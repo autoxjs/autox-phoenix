@@ -12,8 +12,8 @@ config :logger, level: :warn
 # Configure your database
 config :autox, Autox.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "ia",
+  password: "1234567",
   database: "autox_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

@@ -1,5 +1,20 @@
 # Autox
 
+Phoenix Ember addon for rapidly building jsonapi backends
+
+>Note: This is super alpha software! Use at your own peril
+
+## Assumptions
+
+In order to ultra rapidly scaffold out the backend, I make the following
+assumptions about your back-end. If *any* of them are not true for you,
+I highly recommend against using this library as it may cause irreparable damage
+to your app.
+
+1. You don't have any user data in your db and therefore can drop and re-create it on a whim
+2. You won't ever care to "optimize" at the application level
+3. You *will* use ember-data and phoenix
+
 To start your Phoenix app:
 
   1. Install dependencies with `mix deps.get`

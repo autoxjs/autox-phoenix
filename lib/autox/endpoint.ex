@@ -14,6 +14,8 @@ defmodule Autox.Endpoint do
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
+    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
+    plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
   end
 
@@ -31,7 +33,7 @@ defmodule Autox.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_autox_key",
-    signing_salt: "Z3kz30ns"
+    signing_salt: "Sy5Acui8"
 
   plug Autox.Router
 end

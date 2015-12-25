@@ -46,8 +46,10 @@ defmodule Autox.Web do
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
 
+      # Use all HTML functionality (forms, tags, etc)
+      use Phoenix.HTML
+
       import Autox.Router.Helpers
-      import Autox.ErrorHelpers
       import Autox.Gettext
     end
   end
@@ -55,6 +57,7 @@ defmodule Autox.Web do
   def router do
     quote do
       use Phoenix.Router
+      import Autox.Manifest
     end
   end
 
