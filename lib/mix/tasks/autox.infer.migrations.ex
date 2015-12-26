@@ -63,7 +63,7 @@ defmodule Mix.Tasks.Autox.Infer.Migrations do
   end
 
   defp infer_types(model) do
-    model.__schema__(:types) 
+    model.__schema__(:types)
     |> Enum.map(&keyify_datetime/1)
     |> Enum.reject(&bad_type?/1)
     |> Enum.map(&join/1)
