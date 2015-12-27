@@ -1,6 +1,7 @@
 `import DS from 'ember-data'`
+`import {RelateableMixin} from 'ember-autox'`
 
-Model = DS.Model.extend
+Model = DS.Model.extend RelateableMixin,
   <%= for {key, type} <- attrs do %>
   <%= key %>: DS.attr "<%= type %>"
   <% end %>

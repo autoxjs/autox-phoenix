@@ -2,5 +2,5 @@
 'use strict';
 
 module.exports = {
-  name: 'autox'
+  name: 'ember-autox'
 };

@@ -5,15 +5,17 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
   @shortdoc """
   Scaffolds ember models
   """
-  def run(_) do
+  def run(args) do
+    switches = [test: :boolean]
+    {[test: test], _, _} = OptionParser.parse(args, switches: switches)
     Mix.Phoenix.base
     |> Module.concat("Router")
     |> apply(:__routes__, [])
     |> Enum.reduce(%{}, &view_class_associations/2)
-    |> Enum.map(&scaffold/1)
+    |> Enum.map(&scaffold(test, &1))
   end
 
-  defp scaffold({key, assocs}) do
+  defp scaffold(test, {key, assocs}) do
     attributes = key 
     |> model_view_class_from_key 
     |> infer_attributes
@@ -27,8 +29,10 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
     model = key |> model_name_from_key
 
     paths = Mix.Autox.paths
+    destination = if(test, do: "tests/dummy/", else: "") <> "app/models/#{model}.coffee"
+
     Mix.Phoenix.copy_from paths, "priv/templates/autox.infer.embers", "", binding, [
-      {:eex, "model.coffee", "app/models/#{model}.coffee"}
+      {:eex, "model.coffee", destination}
     ]
   end
 
