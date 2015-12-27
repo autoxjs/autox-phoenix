@@ -2,7 +2,7 @@
 
 RelationshipAdapter = DS.JSONAPIAdapter.extend
   urlForCreateRecord: (modelName, snapshot) ->
-    base = @_buildURL(snapshot.attr("relatedParentName"), snapshot.attr("relatedParentId"))
+    base = @_buildURL(snapshot.attr("relatedParentModelName"), snapshot.attr("relatedParentId"))
     base + "/relationships/" + snapshot.attr("relatedChildPath")
     
   updateRecord: (store, type, snapshot) ->

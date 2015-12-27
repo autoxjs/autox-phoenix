@@ -1,9 +1,10 @@
+`import Ember from 'ember'`
 `import DS from 'ember-data'`
 
 RelationshipSerializer = DS.JSONAPISerializer.extend
   serialize: (snapshot, options) ->
     {data} = @_super arguments...
-    data.type = @payloadKeyFromModelName snapshot.attr("relatedChildType")
+    data.type = @payloadKeyFromModelName snapshot.attr("relatedChildModelName")
     data.id = snapshot.attr("relatedChildId") if snapshot.attr("relatedChildId")?
     {data}
   serializeAttribute: (snapshot, json, key, meta) ->
