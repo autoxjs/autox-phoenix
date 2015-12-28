@@ -10,7 +10,7 @@ Relationship = DS.Model.extend
   relatedChildModelName: DS.attr "string", virtual: true
   relatedChildId: DS.attr "string", virtual: true
   
-  relatedAttributes: DS.attr(defaultValue: Payload.create())
+  relatedAttributes: DS.attr defaultValue: -> Payload.create({})
 
   relatedParent: computed set: (key, parent) ->
     @set "relatedParentModelName", parent.constructor.modelName

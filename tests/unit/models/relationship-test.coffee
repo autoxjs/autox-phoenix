@@ -32,3 +32,4 @@ test 'it can relate', (assert) ->
     owner = store.createRecord "owner", name: "Charleston Hesser", id: 777
     relation.associate owner
     assert.equal relation.get("relatedChildId"), 777, "associating a relation should work"
+    relation.rollbackAttributes()

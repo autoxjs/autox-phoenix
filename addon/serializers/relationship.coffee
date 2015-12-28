@@ -9,7 +9,7 @@ RelationshipSerializer = DS.JSONAPISerializer.extend
     attributes = snapshot.attr("relatedAttributes")
     attributes.eachAttribute (key, meta) =>
       @serializeAttribute attributes, data, key, meta
-    {data}
+    data
 
   serializeAttribute: (snapshot, json, key, meta) ->
     type = meta.type
