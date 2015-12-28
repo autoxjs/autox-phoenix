@@ -6,8 +6,9 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
   Scaffolds ember models
   """
   def run(args) do
-    switches = [test: :boolean]
-    {[test: test], _, _} = OptionParser.parse(args, switches: switches)
+    switches = [test: :boolean, setup: :boolean]
+    {[test: test, setup: setup], _, _} = OptionParser.parse(args, switches: switches)
+    if setup, do: setup(test)
     Mix.Phoenix.base
     |> Module.concat("Router")
     |> apply(:__routes__, [])
@@ -15,6 +16,15 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
     |> Enum.map(&scaffold(test, &1))
   end
 
+  defp setup(test) do
+    destination = if(test, do: "tests/dummy/", else: "")
+    paths = Mix.Autox.paths
+    Mix.Phoenix.copy_from paths, "priv/templates/autox.infer.embers", "", [], [
+      {:eex, "relationship.coffee", destination <> "app/models/relationship.coffee" },
+      {:eex, "adapter.coffee", destination <> "app/adapters/relationship.coffee" },
+      {:eex, "serializer.coffee", destination <> "app/serializers/relationship.coffee" }
+    ]
+  end
   defp scaffold(test, {key, assocs}) do
     attributes = key 
     |> model_view_class_from_key 
@@ -29,10 +39,10 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
     model = key |> model_name_from_key
 
     paths = Mix.Autox.paths
-    destination = if(test, do: "tests/dummy/", else: "") <> "app/models/#{model}.coffee"
+    destination = if(test, do: "tests/dummy/", else: "")
 
     Mix.Phoenix.copy_from paths, "priv/templates/autox.infer.embers", "", binding, [
-      {:eex, "model.coffee", destination}
+      {:eex, "model.coffee", destination <> "app/models/#{model}.coffee"}
     ]
   end
 

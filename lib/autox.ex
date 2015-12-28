@@ -17,7 +17,7 @@ defmodule Autox do
   ember install ember-autox # command might be different if I publicly publish
 
   # Either do:
-  ember ember-autox:init-phoenix
+  ember ember-autox:install
 
   # or:
   cd ..
