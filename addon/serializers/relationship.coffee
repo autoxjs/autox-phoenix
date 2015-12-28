@@ -3,24 +3,20 @@
 
 RelationshipSerializer = DS.JSONAPISerializer.extend
   serialize: (snapshot, options) ->
-    {data} = @_super arguments...
-    data.type = @payloadKeyFromModelName snapshot.attr("relatedChildModelName")
-    data.id = snapshot.attr("relatedChildId") if snapshot.attr("relatedChildId")?
+    data =
+      id: snapshot.attr("relatedChildId")
+      type: @payloadKeyFromModelName snapshot.attr("relatedChildModelName")
+    attributes = snapshot.attr("relatedAttributes")
+    attributes.eachAttribute (key, meta) =>
+      @serializeAttribute attributes, data, key, meta
     {data}
+
   serializeAttribute: (snapshot, json, key, meta) ->
     type = meta.type
-    real = not meta.virtual
-    if @_canSerialize(key) and real
-      json.attributes ?= []
-
-      value = snapshot.attr(key)
-      value = @transformFor(type)?(value) if type?
-      
-      payloadKey = @_getMappedKey(key, snapshot.type)
-
-      if payloadKey is key
-        payloadKey = @keyForAttribute(key, "serialize")
-
-      json.attributes[payloadKey] = value
+    json.attributes ?= {}
+    value = snapshot.attr(key)
+    value = transform.serialize(value) if (transform = @transformFor type)?
+    payloadKey = @keyForAttribute(key, "serialize")
+    json.attributes[payloadKey] = value
 
 `export default RelationshipSerializer`
