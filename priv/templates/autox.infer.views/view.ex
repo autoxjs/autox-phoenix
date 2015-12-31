@@ -3,6 +3,7 @@ defmodule <%= base %>.<%= model %>View do
   <%= if relational_type? do %>
   use Autox.RelationshipView
   <% else %>
+  @relationships ~w( <%= for key <- relationships do %><%= key %> <% end %>)a
   use Autox.ResourceView
   <% end %>
 end

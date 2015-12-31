@@ -7,6 +7,9 @@ defmodule Autox.Shop do
 
     belongs_to :owner, Autox.Owner
 
+    has_one :kitchen, Autox.Kitchen
+    has_many :chairs, Autox.Chair
+
     has_many :tacos_shops_relationship, Autox.TacosShopsRelationship
     has_many :tacos, through: [:tacos_shops_relationship, :taco]
 

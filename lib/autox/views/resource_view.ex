@@ -1,10 +1,12 @@
 defmodule Autox.ResourceView do
   alias Fox.MapExt
+  alias Fox.StringExt
   alias Fox.AtomExt
   alias Fox.DictExt
   alias Fox.RecordExt
   alias Ecto.Association.NotLoaded
   alias Autox.RelationUtils
+  defdelegate resource_identifier(model), to: Autox.RelationshipView
   def infer_fields(view_module) do
     model_module = view_module |> AtomExt.infer_model_module 
     model_module.__schema__(:fields) |> Enum.reject(fn field -> field == :id end)
@@ -72,14 +74,6 @@ defmodule Autox.ResourceView do
     |> MapExt.present_put(:links, infer_links(model))
   end
 
-  def resource_identifier(model) do
-    type = model
-    |> RecordExt.infer_collection_key
-    |> Atom.to_string
-    %{id: model.id,
-      type: type}
-  end
-
   def extract_relationships(model, relationships) do
     model
     |> Map.take(relationships)
@@ -96,7 +90,7 @@ defmodule Autox.ResourceView do
     case RelationUtils.reflect_association(model, field) do
       %{owner_key: id_key, related: typeclass} ->
         id = Map.get(model, id_key)
-        type = AtomExt.infer_collection_key(typeclass)
+        type = AtomExt.infer_collection_key(typeclass) |> Atom.to_string |> StringExt.dasherize
         if id && type, do: %{id: id, type: type}, else: nil
       %{cardinality: :many} -> []
       _ -> nil
@@ -119,10 +113,10 @@ defmodule Autox.ResourceView do
   defmacro __using__(_opts) do
     quote location: :keep do
       alias Autox.ResourceView
-      @attributes Module.get_attribute(__MODULE__, :attributes)
-      @relationships Module.get_attribute(__MODULE__, :relationships)
-      def attributes, do: @attributes || ResourceView.infer_fields(__MODULE__)
-      def relationships, do: @relationships || ResourceView.infer_associations(__MODULE__)
+      @attributes Module.get_attribute(__MODULE__, :attributes) || ResourceView.infer_fields(__MODULE__)
+      @relationships Module.get_attribute(__MODULE__, :relationships) || ResourceView.infer_associations(__MODULE__)
+      def attributes, do: @attributes
+      def relationships, do: @relationships
 
       def render("show.json", %{data: model, meta: meta}) do
         %{meta: meta}

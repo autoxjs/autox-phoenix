@@ -64,60 +64,50 @@ defmodule Autox.Manifest do
     end
   end
 
-  @has_actions [:update, :delete, :create]
+  @many_actions [:index, :delete, :create]
   defmacro many(model) do
-    many_core(model, @has_actions)
+    many_core(model, @many_actions)
   end
   defmacro many(model, actions) do
     many_core(model, actions)
   end
 
-  defp many_core(models, _actions) when is_list(models) do
+  defp many_core(models, actions) when is_list(models) do
+    delete? = :delete in actions
+    actions = actions |> Enum.reject(&(&1 == :delete))
     quote do
       for model <- unquote(models) do
         path = Autox.Manifest.infer_collection_path(model)
         relation_path = "relationships/" <> path
         controller = Autox.Manifest.infer_relationship_controller(model)
 
-        resources relation_path, controller, only: [:index]
+        resources relation_path, controller, only: unquote(actions)
+        if unquote(delete?) do
+          resources relation_path, controller, only: [:delete], singleton: true
+        end
       end
     end
   end
-  defp many_core(model, _actions) do
-    quote do
-      path = Autox.Manifest.infer_collection_path(unquote(model))
-      relation_path = "relationships/" <> path
-      controller = Autox.Manifest.infer_relationship_controller(unquote(model))
+  defp many_core(model, actions), do: many_core([model], actions)
 
-      resources relation_path, controller, only: [:index]
-    end
-  end
-
+  @one_actions [:show, :delete, :create]
   defmacro one(model) do
-    one_core(model, @has_actions)
+    one_core(model, @one_actions)
   end
   defmacro one(model, actions) do
     one_core(model, actions)
   end
 
-  defp one_core(models, _actions) when is_list(models) do
+  defp one_core(models, actions) when is_list(models) do
     quote do
       for model <- unquote(models) do
         path = Autox.Manifest.pathify(model)
         relation_path = "relationships/" <> path
         controller = Autox.Manifest.infer_relationship_controller(model)
 
-        resources relation_path, controller, only: [:show], singleton: true
+        resources relation_path, controller, only: unquote(actions), singleton: true
       end
     end
   end
-  defp one_core(model, _actions) do
-    quote do
-      path = Autox.Manifest.pathify(unquote(model))
-      relation_path = "relationships/" <> path
-      controller = Autox.Manifest.infer_relationship_controller(unquote(model))
-
-      resources relation_path, controller, only: [:show], singleton: true
-    end
-  end
+  defp one_core(model, actions), do: one_core([model], actions)
 end

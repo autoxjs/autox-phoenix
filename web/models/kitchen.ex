@@ -1,16 +1,14 @@
-defmodule Autox.SalsasShopsRelationship do
+defmodule Autox.Kitchen do
   use Autox.Web, :model
 
-  schema "salsas_shops" do
-    field :authorization_key, :string
-    belongs_to :salsa, Autox.Salsa
+  schema "kitchens" do
     belongs_to :shop, Autox.Shop
     timestamps
   end
 
-  @create_fields ~w(salsa_id shop_id authorization_key)
+  @create_fields ~w()
   @update_fields @create_fields
-  @optional_fields ~w()
+  @optional_fields ~w(shop_id)
 
   def create_changeset(model, params\\:empty) do
     model

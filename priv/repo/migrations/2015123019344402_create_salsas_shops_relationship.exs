@@ -3,6 +3,7 @@ defmodule Autox.Repo.Migrations.CreateSalsasShopsRelationship do
 
   def change do
     create table(:salsas_shops) do
+      add :authorization_key, :string
 
       timestamps
     end

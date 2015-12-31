@@ -5,6 +5,7 @@ defmodule Autox.Repo.Migrations.CreateSalsa do
     create table(:salsas) do
       add :name, :string
       add :price, :decimal
+      add :secret_sauce, :string
 
       timestamps
     end

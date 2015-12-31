@@ -3,8 +3,8 @@ defmodule Autox.RelationUtils do
   alias Ecto.Association.BelongsTo
   alias Ecto.Association.Has
   alias Ecto.Association.HasThrough
-  alias Ecto.Association.NotLoaded
-  alias Ecto.Schema
+  alias Fox.StringExt
+  alias Autox.ChangesetUtils
   @moduledoc """
   For reference:
 
@@ -27,65 +27,135 @@ defmodule Autox.RelationUtils do
    queryable: {"shops_pictures", Apiv3.Picture}, related: Apiv3.Picture,
    related_key: :shop_id}
   """
-  @spec create_relationship_changeset(Schema.t, atom, Schema.t) :: Changeset.t
-  def create_relationship_changeset(apple, field, %{id: id}=orange) when not is_nil(id) do
-    case apple |> reflect_association(field) |> check_legality(orange) do
-      %BelongsTo{owner_key: foreign_key, related_key: references} ->
-        ensure_belongs_to(apple, orange, foreign_key, references)
-      %Has{owner_key: foreign_key, related_key: references} ->
-        ensure_belongs_to(orange, apple, foreign_key, references)
-      %HasThrough{cardinality: :one, through: [relation_key, field]} ->
-        apple
-        |> Map.get(relation_key)
-        |> case do
-          %NotLoaded{} -> throw "your has-through relationship wasn't fully loaded"
-          nil -> apple |> create_relationship_changeset(relation_key, [{field, orange}])
-          relation -> relation |> create_relationship_changeset(field, orange)
-        end
-      %HasThrough{cardinality: :many, through: [relation_key, field]} ->
-        apple
-        |> Map.get(field)
-        |> case do
-          %NotLoaded{} -> throw "your has-through relationship wasn't fully loaded"
-          oranges when is_list(oranges) -> if orange in oranges, do: null_changeset(orange), else: throw "x"
-          _ -> throw "I'm not sure how to do this"
-        end
-      nil -> throw "invalid relationship"
-    end
-  end
-  def create_relationship_changeset(model, field, params) do
-    case model |> reflect_association(field) do
-      %Has{} -> model |> build_assoc(field) |> create_changeset(params)
-      %BelongsTo{} -> throw "requires a transaction where we make the params first, then change this model"
-      %HasThrough{} -> throw "same issue as above"
-    end    
-  end
-
-  defp check_legality(%BelongsTo{related: module}=a, %{__struct__: module}), do: a
-  defp check_legality(%Has{related: module}=a, %{__struct__: module}), do: a
-  defp check_legality(%HasThrough{}=a, _), do: a
-  defp check_legality(_, _), do: throw "illegal type"
-
-  defp ensure_belongs_to(child, parent, foreign_key, references) do
-    case {child |> Map.get(foreign_key), parent |> Map.get(references) } do
-      {id, id} when not is_nil(id) -> null_changeset(child)
-      {_, nil} -> throw "parent not persisted"
-      {_, id} -> 
-        params = %{} |> Map.put(Atom.to_string(foreign_key), id)
-        child |> update_changeset(params) 
+  def caac(r, p, k, d), do: creative_action_and_changeset(r,p,k,d)
+  def creative_action_and_changeset(repo, parent, key, data) do
+    data
+    |> find_class
+    |> find_or_create_model(repo, data)
+    |> case do
+      {:ok, data} -> create_core(repo, parent, key, data)
+      other -> other
     end
   end
 
-  defp null_changeset(model) do
-    Ecto.Changeset.change(model, %{})
+  def find_class(data), do: data |> Map.get("type") |> maybe_to_existing_model
+
+  defp find_or_create_model(nil, _, _), do: {:error, "no such type"}
+  defp find_or_create_model(class, repo, %{"id" => id}=data) do
+    case repo.get(class, id) do
+      nil -> {:error, "no such model #{id}"}
+      model -> 
+        data = data
+        |> Map.drop(["id"])
+        |> Map.put(:model, model)
+        {:ok, data}
+    end
+  end
+  defp find_or_create_model(_, _, data), do: {:ok, data}
+
+  defp create_core(repo, parent, key, data) do
+    parent 
+    |> reflect_association(key)
+    |> case do
+      %{cardinality: :one}=relation ->
+        parent 
+        |> repo.preload([key])
+        |> singular_cardinality_check(key, data, &create1(&1, relation, &2))
+      %{cardinality: :many}=relation ->
+        checker = &repo.get(assoc(parent, key), &1)
+        worker = &createx(parent, relation, &1)
+        plural_cardinality_check(checker, data, worker)
+    end
   end
 
-  defp create_changeset(%{__struct__: module}=model, params) do
-    module.create_changeset(model, params)
+  def createx(parent, %Has{}=r, data), do: create1(parent, r, data)
+
+  def createx(parent, %HasThrough{through: [near_field, far_field]}, data) do
+    parent 
+    |> reflect_association(near_field)
+    |> double_reflect_association(far_field)
+    |> through
+    |> apply([parent, data])
   end
-  defp update_changeset(%{__struct__: module}=model, params) do
-    module.update_changeset(model, params)
+
+  defp many_many_through(_, _), do: {:error, "refuse to create many-many through relationship due"}
+  defp one_many_through(near_relation, far_relation, parent, data) do
+    %{field: near_field, related: class, owner_key: pkey, related_key: fkey} = near_relation
+    %{field: far_field} = far_relation
+    attributes = data 
+    |> Map.get("attributes", %{})
+    |> Map.put(to_string(fkey), Map.get(parent, pkey))
+    relationships = %{} |> Map.put(to_string(far_field), data)
+    params = %{"type" => class, "attributes" => attributes, "relationships" => relationships}
+
+    case parent |> Map.get(near_field) do
+      nil -> create1(parent, near_relation, params)
+      parent -> create1(parent, far_relation, params)
+    end
   end
+  defp many_one_through(near_relation, far_relation, parent, data) do
+    %{field: near_field, related: class, owner_key: pkey, related_key: fkey} = near_relation
+    %{field: far_field} = far_relation
+    attributes = data 
+    |> Map.get("attributes", %{})
+    |> Map.put(to_string(fkey), Map.get(parent, pkey))
+    relationships = %{} |> Map.put(to_string(far_field), data)
+    params = %{"type" => class, "attributes" => attributes, "relationships" => relationships}
+
+    case data |> Map.get(:model) do
+      nil -> {:error, "many through one with a nonexistent one isn't allowed"}
+      _ -> create1(parent, near_relation, params)
+    end
+  end
+  def one_one_through(a,b,c,d), do: one_many_through(a,b,c,d)
+
+  defp through({%{cardinality: :many}, %{cardinality: :many}}), do: &many_many_through/2
+  defp through({%{cardinality: :many}=rn, %{cardinality: :one}=rf}), do: &many_one_through(rn, rf, &1, &2)
+  defp through({%{cardinality: :one}=rn, %{cardinality: :many}=rf}), do: &one_many_through(rn, rf, &1, &2)
+  defp through({%{cardinality: :one}=rn, %{cardinality: :one}=rf}), do: &one_one_through(rn, rf, &1, &2)
+
+  defp create1(parent, %HasThrough{}=r, data), do: createx(parent, r, data)
+  
+  defp create1(parent, %BelongsTo{owner_key: key, owner: class}, %{model: child}) do
+    params = %{} |> Map.put(key, child.id)
+    cs = parent |> class.update_changeset(params)
+    {:update, cs}
+  end
+  defp create1(_, %BelongsTo{}, data) do
+    {:error, "refuse to create belongs_to relationships in reverse"}
+  end
+
+  defp create1(parent, %Has{related_key: key, related: class}, %{model: child}) do
+    params = %{} |> Map.put(key, parent.id)
+    cs = child |> class.update_changeset(params)
+    {:update, cs}
+  end
+  defp create1(parent, %Has{related: class, field: field}, data) do
+    params = ChangesetUtils.activemodel_paramify(data)
+    cs = parent 
+    |> build_assoc(field)
+    |> class.create_changeset(params)
+    {:insert, cs}
+  end
+
+  defp singular_cardinality_check(parent, field, model, f) do
+    id = model |> Map.get(:model, %{}) |> Map.get(:id)
+    parent
+    |> Map.get(field)
+    |> case do
+      %{id: ^id} when not is_nil(id) -> {:ok, model}
+      %{id: id} -> {:error, "already occupied by '#{id}'"}
+      nil -> f.(parent, model)
+    end
+  end
+
+  defp plural_cardinality_check(checker, %{model: %{id: id}}=d, f) do
+    case checker.(id) do
+      nil -> f.(d)
+      model -> {:ok, model}
+    end
+  end
+  defp plural_cardinality_check(_, data, f), do: f.(data)
 
   def reflect_association(%{__struct__: module}, field), do: reflect_association(module, field)
   def reflect_association(module, field) do
@@ -93,6 +163,25 @@ defmodule Autox.RelationUtils do
       nil -> nil
       atom ->
         module.__schema__(:association, atom)
+    end
+  end
+
+  def double_reflect_association(%{related: module}=r, field), do: {r, reflect_association(module, field)}
+  def double_reflect_association(r, _), do: {r, nil}
+
+  def maybe_to_existing_model(atom) when is_atom(atom) do
+    atom 
+    |> Atom.to_string 
+    |> case do
+      "Elixir." <> _ -> atom
+      symbol -> symbol |> maybe_to_existing_model
+    end
+  end
+  def maybe_to_existing_model(str) when is_binary(str) do
+    try do
+      ChangesetUtils.model_module_from_collection_name(str)
+    rescue
+      ArgumentError -> nil
     end
   end
 

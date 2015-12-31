@@ -33,7 +33,13 @@ defmodule Autox.ShopControllerTest do
     }
     conn = conn |> post("/api/shops", params)
     assert %{"data" => data} = json_response(conn, 201)
-    assert %{"id" => _, "type" => "shops", "attributes" => _, "relationships" => relationships} = data
+    assert %{
+      "id" => _, 
+      "type" => "shops", 
+      "attributes" => _, 
+      "relationships" => relationships, 
+      "links" => %{"self" => _}
+    } = data
     assert %{
       "owner" => owner, 
       "tacos" => %{

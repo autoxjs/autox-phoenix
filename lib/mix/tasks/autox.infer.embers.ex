@@ -46,12 +46,12 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
     ]
   end
 
-  defp model_name_from_key(key), do: key |> StringExt.singularize |> StringExt.dasherize
+  def model_name_from_key(key), do: key |> StringExt.singularize |> StringExt.dasherize
 
   defp jrelate(:index), do: "hasMany"
   defp jrelate(:show), do: "belongsTo"
 
-  defp view_class_associations(%{path: path, opts: opts}, map) do
+  def view_class_associations(%{path: path, opts: opts}, map) do
     case path |> String.split("/") |> Enum.reverse |> Enum.take(4) do
       [field, "relationships", _, parent_name] ->
         map |> Map.update(parent_name, %{}, &Map.put_new(&1, field, opts))
@@ -62,7 +62,7 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
     end
   end
 
-  defp model_view_class_from_key(name) do
+  def model_view_class_from_key(name) do
     model_name = name 
     |> StringExt.singularize
     |> StringExt.camelize

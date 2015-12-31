@@ -4,6 +4,7 @@ defmodule Autox.ChangesetUtils do
   end
   alias Ecto.Association.BelongsTo
   alias Autox.RelationUtils
+  alias Fox.StringExt
   @moduledoc """
   Changeset Utility functions for creating changesets from JSONAPI data
 
@@ -30,8 +31,9 @@ defmodule Autox.ChangesetUtils do
   however, changesets are created from active-model-like paramters
   so this functions "flattens" out the post requests
   """
-  def activemodel_paramify(%{"data" => data}) do
-    module = model_module_from_collection_name data["type"]
+  def activemodel_paramify(%{"data" => data}), do: activemodel_paramify(data)
+  def activemodel_paramify(%{"type" => type}=data) do
+    module = model_module_from_collection_name type
     
     data
     |> activemodelify_attributes
@@ -66,20 +68,24 @@ defmodule Autox.ChangesetUtils do
       _ -> nil
     end
   end
+  def foreign_key_pair(module, {association, %{model: %{id: id}}}) do
+    case RelationUtils.reflect_association(module, association) do
+      %BelongsTo{owner_key: name} -> {to_string(name), id}
+      _ -> nil
+    end
+  end
   def foreign_key_pair(_, _), do: nil
 
   def model_module_from_collection_name(nil) do
     raise MissingTypeError,
       message: "I expect all post data to create to contain a 'type' parameter, but you didn't provide one"
   end
-  def model_module_from_collection_name(type) do
-    alias Fox.StringExt, as: Ex
-    x = type
-    |> Ex.singularize
-    |> Ex.underscore
-    |> Ex.camelize
-    
-    String.to_existing_atom("Elixir.Autox." <> x)
+  def model_module_from_collection_name(atom) when is_atom(atom) do
+    RelationUtils.maybe_to_existing_model(atom)
+  end
+  def model_module_from_collection_name(type) when is_binary(type) do 
+    name = type |> StringExt.singularize |> StringExt.camelize
+    Mix.Phoenix.base |> Module.safe_concat(name)
   end
 
 end
