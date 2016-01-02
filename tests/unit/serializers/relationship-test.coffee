@@ -15,16 +15,18 @@ test 'it serializes records', (assert) ->
     relation.associate owner
     serializedRecord = relation.serialize()
     assert.deepEqual serializedRecord,
-      id: "1998"
-      type: "owners"
+      data:
+        id: "1998"
+        type: "owners"
 
     relation.set "secretSource", "applesauce"
     relation.set "accessToken", "xwing-93"
     serializedRecord = relation.serialize()
     assert.deepEqual serializedRecord,
-      id: "1998"
-      type: "owners"
-      attributes:
-        "secret-source": "applesauce"
-        "access-token": "xwing-93"
+      data:
+        id: "1998"
+        type: "owners"
+        attributes:
+          "secret-source": "applesauce"
+          "access-token": "xwing-93"
     relation.rollbackAttributes()

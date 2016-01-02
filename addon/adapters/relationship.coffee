@@ -1,7 +1,8 @@
+`import Ember from 'ember'`
 `import DS from 'ember-data'`
 
 RelationshipAdapter = DS.JSONAPIAdapter.extend
-  deleteRecord: (store, type, snapshot) -> 
+  deleteRecord: (store, type, snapshot) ->
     data = {}
     serializer = store.serializerFor(type.modelName)
     serializer.serializeIntoHash(data, type, snapshot)

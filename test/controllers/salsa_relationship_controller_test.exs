@@ -10,6 +10,26 @@ defmodule Autox.SalsaRelationshipControllerTest do
     {:ok, conn: conn, shop: shop, salsa: salsa}
   end
 
+  test "it should properly show", %{conn: conn, shop: shop, salsa: salsa} do
+    %{salsa: %{id: salsa_id}, shop: shop} = salsa |> salsa_to_shop(shop)
+    path = conn |> shop_salsa_relationship_path(:index, shop.id)
+    assert path == "/api/shops/#{shop.id}/salsas"
+    response = conn
+    |> get(path, %{})
+    |> json_response(200)
+
+    assert %{"data" => data, "links" => links} = response
+    assert [%{
+      "id" => ^salsa_id,
+      "type" => "salsas",
+      "attributes" => _,
+      "relationships" => _
+    }] = data
+    assert %{
+      "self" => "api/shops/#{shop.id}/salsas"
+    } == links
+  end
+
   test "it should relate the shop with the salsa", %{conn: conn, shop: shop, salsa: salsa} do
     path = conn |> shop_salsa_relationship_path(:create, shop.id)
     assert path == "/api/shops/#{shop.id}/relationships/salsas"

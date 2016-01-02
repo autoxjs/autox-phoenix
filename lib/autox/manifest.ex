@@ -74,14 +74,19 @@ defmodule Autox.Manifest do
 
   defp many_core(models, actions) when is_list(models) do
     delete? = :delete in actions
-    actions = actions |> Enum.reject(&(&1 == :delete))
+    index? = :index in actions
+    create? = :create in actions
     quote do
       for model <- unquote(models) do
         path = Autox.Manifest.infer_collection_path(model)
         relation_path = "relationships/" <> path
         controller = Autox.Manifest.infer_relationship_controller(model)
-
-        resources relation_path, controller, only: unquote(actions)
+        if unquote(index?) do
+          resources path, controller, only: [:index]
+        end
+        if unquote(create?) do
+          resources relation_path, controller, only: [:create]
+        end
         if unquote(delete?) do
           resources relation_path, controller, only: [:delete], singleton: true
         end
@@ -99,12 +104,17 @@ defmodule Autox.Manifest do
   end
 
   defp one_core(models, actions) when is_list(models) do
+    show? = :show in actions
+    actions = actions |> Enum.reject(&(&1 == :show))
+    
     quote do
       for model <- unquote(models) do
         path = Autox.Manifest.pathify(model)
         relation_path = "relationships/" <> path
         controller = Autox.Manifest.infer_relationship_controller(model)
-
+        if unquote(show?) do
+          resources path, controller, only: [:show], singleton: true  
+        end
         resources relation_path, controller, only: unquote(actions), singleton: true
       end
     end

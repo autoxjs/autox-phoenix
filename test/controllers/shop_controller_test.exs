@@ -42,18 +42,16 @@ defmodule Autox.ShopControllerTest do
     } = data
     assert %{
       "owner" => owner, 
-      "tacos" => %{
-        "links" => %{"self" => _},
-        "data" => []
-      },
-      "salsas" => %{
-        "links" => %{"self" => _},
-        "data" => []
-      }
+      "tacos" => tacos,
+      "salsas" => salsas
     } = relationships
     assert %{
       "links" => %{"self" => _},
       "data" => %{ "id" => ^id, "type" => "owners"}
     } = owner
+    assert %{"links" => %{"self" => _}} = tacos
+    refute tacos["data"] == []
+    assert %{"links" => %{"self" => _}} = salsas
+    refute salsas["data"] == []
   end
 end

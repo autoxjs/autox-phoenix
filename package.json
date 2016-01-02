@@ -18,6 +18,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "body-parser": "^1.14.2",
     "broccoli-asset-rev": "^2.2.0",
     "ember-ajax": "0.7.1",
     "ember-cli": "1.13.13",
@@ -27,6 +28,7 @@
     "ember-cli-htmlbars": "^1.0.1",
     "ember-cli-htmlbars-inline-precompile": "^0.3.1",
     "ember-cli-inject-live-reload": "^1.3.1",
+    "ember-cli-moment-shim": "0.7.1",
     "ember-cli-qunit": "^1.1.0",
     "ember-cli-release": "0.2.8",
     "ember-cli-sri": "^1.2.0",
@@ -35,8 +37,12 @@
     "ember-disable-prototype-extensions": "^1.0.0",
     "ember-disable-proxy-controllers": "^1.0.1",
     "ember-export-application-global": "^1.0.4",
+    "ember-moment": "4.2.1",
     "ember-resolver": "^2.0.3",
-    "ember-try": "~0.0.8"
+    "ember-try": "~0.0.8",
+    "glob": "^4.5.3",
+    "http-proxy": "^1.12.0",
+    "morgan": "^1.6.1"
   },
   "keywords": [
     "ember-addon"

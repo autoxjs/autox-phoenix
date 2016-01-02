@@ -1,26 +1,33 @@
 defmodule Autox.RelationshipView do
   alias Fox.RecordExt
   alias Fox.StringExt
-  def resource_identifier(model) do
-    type = model
-    |> RecordExt.infer_collection_key
-    |> Atom.to_string
-    |> StringExt.dasherize
-    %{id: model.id,
-      type: type}
-  end
-  def resource_identifiers(models) do
-    models |> Enum.map(&resource_identifier/1)
-  end
+  alias Autox.ResourceView
+
   defmacro __using__(_opts) do
     quote location: :keep do
       alias Autox.RelationshipView
-      def render("show.json", %{data: model, links: links}) do
-        %{data: RelationshipView.resource_identifier(model), links: links}
+      alias Autox.NamespaceUtils
+      def render("show.json", %{data: model, meta: meta}) do
+        %{meta: meta}
+        |> Map.put(:links, render_one(meta, __MODULE__, "links.json", as: :meta))
+        |> Map.put(:data, render_one(model, __MODULE__, "data.json", as: :model))
+        |> NamespaceUtils.namespacify_links(meta)
       end
 
-      def render("index.json", %{data: models, links: links}) do
-        %{data: RelationshipView.resource_identifiers(models), links: links}
+      def render("index.json", %{data: models, meta: meta}) do
+        %{meta: meta}
+        |> Map.put(:links, render_one(meta, __MODULE__, "links.json", as: :meta))
+        |> Map.put(:data, render_many(models, __MODULE__, "data.json", as: :model))
+        |> NamespaceUtils.namespacify_links(meta)
+      end
+
+      def render("data.json", %{model: model}) do
+        model
+        |> RecordExt.view_for_model
+        |> apply(:render, ["data.json", %{model: model}])
+      end
+      def render("links.json", %{meta: meta}) do
+        %{self: meta.resource_path}
       end
     end
   end

@@ -19,7 +19,7 @@ defmodule Autox.Mixfile do
   def application do
     [mod: {Autox.App, []},
      applications: [:phoenix, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+                    :phoenix_ecto, :postgrex, :cors_plug]]
   end
 
   # Specifies which paths to compile per environment.
@@ -37,6 +37,7 @@ defmodule Autox.Mixfile do
      {:fox, "~> 0.1"},
      {:phoenix_ecto, "~> 2.0"},
      {:phoenix_html, "~> 2.3"},
+     {:cors_plug, "~> 0.1.3", only: [:dev, :test]},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:postgrex, ">= 0.0.0", optional: true},
      {:gettext, "~> 0.9", optional: true},

@@ -5,8 +5,14 @@ defmodule Autox.ResourceView do
   alias Fox.DictExt
   alias Fox.RecordExt
   alias Ecto.Association.NotLoaded
+  alias Ecto.Association.BelongsTo
   alias Autox.RelationUtils
-  defdelegate resource_identifier(model), to: Autox.RelationshipView
+  
+  def resource_identifier(model) do
+    type = RecordExt.infer_collection_key(model)
+    id = model.id
+    %{type: type, id: id}
+  end
   def infer_fields(view_module) do
     model_module = view_module |> AtomExt.infer_model_module 
     model_module.__schema__(:fields) |> Enum.reject(fn field -> field == :id end)
@@ -16,22 +22,11 @@ defmodule Autox.ResourceView do
     model_module.__schema__(:associations)
   end
 
-  def namespacify_links(output, %{namespace: ns}=meta) when is_map(output) and is_binary(ns) do
-    output
-    |> MapExt.present_update(:links, &namespacify_links_with(&1, meta))
-    |> MapExt.present_update(:data, &namespacify_links(&1, meta))
-    |> MapExt.present_update(:relationships, &namespacify_relationships(&1, meta))
+  defp post_modify_links(links, field) do
+    links
+    |> MapExt.present_update(:self, &Path.join(&1, "relationships/#{field}"))
+    |> MapExt.present_update(:related, &Path.join(&1, "#{field}"))
   end
-  def namespacify_links(output, _), do: output
-
-  def namespacify_relationships(relations_map, meta) do
-    relations_map |> MapExt.value_map(&namespacify_links(&1, meta))
-  end
-
-  defp namespacify_links_with(links, %{namespace: ns}) do
-    links |> MapExt.present_update(:self, &Path.join(ns, &1))
-  end
-
   def infer_links(model) do
     %{id: id, type: type} = model 
     |> resource_identifier
@@ -40,12 +35,12 @@ defmodule Autox.ResourceView do
     |> Enum.map(&to_string/1)
     |> Path.join
     
-    %{self: self_link}
+    %{self: self_link, related: self_link}
   end
   def infer_links(%NotLoaded{__field__: field}, model) do
     model
     |> infer_links
-    |> MapExt.present_update(:self, &Path.join(&1, "relationships/#{field}"))
+    |> post_modify_links(field)
   end
   def infer_links([model|_]=models, parent) when is_list(models) when is_map(model) do
     field = model
@@ -54,7 +49,7 @@ defmodule Autox.ResourceView do
 
     parent
     |> infer_links
-    |> MapExt.present_update(:self, &Path.join(&1, "relationships/#{field}"))
+    |> post_modify_links(field)
   end
   def infer_links(model, parent) when is_map(model) do
     field = model
@@ -63,7 +58,7 @@ defmodule Autox.ResourceView do
 
     parent
     |> infer_links
-    |> MapExt.present_update(:self, &Path.join(&1, "relationships/#{field}"))
+    |> post_modify_links(field)
   end
   def infer_links(_, _), do: nil
 
@@ -88,11 +83,10 @@ defmodule Autox.ResourceView do
 
   def render_association_core(%NotLoaded{__field__: field}, model) do
     case RelationUtils.reflect_association(model, field) do
-      %{owner_key: id_key, related: typeclass} ->
+      %BelongsTo{owner_key: id_key, related: typeclass} ->
         id = Map.get(model, id_key)
         type = AtomExt.infer_collection_key(typeclass) |> Atom.to_string |> StringExt.dasherize
         if id && type, do: %{id: id, type: type}, else: nil
-      %{cardinality: :many} -> []
       _ -> nil
     end
   end
@@ -113,6 +107,7 @@ defmodule Autox.ResourceView do
   defmacro __using__(_opts) do
     quote location: :keep do
       alias Autox.ResourceView
+      alias Autox.NamespaceUtils
       @attributes Module.get_attribute(__MODULE__, :attributes) || ResourceView.infer_fields(__MODULE__)
       @relationships Module.get_attribute(__MODULE__, :relationships) || ResourceView.infer_associations(__MODULE__)
       def attributes, do: @attributes
@@ -120,15 +115,16 @@ defmodule Autox.ResourceView do
 
       def render("show.json", %{data: model, meta: meta}) do
         %{meta: meta}
+        |> Map.put(:links, render_one(meta, __MODULE__, "links.json", as: :meta))
         |> Map.put(:data, render_one(model, __MODULE__, "data.json", as: :model))
-        |> ResourceView.namespacify_links(meta)
+        |> NamespaceUtils.namespacify_links(meta)
       end
 
       def render("index.json", %{data: models, meta: meta}) do
         %{meta: meta}
         |> Map.put(:links, render_one(meta, __MODULE__, "links.json", as: :meta))
         |> Map.put(:data, render_many(models, __MODULE__, "data.json", as: :model))
-        |> ResourceView.namespacify_links(meta)
+        |> NamespaceUtils.namespacify_links(meta)
       end
       
       def render("data.json", %{model: model}) do
@@ -136,7 +132,7 @@ defmodule Autox.ResourceView do
       end
 
       def render("links.json", %{meta: meta}) do
-        %{self: meta.collection_link}
+        %{self: meta.resource_path}
       end
 
       defoverridable [attributes: 0, relationships: 0]

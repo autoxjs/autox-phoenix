@@ -14,6 +14,19 @@ to your app.
 1. You don't have any user data in your db and therefore can drop and re-create it on a whim
 2. You won't ever care to "optimize" at the application level
 3. You *will* use ember-data and phoenix
+4. In your routers, you namespace like this:
+```elixir
+scope "apiv1", Apiv1 do
+  ...
+end
+```
+Instead of like this:
+```elixir
+scope "api/v1", Apiv1 do
+  ...
+end
+```
+Yeah, don't nest shit unnecessarily
 
 To start your Phoenix app:
 

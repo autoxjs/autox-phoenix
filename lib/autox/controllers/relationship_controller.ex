@@ -15,6 +15,7 @@ defmodule Autox.RelationshipController do
       alias Autox.ContextUtils, as: Cu
       alias Autox.RelationUtils, as: Ru
       alias Autox.BreakupUtils, as: Bu
+      alias Autox.MetaUtils, as: Mu
       @changeset_view Module.get_attribute(__MODULE__, :changeset_view) || Autox.ChangesetView
 
       def repo(conn), do: @repo || Cu.get!(conn, :repo)
@@ -24,9 +25,9 @@ defmodule Autox.RelationshipController do
         model = parent
         |> assoc(association_key)
         |> repo(conn).one
-        links = %{self: conn.request_path}
+        meta = conn |> Mu.from_conn
         conn
-        |> render("show.json", data: model, links: links)
+        |> render("show.json", data: model, meta: meta)
       end
 
       def index(conn, %{"parent" => parent}) do
@@ -34,9 +35,9 @@ defmodule Autox.RelationshipController do
         models = parent
         |> assoc(association_key)
         |> repo(conn).all
-        links = %{self: conn.request_path}
+        meta = conn |> Mu.from_conn
         conn
-        |> render("index.json", data: models, links: links)
+        |> render("index.json", data: models, meta: meta)
       end
 
       def create(conn, %{"parent" => parent, "data" => data}) do

@@ -35,5 +35,11 @@ defmodule Autox.Endpoint do
     key: "_autox_key",
     signing_salt: "Sy5Acui8"
 
+  plug CORSPlug, 
+    headers: ["Authorization", "Content-Type", "Accept", "Origin",
+              "User-Agent", "DNT","Cache-Control", "X-Mx-ReqToken",
+              "Keep-Alive", "X-Requested-With", "If-Modified-Since",
+              "X-CSRF-Token"]
+
   plug Autox.Router
 end

@@ -20,8 +20,8 @@ test 'it should exist and operate as expected', (assert) ->
     relation.associate(salsa)
     relation.set "secretSauce", "hikari no naka"
     snapshot = relation._internalModel.createSnapshot()
-    adapter.ajax = (url, verb, data) ->
-      assert.equal url, "/shops/33/relationships/salsas", "url should match"
+    adapter.ajax = (url, verb, {data}) ->
+      assert.equal url, "/api/shops/33/relationships/salsas", "url should match"
       assert.equal verb, "DELETE", "verb should match"
       assert.deepEqual data,
         data:
@@ -31,8 +31,8 @@ test 'it should exist and operate as expected', (assert) ->
             "secret-sauce": "hikari no naka"
     adapter.deleteRecord(store, store.modelFor("relationship"), snapshot)
 
-    adapter.ajax = (url, verb, data) ->
-      assert.equal url, "/shops/33/relationships/salsas", "url should match"
+    adapter.ajax = (url, verb, {data}) ->
+      assert.equal url, "/api/shops/33/relationships/salsas", "url should match"
       assert.equal verb, "POST", "verb should match"
       assert.deepEqual data,
         data:
