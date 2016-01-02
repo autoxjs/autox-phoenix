@@ -1,12 +1,8 @@
 defmodule Autox.RelationshipView do
-  alias Fox.RecordExt
-  alias Fox.StringExt
-  alias Autox.ResourceView
-
   defmacro __using__(_opts) do
     quote location: :keep do
-      alias Autox.RelationshipView
       alias Autox.NamespaceUtils
+      alias Fox.RecordExt
       def render("show.json", %{data: model, meta: meta}) do
         %{meta: meta}
         |> Map.put(:links, render_one(meta, __MODULE__, "links.json", as: :meta))

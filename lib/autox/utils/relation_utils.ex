@@ -3,7 +3,6 @@ defmodule Autox.RelationUtils do
   alias Ecto.Association.BelongsTo
   alias Ecto.Association.Has
   alias Ecto.Association.HasThrough
-  alias Fox.StringExt
   alias Autox.ChangesetUtils
   @moduledoc """
   For reference:
