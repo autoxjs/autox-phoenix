@@ -1,5 +1,5 @@
 {
-  "name": "ember-autox",
+  "name": "autox",
   "version": "0.1.0",
   "description": "The default blueprint for ember-cli addons.",
   "directories": {

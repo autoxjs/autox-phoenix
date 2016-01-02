@@ -1,5 +1,5 @@
 {
-  "name": "ember-autox",
+  "name": "autox",
   "dependencies": {
     "ember": "2.2.0",
     "ember-cli-shims": "0.0.6",
