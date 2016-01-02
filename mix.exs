@@ -28,6 +28,12 @@ defmodule Autox.Mixfile do
      links: %{github: "https://github.com/foxnewsnetwork/autox"}]
   end
 
+  defp description do
+    """
+    Scaffold / run-time tool for building ember phoenix tools
+    """
+  end
+
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
