@@ -1,11 +1,27 @@
 defmodule Autox.ResourceController do
+  alias Fox.ListExt
+  def infer_changeset_view(module) do
+    module 
+    |> Module.split
+    |> ListExt.head
+    |> Kernel.++(["ChangesetView"])
+    |> Module.safe_concat
+  end
+
   defmacro __using__(opts\\[]) do
     quote location: :keep do
-      use Fox.AtomExt
+      alias Fox.AtomExt
+      use AtomExt
+      alias Autox.ResourceController
       alias Autox.ContextUtils
       alias Autox.ChangesetUtils
       alias Autox.MetaUtils
-      @changeset_view Module.get_attribute(__MODULE__, :changeset_view) || Autox.ChangesetView
+      @collection_key Module.get_attribute(__MODULE__, :collection_key) 
+      || AtomExt.infer_collection_key(__MODULE__)
+
+      @changeset_view Module.get_attribute(__MODULE__, :changeset_view) 
+      || ResourceController.infer_changeset_view(__MODULE__)
+
       @repo Module.get_attribute(__MODULE__, :repo)
 
       def repo(conn), do: @repo || ContextUtils.get!(conn, :repo)
@@ -26,7 +42,7 @@ defmodule Autox.ResourceController do
 
         case conn |> ContextUtils.get(:parent) do
           nil -> struct(infer_model_module)
-          parent -> parent |> Ecto.build_assoc(infer_collection_key)
+          parent -> parent |> Ecto.build_assoc(@collection_key)
         end
         |> infer_model_module.create_changeset(make_params)
         |> repo(conn).insert

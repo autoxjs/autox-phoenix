@@ -1,4 +1,4 @@
-defmodule Autox.ChangesetView do
+defmodule Autox.ErrorView do
   defmacro __using__(_opts) do
     quote location: :keep do
       def render("error.json", %{changeset: changeset}) do

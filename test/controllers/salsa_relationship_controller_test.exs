@@ -26,7 +26,7 @@ defmodule Autox.SalsaRelationshipControllerTest do
       "relationships" => _
     }] = data
     assert %{
-      "self" => "api/shops/#{shop.id}/salsas"
+      "self" => "/api/shops/#{shop.id}/salsas"
     } == links
   end
 

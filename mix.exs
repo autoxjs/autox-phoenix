@@ -3,12 +3,14 @@ defmodule Autox.Mixfile do
 
   def project do
     [app: :autox,
-     version: "0.1.2",
+     version: version,
      elixir: "~> 1.0",
      description: description,
      name: "autox",
      source_url: "https://github.com/foxnewsnetwork/autox",
+     elixirc_paths: elixirc_paths(Mix.env),
      package: package,
+     compilers: compilers(Mix.env),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases,
@@ -18,7 +20,35 @@ defmodule Autox.Mixfile do
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
+  @doc """
+  Read the version off of the package.json file
+  """
+  @version ~r/"version":\s+"([a-zA-Z\d\.]+)"/
+  def version do
+    json = File.cwd!
+    |> Path.join("package.json")
+    |> File.read!
+    @version
+    |> Regex.scan(json)
+    |> List.first
+    |> List.last
+  end
+
+  def elixirc_paths(:test), do: ["lib", "test/fixtures", "test/support"]
+  def elixirc_paths(_), do: ["lib"]
+
+  def compilers(:test), do:  [:phoenix] ++ Mix.compilers
+  def compilers(_), do: Mix.compilers
+
   def application do
+    application(Mix.env)
+  end
+  def application(:test) do
+    [mod: {Autox.App, []},
+     applications: [:phoenix, :phoenix_html, :cowboy, :logger,
+                    :phoenix_ecto, :postgrex, :fox, :cors_plug]]
+  end
+  def application(_) do
     [applications: [:phoenix, :fox]]
   end
 
