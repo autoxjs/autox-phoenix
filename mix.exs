@@ -70,6 +70,7 @@ defmodule Autox.Mixfile do
   defp deps do
     [{:phoenix, "~> 1.1"},
      {:fox, "~> 0.1"},
+     {:pipe, "~> 0.0.2"},
      {:phoenix_ecto, "~> 2.0", only: [:dev, :test]},
      {:phoenix_html, "~> 2.3", only: [:dev, :test]},
      {:cors_plug, "~> 0.1.3", only: [:dev, :test]},
