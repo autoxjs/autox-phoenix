@@ -57,5 +57,8 @@ defmodule Autox do
   ember s
   ```
   """
-  
+  def default_repo, do: Application.get_env(:autox, Autox.Defaults)[:repo]
+  def default_user_class, do: Application.get_env(:autox, Autox.Defaults)[:user_class]
+  def default_session_class, do: Application.get_env(:autox, Autox.Defaults)[:session_class]
+  def default_session_header, do: Application.get_env(:autox, Autox.Defaults)[:session_header]
 end

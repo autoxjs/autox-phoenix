@@ -16,8 +16,7 @@ defmodule Autox.RelationshipController do
       alias Autox.RelationUtils, as: Ru
       alias Autox.BreakupUtils, as: Bu
       alias Autox.MetaUtils, as: Mu
-      @changeset_view Module.get_attribute(__MODULE__, :changeset_view) || Autox.ChangesetView
-
+      
       def repo(conn), do: @repo || Cu.get!(conn, :repo)
 
       def show(conn, %{"parent" => parent}) do
@@ -57,7 +56,7 @@ defmodule Autox.RelationshipController do
           {:error, changeset} ->
             conn
             |> put_status(:unprocessable_entity)
-            |> render(@changeset_view, "error.json", changeset: changeset) 
+            |> render("error.json", changeset: changeset) 
         end
       end
 
@@ -78,7 +77,7 @@ defmodule Autox.RelationshipController do
           {:error, changeset} ->
             conn
             |> put_status(:unprocessable_entity)
-            |> render(@changeset_view, "error.json", changeset: changeset) 
+            |> render("error.json", changeset: changeset) 
         end
       end
 

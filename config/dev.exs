@@ -30,3 +30,9 @@ config :autox, Autox.Repo,
   database: "autox_dev",
   hostname: "localhost",
   pool_size: 10
+
+config :autox, Autox.Defaults,
+  repo: Autox.Repo,
+  session_header: "autox-remember-token",
+  user_class: Autox.User,
+  session_class: Autox.Session

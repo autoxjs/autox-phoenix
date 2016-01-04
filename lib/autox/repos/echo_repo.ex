@@ -2,10 +2,19 @@ defmodule Autox.EchoRepo do
   @moduledoc """
   Echo repos don't hit the database
   """
+  def insert!(cs) do
+    case cs |> insert do
+      {:ok, model} -> cs
+      {:error, cs} -> raise cs
+    end
+  end
+
+  def preload(model, _), do: model
+
   def insert(%{valid?: false}=changeset), do: {:error, changeset}
   def insert(%{model: model, changes: changes}) do
     model = model 
-    |> Map.merge(changes) 
+    |> Map.merge(changes)
     |> Map.put(:id, calculate_id(changes))
     {:ok, model}
   end
@@ -19,8 +28,12 @@ defmodule Autox.EchoRepo do
   end
 
   def calculate_id(changes) do
-    changes 
-    |> Poison.encode!
+    changes
+    |> Poison.encode
+    |> case do
+      {:ok, x} -> x
+      {:error, _} -> :os.timestamp |> Tuple.to_list |> Enum.join("-")
+    end
     |> Base.encode64
   end
 
@@ -43,6 +56,9 @@ defmodule Autox.EchoRepo do
       nil -> nil
     end
   end
+  def one(class, id), do: get(class, id)
+
+  def all(_), do: []
 
   defp find(params, class, id) do 
     class |> struct(id: id) |> class.create_changeset(params) |> update

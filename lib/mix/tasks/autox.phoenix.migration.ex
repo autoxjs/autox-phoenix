@@ -37,7 +37,7 @@ defmodule Mix.Tasks.Autox.Phoenix.Migration do
         [{:eex, "migration.exs", "priv/repo/migrations/#{timestamp(xg)}_#{action}_#{migration}.exs"}|files]
     end
 
-    Mix.Phoenix.copy_from paths(), "priv/templates/autox.phoenix.migration", "", binding, files
+    Mix.Phoenix.copy_from Mix.Autox.paths, "priv/templates/autox.phoenix.migration", "", binding, files
 
     # Print any extra instruction given by parent generators
     Mix.shell.info opts[:instructions] || ""
@@ -139,9 +139,5 @@ defmodule Mix.Tasks.Autox.Phoenix.Migration do
     else
       v
     end
-  end
-
-  defp paths do
-    [".", :phoenix]
   end
 end

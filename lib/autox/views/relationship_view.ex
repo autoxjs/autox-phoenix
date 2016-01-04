@@ -2,6 +2,7 @@ defmodule Autox.RelationshipView do
   defmacro __using__(_opts) do
     quote location: :keep do
       alias Autox.NamespaceUtils
+      alias Autox.ChangesetView, as: Cv
       alias Fox.RecordExt
       def render("show.json", %{data: model, meta: meta}) do
         %{meta: meta}
@@ -16,6 +17,8 @@ defmodule Autox.RelationshipView do
         |> Map.put(:data, render_many(models, __MODULE__, "data.json", as: :model))
         |> NamespaceUtils.namespacify_links(meta)
       end
+
+      def render("error.json", %{changeset: changeset}), do: Cv.render("error.json", %{changeset: changeset})
 
       def render("data.json", %{model: model}) do
         model

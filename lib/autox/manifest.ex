@@ -28,6 +28,22 @@ defmodule Autox.Manifest do
     |> String.to_atom
   end
 
+  defmacro can_login! do
+    quote do
+      resources "sessions", SessionController, only: [:create], singleton: true
+      resources "users", UserController, only: [:create]
+    end
+  end
+  defmacro can_logout! do
+    quote do
+      resources "sessions", SessionController, only: [:show, :update, :delete], singleton: true
+      resources "users", UserController, only: [:update, :show]
+    end
+  end
+  def session_core(actions) do
+    uactions = actions |> Enum.reject(&(&1 == :delete))
+  end
+
   @an_actions [:show, :index, :update, :create, :delete]
   defmacro an(model, actions, do: context) do
     an_core model, actions, do: context

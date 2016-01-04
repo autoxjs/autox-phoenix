@@ -108,10 +108,16 @@ defmodule Autox.ResourceView do
     quote location: :keep do
       alias Autox.ResourceView
       alias Autox.NamespaceUtils
-      @attributes Module.get_attribute(__MODULE__, :attributes) || ResourceView.infer_fields(__MODULE__)
-      @relationships Module.get_attribute(__MODULE__, :relationships) || ResourceView.infer_associations(__MODULE__)
-      def attributes, do: @attributes
-      def relationships, do: @relationships
+      alias Autox.ChangesetView, as: Cv
+
+      @attributes Module.get_attribute(__MODULE__, :attributes)
+      def attributes do 
+        @attributes || ResourceView.infer_fields(__MODULE__)
+      end
+      @relationships Module.get_attribute(__MODULE__, :relationships)
+      def relationships do 
+        @relationships || ResourceView.infer_associations(__MODULE__)
+      end
 
       def render("show.json", %{data: model, meta: meta}) do
         %{meta: meta}
@@ -126,6 +132,8 @@ defmodule Autox.ResourceView do
         |> Map.put(:data, render_many(models, __MODULE__, "data.json", as: :model))
         |> NamespaceUtils.namespacify_links(meta)
       end
+
+      def render("error.json", %{changeset: changeset}), do: Cv.render("error.json", %{changeset: changeset})
       
       def render("data.json", %{model: model}) do
         model |> ResourceView.jsonapify(attributes, relationships)

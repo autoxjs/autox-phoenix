@@ -1,5 +1,6 @@
 defmodule Mix.Autox do
   alias Fox.StringExt
+  def inflect(atom) when is_atom(atom), do: atom |> to_string |> inflect
   def inflect(model) do
     type = case model |> StringExt.reverse_consume("Relationship") do
       {:ok, _} -> :relationship
@@ -14,7 +15,7 @@ defmodule Mix.Autox do
   end
 
   def paths do
-    ["."]
+    [:autox]
   end
 
   def ctrl_2_model(ctrl) do

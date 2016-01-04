@@ -8,9 +8,7 @@ defmodule Autox.Mixfile do
      description: description,
      name: "autox",
      source_url: "https://github.com/foxnewsnetwork/autox",
-     elixirc_paths: elixirc_paths(Mix.env),
      package: package,
-     compilers: compilers(Mix.env),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases,
@@ -34,22 +32,8 @@ defmodule Autox.Mixfile do
     |> List.last
   end
 
-  def elixirc_paths(:test), do: ["lib", "test/fixtures", "test/support"]
-  def elixirc_paths(_), do: ["lib"]
-
-  def compilers(:test), do:  [:phoenix] ++ Mix.compilers
-  def compilers(_), do: Mix.compilers
-
   def application do
-    application(Mix.env)
-  end
-  def application(:test) do
-    [mod: {Autox.App, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger,
-                    :phoenix_ecto, :postgrex, :fox, :cors_plug]]
-  end
-  def application(_) do
-    [applications: [:phoenix, :fox]]
+    [applications: [:phoenix, :fox, :ecto]]
   end
 
   defp package do
@@ -71,9 +55,10 @@ defmodule Autox.Mixfile do
     [{:phoenix, "~> 1.1"},
      {:fox, "~> 0.1"},
      {:pipe, "~> 0.0.2"},
-     {:phoenix_ecto, "~> 2.0", only: [:dev, :test]},
+     {:comeonin, "~> 1.1"},
+     {:phoenix_ecto, "~> 2.0"},
      {:phoenix_html, "~> 2.3", only: [:dev, :test]},
-     {:cors_plug, "~> 0.1.3", only: [:dev, :test]},
+     
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:postgrex, ">= 0.0.0", optional: true},
      {:gettext, "~> 0.9", optional: true},

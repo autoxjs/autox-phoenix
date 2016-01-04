@@ -1,9 +1,7 @@
 defmodule Mix.Tasks.Autox.Destroy.Migrations do
   use Mix.Task
   alias Mix.Shell.IO
-  @shortdoc """
-  runs `rm -r priv/repo/migrations`
-  """
+  @shortdoc "runs `rm -r priv/repo/migrations`"
   def run(_) do
     File.cwd! 
     |> Path.join("priv/repo/migrations")

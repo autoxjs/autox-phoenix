@@ -3,12 +3,11 @@ defmodule Mix.Tasks.Autox.Infer.All do
   alias Mix.Tasks.Autox.Infer.Views
   alias Mix.Tasks.Autox.Infer.Models
   alias Mix.Tasks.Autox.Infer.Controllers
-  @shortdoc """
-  Scaffolds controllers, views, and models
-  """
+  @shortdoc "Scaffolds controllers, views, and models"
   def run(args) do
-    Views.run(args)
+    Mix.Task.run "compile", []
     Models.run(args)
+    Views.run(args)
     Controllers.run(args)
   end
 

@@ -19,9 +19,6 @@ defmodule Autox.ResourceController do
       @collection_key Module.get_attribute(__MODULE__, :collection_key) 
       || AtomExt.infer_collection_key(__MODULE__)
 
-      @changeset_view Module.get_attribute(__MODULE__, :changeset_view) 
-      || ResourceController.infer_changeset_view(__MODULE__)
-
       @repo Module.get_attribute(__MODULE__, :repo)
 
       def repo(conn), do: @repo || ContextUtils.get!(conn, :repo)
@@ -55,7 +52,7 @@ defmodule Autox.ResourceController do
           {:error, changeset} ->
             conn
             |> put_status(:unprocessable_entity)
-            |> render(@changeset_view, "error.json", changeset: changeset)
+            |> render("error.json", changeset: changeset)
         end
       end
 
@@ -76,7 +73,7 @@ defmodule Autox.ResourceController do
           {:error, changeset} ->
             conn
             |> put_status(:unprocessable_entity)
-            |> render(@changeset_view, "error.json", changeset: changeset)
+            |> render("error.json", changeset: changeset)
         end
       end
 
@@ -95,7 +92,7 @@ defmodule Autox.ResourceController do
           {:error, changeset} ->
             conn
             |> put_status(:unprocessable_entity)
-            |> render(@changeset_view, "error.json", changeset: changeset) 
+            |> render("error.json", changeset: changeset) 
         end
       end
 

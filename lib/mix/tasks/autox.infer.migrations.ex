@@ -7,9 +7,12 @@ defmodule Mix.Tasks.Autox.Infer.Migrations do
   Attempts to write migrations for all the files in the `web/models` folder
   """
   def run(_) do
+    Mix.Task.run "compile", []
+
     migration_cores = models_dir
     |> File.ls!
     |> Enum.map(&infer_model_plural_class/1)
+    |> Enum.filter(&concrete_tables?/1)
 
     creates = migration_cores 
     |> Enum.map(&create_table_migration/1)
@@ -36,6 +39,11 @@ defmodule Mix.Tasks.Autox.Infer.Migrations do
     class = Mix.Phoenix.base |> Module.safe_concat(model)
     plural = class.__schema__(:source)
     {model, plural, class}
+  end
+
+  @underscored ~r/^[a-z0-9_]+$/
+  def concrete_tables?({_, table_name, _}) do
+    table_name |> String.match?(@underscored)
   end
 
   def add_reference_migration({model, plural, class}) do

@@ -27,6 +27,8 @@ scope "api/v1", Apiv1 do
 end
 ```
 Yeah, don't nest shit unnecessarily
+5. If your app needs session authentication, you're naming the models "Session", and "User" (this decision is *not* negotiable, go use another library if you don't like it)
+6. There is no zeroth level route; i.e., everything lives in a scope block
 
 To start your Phoenix app:
 

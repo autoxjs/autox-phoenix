@@ -55,6 +55,8 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
     case path |> String.split("/") |> Enum.reverse |> Enum.take(4) do
       [field, "relationships", _, parent_name] ->
         map |> Map.update(parent_name, %{}, &Map.put_new(&1, field, opts))
+      [field, _, parent_name] ->
+        map |> Map.update(parent_name, %{}, &Map.put_new(&1, field, opts))
       [":id", model_name|_] ->
         map |> Map.put_new(model_name, %{})
       [model_name|_] ->
