@@ -14,7 +14,7 @@ defmodule Dummy.SessionControllerTest do
     assert path == "/api/sessions"
     data = %{ 
       "type" => "sessions",
-      "attributes" => %{"email" => user.email, "password" => "password123"} }
+      "attributes" => %{"email" => email, "password" => "password123"} }
     conn = conn |> post(path, %{"data" => data})
     assert conn |> Su.logged_in?
     assert %{"data" => data} = conn |> json_response(201)
@@ -39,9 +39,9 @@ defmodule Dummy.SessionControllerTest do
     } = user_relation
   end
 
-  test "show session", %{conn: conn} do
+  test "show session", %{conn: conn, user: %{email: email}} do
     path = conn |> session_path(:create)
-    data = %{ "type" => "sessions", "attributes" => session_attributes }
+    data = %{ "type" => "sessions", "attributes" => %{"email" => email, "password" => "password123"} }
     conn = conn |> post(path, %{"data" => data})
     conn |> Su.logged_in? |> assert
     path = conn |> session_path(:show)
@@ -62,10 +62,10 @@ defmodule Dummy.SessionControllerTest do
     assert %{"detail" => _} = errors
   end
 
-  test "update session", %{conn: conn, user: %{id: user_id}} do
+  test "update session", %{conn: conn, user: %{id: user_id, email: email}} do
     owner = build_owner
     path = conn |> session_path(:create)
-    data = %{ "type" => "sessions", "attributes" => session_attributes }
+    data = %{ "type" => "sessions", "attributes" => %{"email" => email, "password" => "password123"} }
     conn = conn |> post(path, %{"data" => data})
     path = conn |> session_path(:update)
     data = %{
@@ -81,9 +81,9 @@ defmodule Dummy.SessionControllerTest do
     assert session.owner_id == owner.id
   end
 
-  test "delete session", %{conn: conn} do
+  test "delete session", %{conn: conn, user: %{email: email}} do
     path = conn |> session_path(:create)
-    data = %{ "type" => "sessions", "attributes" => session_attributes }
+    data = %{ "type" => "sessions", "attributes" => %{"email" => email, "password" => "password123"} }
     conn = conn |> post(path, %{"data" => data})
     path = conn |> session_path(:delete)
     conn

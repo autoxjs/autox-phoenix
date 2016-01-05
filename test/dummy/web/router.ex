@@ -12,6 +12,10 @@ defmodule Dummy.Router do
     plug Autox.AuthSessionPlug
   end
 
+  pipeline :admin do
+    plug Autox.AuthHeaderPlug
+  end
+
   scope "/api", Dummy do
     pipe_through :api
 
@@ -39,11 +43,15 @@ defmodule Dummy.Router do
     pipe_through [:api, :auth]
     can_logout!
     
-    the Kitchen do
+    the Chair do
       one Shop
     end
+  end
 
-    the Chair do
+  scope "/api", Dummy do
+    pipe_through [:api, :admin]
+
+    the Kitchen do
       one Shop
     end
   end

@@ -33,6 +33,7 @@ config :plug, :mimes, %{"application/vnd.api+json" => ["json-api"]}
 config :autox, Autox.Defaults,
   repo: Dummy.Repo,
   session_header: "autox-remember-token",
+  autox_master_key: "sore ue subete ga tsunagareru",
   error_view: Dummy.ErrorView,
   user_class: Dummy.User,
   session_class: Dummy.Session
