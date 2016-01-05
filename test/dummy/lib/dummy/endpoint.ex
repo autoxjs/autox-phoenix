@@ -37,7 +37,7 @@ defmodule Dummy.Endpoint do
     headers: ["Authorization", "Content-Type", "Accept", "Origin",
               "User-Agent", "DNT","Cache-Control", "X-Mx-ReqToken",
               "Keep-Alive", "X-Requested-With", "If-Modified-Since",
-              "X-CSRF-Token", "autox-remember-token"]
+              "X-CSRF-Token"] ++ [Autox.default_session_header]
 
   plug Dummy.Router
 end

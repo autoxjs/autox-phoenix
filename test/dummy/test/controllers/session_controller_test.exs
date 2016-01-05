@@ -54,6 +54,14 @@ defmodule Dummy.SessionControllerTest do
     } = data
   end
 
+  test "show session - forbidden", %{conn: conn} do
+    path = conn |> session_path(:show)
+    %{"errors" => errors} = conn
+    |> get(path, %{})
+    |> json_response(:forbidden)
+    assert %{"detail" => _} = errors
+  end
+
   test "update session", %{conn: conn, user: %{id: user_id}} do
     owner = build_owner
     path = conn |> session_path(:create)

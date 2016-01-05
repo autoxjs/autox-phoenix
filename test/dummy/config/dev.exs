@@ -30,9 +30,3 @@ config :dummy, Dummy.Repo,
   database: "autox_dev",
   hostname: "localhost",
   pool_size: 10
-
-config :autox, Autox.Defaults,
-  repo: Dummy.Repo,
-  session_header: "autox-remember-token",
-  user_class: Dummy.User,
-  session_class: Dummy.Session

@@ -4,12 +4,12 @@ defmodule Dummy.Router do
   pipeline :api do
     plug :accepts, ["json", "json-api"]
     plug :fetch_session
-    plug Autox.RepoContextPlug, Dummy.Repo
+    plug Autox.RepoContextPlug
     plug Autox.UnderscoreParamsPlug, "data"
   end
 
   pipeline :auth do
-    plug Autox.ChangeSessionPlug
+    plug Autox.AuthSessionPlug
   end
 
   scope "/api", Dummy do
@@ -32,6 +32,13 @@ defmodule Dummy.Router do
       many Shop 
     end
 
+    can_login!
+  end
+
+  scope "/api", Dummy do
+    pipe_through [:api, :auth]
+    can_logout!
+    
     the Kitchen do
       one Shop
     end
@@ -41,9 +48,4 @@ defmodule Dummy.Router do
     end
   end
 
-  scope "/api", Dummy do
-    pipe_through [:api, :auth]
-    can_logout!
-    can_login!
-  end
 end

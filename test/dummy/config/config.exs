@@ -23,9 +23,17 @@ config :logger, :console,
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
 
-config :plug, :mimes, %{"application/vnd.api+json" => ["json-api"]}
-
 # Configure phoenix generators
 config :phoenix, :generators,
   migration: true,
   binary_id: false
+
+## Autox installed configurations
+config :plug, :mimes, %{"application/vnd.api+json" => ["json-api"]}
+config :autox, Autox.Defaults,
+  repo: Dummy.Repo,
+  session_header: "autox-remember-token",
+  error_view: Dummy.ErrorView,
+  user_class: Dummy.User,
+  session_class: Dummy.Session
+

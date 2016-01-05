@@ -12,8 +12,8 @@ defmodule Autox.RelationshipController do
     quote location: :keep do
       @repo Module.get_attribute(__MODULE__, :repo)
       alias Autox.RelationshipController, as: Rc
-      alias Autox.ContextUtils, as: Cu
       alias Autox.RelationUtils, as: Ru
+      alias Autox.ContextUtils, as: Cu
       alias Autox.BreakupUtils, as: Bu
       alias Autox.MetaUtils, as: Mu
       

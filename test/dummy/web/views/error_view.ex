@@ -1,6 +1,14 @@
 defmodule Dummy.ErrorView do
   use Dummy.Web, :view
 
+  def render("400.json", %{detail: detail}) do
+    %{errors: %{detail: detail}}
+  end
+
+  def render("403.json", %{detail: detail}) do
+    %{errors: %{detail: detail}}
+  end
+
   def render("404.json", _assigns) do
     %{errors: %{detail: "Page not found"}}
   end

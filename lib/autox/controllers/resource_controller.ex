@@ -8,7 +8,7 @@ defmodule Autox.ResourceController do
     |> Module.safe_concat
   end
 
-  defmacro __using__(opts\\[]) do
+  defmacro __using__(_) do
     quote location: :keep do
       alias Fox.AtomExt
       use AtomExt

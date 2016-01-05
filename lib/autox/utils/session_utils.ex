@@ -1,7 +1,5 @@
 defmodule Autox.SessionUtils do
-  import Ecto
   import Plug.Conn
-  alias Autox.ContextUtils, as: Cu
   alias Autox.EchoRepo, as: Repo
 
   def logged_in?(conn) do
@@ -56,6 +54,6 @@ defmodule Autox.SessionUtils do
   end
 
   defp session_class do
-    Mix.Phoenix.base |> Module.safe_concat("Session")
+    Autox.default_session_class
   end
 end
