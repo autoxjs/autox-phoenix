@@ -1,6 +1,5 @@
 defmodule Dummy.User do
   use Dummy.Web, :model
-  alias Dummy.Repo
 
   schema "users" do
     field :email, :string

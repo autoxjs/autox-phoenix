@@ -1,6 +1,5 @@
 defmodule <%= base %>.User do
   use <%= base %>.Web, :model
-  alias <%= base %>.Repo
 
   schema "users" do
     field :email, :string

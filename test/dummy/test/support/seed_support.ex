@@ -2,6 +2,7 @@ defmodule Dummy.SeedSupport do
   alias Dummy.Repo
   alias Dummy.Shop
   alias Dummy.User
+  alias Dummy.Taco
   alias Dummy.Salsa
   alias Dummy.Owner
   alias Dummy.Chair
@@ -11,6 +12,10 @@ defmodule Dummy.SeedSupport do
   import Ecto
   def owner_attributes do
     %{ "name" => "Jackson Davis Test Shop" }
+  end
+
+  def taco_attributes do
+    %{"name" => "al pastor", "calories" => 9000}
   end
 
   def shop_attributes do
@@ -96,6 +101,12 @@ defmodule Dummy.SeedSupport do
   def build_salsa do
     %Salsa{}
     |> Salsa.create_changeset(salsa_attributes)
+    |> Repo.insert!
+  end
+
+  def build_taco do
+    %Taco{}
+    |> Taco.create_changeset(taco_attributes)
     |> Repo.insert!
   end
 

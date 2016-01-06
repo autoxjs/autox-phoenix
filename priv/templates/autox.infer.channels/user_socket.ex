@@ -1,13 +1,7 @@
-defmodule Dummy.UserSocket do
+defmodule <%= base %>.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-
-  channel "users:*", Dummy.UserChannel
-
-
-  channel "owners:*", Dummy.OwnerChannel
-
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

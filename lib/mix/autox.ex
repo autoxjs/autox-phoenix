@@ -24,4 +24,30 @@ defmodule Mix.Autox do
     |> List.last
     |> StringExt.reverse_consume!("Controller")
   end
+
+  def append_to_file(string, filename) do
+    file = open(filename, [:append])
+    IO.puts(file, string)
+    File.close(file)
+    Mix.shell.info [:green, "* appending to ", :reset, filename]
+  end
+
+  def inject_into_file(string, filename, after: pattern) do
+    read(filename) 
+    |> String.replace(pattern, pattern <> "\n" <> string, global: false)
+    |> write2(filename)
+    Mix.shell.info [:green, "* injecting into ", :reset, filename]
+  end
+
+  defp write2(contents, filename) do
+    File.cwd! |> Path.join(filename) |> File.write!(contents)
+  end
+
+  defp read(filename) do
+    File.cwd! |> Path.join(filename) |> File.read!
+  end
+
+  defp open(filename, opts) do
+    File.cwd! |> Path.join(filename) |> File.open!(opts)
+  end
 end

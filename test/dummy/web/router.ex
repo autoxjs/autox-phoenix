@@ -8,6 +8,10 @@ defmodule Dummy.Router do
     plug Autox.UnderscoreParamsPlug, "data"
   end
 
+  pipeline :realtime do
+    plug Autox.BroadcastSessionPlug
+  end
+
   pipeline :auth do
     plug Autox.AuthSessionPlug
   end
@@ -24,10 +28,6 @@ defmodule Dummy.Router do
       one [Owner, Kitchen]
     end
 
-    the Taco do
-      many Shop
-    end
-
     the Salsa do
       many Shop
     end
@@ -37,6 +37,14 @@ defmodule Dummy.Router do
     end
 
     can_login!
+  end
+
+  scope "/api", Dummy do
+    pipe_through [:api, :auth, :realtime]
+
+    the Taco do
+      many Shop
+    end
   end
 
   scope "/api", Dummy do

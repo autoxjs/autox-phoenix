@@ -51,7 +51,7 @@ defmodule Autox.RelationshipController do
         |> case do
           {:ok, model} ->
             conn
-            |> Plug.Conn.assign(:data, model)
+            |> Plug.Conn.assign(:relate, {parent, data})
             |> send_resp(:no_content, "")
           {:error, changeset} ->
             conn
@@ -72,7 +72,7 @@ defmodule Autox.RelationshipController do
         |> case do
           {:ok, model} ->
             conn
-            |> Plug.Conn.assign(:data, model)
+            |> Plug.Conn.assign(:unrelate, {parent, data})
             |> send_resp(:no_content, "")
           {:error, changeset} ->
             conn

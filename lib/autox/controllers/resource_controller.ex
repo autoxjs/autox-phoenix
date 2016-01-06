@@ -69,6 +69,7 @@ defmodule Autox.ResourceController do
           {:ok, model} ->
             conn
             |> assign(:data, model)
+            |> assign(:meta, MetaUtils.from_conn(conn))
             |> send_resp(:no_content, "")
           {:error, changeset} ->
             conn
