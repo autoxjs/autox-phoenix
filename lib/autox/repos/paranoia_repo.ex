@@ -20,5 +20,5 @@ defmodule Autox.ParanoiaRepo do
     |> @repo.update
   end
 
-  defdelegate [insert(a,b), update(a,b), preload(a,b), get(a,b), get_by(a,b), one(a,b), all(a,b), delete(a,b)], to: @repo
+  defdelegate [insert(a,b), update(a,b), preload(a,b), get(a,b), get_by(a,b), one(a,b), all(a,b), delete(a,b)], to: Autox.default_repo
 end

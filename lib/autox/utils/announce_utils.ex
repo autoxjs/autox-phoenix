@@ -28,8 +28,4 @@ defmodule Autox.AnnounceUtils do
   defp infer_topic(%{id: id}=model) do
     model |> infer_subtopic |> Kernel.<>(":#{id}")
   end
-
-  defp infer_topic(parent, child) do
-    [infer_topic(parent), infer_subtopic(child)] |> Enum.join(":")
-  end
 end
