@@ -13,6 +13,10 @@ Model = DS.Model.extend RelateableMixin,
   
 
   
+  chairs: DS.hasMany "chair", async: true
+  
+  kitchen: DS.belongsTo "kitchen", async: true
+  
   owner: DS.belongsTo "owner", async: true
   
   salsas: DS.hasMany "salsa", async: true

@@ -9,6 +9,8 @@ Model = DS.Model.extend RelateableMixin,
   
   insertedAt: DS.attr "moment"
   
+  password: DS.attr "string"
+  
   passwordHash: DS.attr "string"
   
   recoveryHash: DS.attr "string"

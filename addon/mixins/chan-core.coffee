@@ -1,5 +1,5 @@
 `import Ember from 'ember'`
-{inject, String, RSVP, K, Mixin, computed: {equal}} = Ember
+{inject, String, RSVP, Mixin, computed: {equal}} = Ember
 dashingularize = (x) -> String.dasherize String.singularize x
 underpluralize = (x) -> String.underscore String.pluralize x
 
@@ -22,27 +22,29 @@ ChanCoreMixin = Mixin.create
     @set "topic", (topic = @makeTopic(subject))
     @get("socket").channel(topic)
     .then (chan) =>
-      chan.on "notify", (payload) =>
-        @trigger "notify", payload
-      chan.on "update", (payload) =>
-        @trigger "update", payload.data
-      chan.on "destroy", (payload) =>
-        @trigger "destroy", payload.data
+      chan.on "notify", (payload) => @trigger "notify", payload
+      chan.on "update", (payload) => @trigger "update", payload
+      chan.on "destroy", (payload) => @trigger "destroy", payload
       @joinChan chan
 
   onNotify: Ember.on "notify", ({level, message}) ->
     level ?= "info"
     @get("notify")?[level]?message
 
-  onUpdate: Ember.on "update", ({data}) ->
-    data.type = dashingularize data.type
-    @get("store").pushPayload data
+  onUpdate: Ember.on "update", (payload) ->
+    Ember.run => @get("store").pushPayload payload
 
   onDestroy: Ember.on "destroy", (payload) ->
-    {type, id} = payload
-    type ?= dashingularize(type)
-    if (record = @get("store").peekRecord type, id)?
+    {data: {type, id}} = payload
+    type = dashingularize(type)
+    if (record = @get("store").peekRecord type, id)? and not record.get("isSaving")
       @get("store").unloadRecord record
+
+  onJoin: Ember.on "join", ->
+    @set "state", "connected"
+    return if @get("alreadySetupLeave")
+    @get("socket").on "disconnect", => @disconnect()
+    @set "alreadySetupLeave", true
 
   joinChan: (chan) ->
     @set "chan", chan
@@ -50,7 +52,7 @@ ChanCoreMixin = Mixin.create
       @set "state", "connecting"
       chan.join()
       .receive "ok", => 
-        @set "state", "connected"
+        @trigger "join" 
         resolve(@)
       .receive "error", (reason) => 
         @set "state", "disconnected"

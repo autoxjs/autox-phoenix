@@ -137,6 +137,7 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
   end
   defp jtype(:decimal), do: "number"
   defp jtype(:integer), do: "number"
+  defp jtype(nil), do: "string"
   defp jtype(atom) do
     atom
     |> Atom.to_string 

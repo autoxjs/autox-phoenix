@@ -6,6 +6,8 @@ Session = DS.Model.extend Ember.Evented, SessionStateMixin,
   
   email: DS.attr "string"
   
+  password: DS.attr "string"
+  
   rememberMe: DS.attr "boolean"
   
   rememberToken: DS.attr "string"

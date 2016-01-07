@@ -15,8 +15,25 @@ defmodule Autox.ResourceView do
   end
   def infer_fields(view_module) do
     model_module = view_module |> AtomExt.infer_model_module 
-    model_module.__schema__(:fields) |> Enum.reject(fn field -> field == :id end)
+    model_module
+    |> struct
+    |> Map.keys
+    |> Enum.reject(&meta_field?/1)
+    |> Enum.reject(&relation_field?(model_module, &1))
   end
+
+  defp meta_field?(field) when field in [:__meta__, :__struct__, :id], do: true
+  defp meta_field?(_), do: false
+
+  defp relation_field?(module, field) do
+    case {module.__schema__(:association, field), module.__schema__(:type, field)} do
+      {nil, nil} -> false # virtual field
+      {nil, :id} -> true  # belongs_to relation leftover
+      {nil,   _} -> false  # valid attribute
+      {_  ,   _} -> true  # other relation
+    end
+  end
+
   def infer_associations(view_module) do
     model_module = view_module |> AtomExt.infer_model_module
     model_module.__schema__(:associations)

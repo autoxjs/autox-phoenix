@@ -1,7 +1,7 @@
 defmodule <%= base %>.<%= model %>Channel do
   use <%= base %>.Web, :channel
 
-  def join("<%= collection %>:" <> room, payload, socket) do
+  def join("<%= collection %>:" <> _room, payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
     else

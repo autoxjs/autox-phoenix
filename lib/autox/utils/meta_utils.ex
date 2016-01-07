@@ -16,6 +16,16 @@ defmodule Autox.MetaUtils do
     struct(__MODULE__, vs)
   end
 
+  def from_user(user) do
+    %__MODULE__{
+      resource_path: "users/#{user.id}",
+      namespace: "/api",
+      type: :resource,
+      path: "/api/users/#{user.id}",
+      host: "localhost"
+    }
+  end
+
   defp destruct_path([related, "relationships", parent_id, parent, namespace]) do
     [namespace: "/" <> namespace,
     type: :relationship,

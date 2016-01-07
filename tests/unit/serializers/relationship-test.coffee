@@ -3,7 +3,7 @@
 
 moduleForModel 'shop', 'Unit | Serializer | relationship',
   # Specify the other units that are required for this test.
-  needs: ['serializer:relationship', 'model:relationship', 'model:owner', 'model:salsa', 'model:taco']
+  needs: ['serializer:relationship', 'model:relationship', 'model:owner', 'model:salsa', 'model:taco', 'model:chair', 'model:kitchen']
 
 # Replace this with your real tests.
 test 'it serializes records', (assert) ->

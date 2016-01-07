@@ -24,23 +24,30 @@ SocketService = Service.extend Evented,
     @get "deferredSocket.promise"
     .then (socket) ->
       socket.channel topic
+
+  onConnect: Ember.on "connect", ->
+    @set "state", "connected"
+    @get("deferredSocket").resolve(@socket)
+
+  onDisconnect: Ember.on "disconnect", ->
+    @set "state", "disconnected"
+
+  onError: Ember.on "error", ->
+    if @get("state") is "disconnected"
+      @get("deferredSocket").reject(socket)
+    else
+      @set "state", "error"
+    
   instanceInit: (Socket, socketNamespace) ->
     session = @get "session"
     session.on "logout", =>
-      @socket?.disconnect()
+      @socket?.disconnect => @trigger "disconnect"
     session.on "login", =>
       id = session.get("id")
       @socket = new Socket socketNamespace, params: user_id: id
       @socket.connect()
-      @socket.onOpen =>
-        @set "state", "connected"
-        @get("deferredSocket").resolve(socket)
-      @socket.onClose =>
-        @set "state", "disconnected"
-      @socket.onError =>
-        if @get("state") is "disconnected"
-          @get("deferredSocket").reject(socket)
-        else
-          @set "state", "error"
+      @socket.onOpen => @trigger "connect"
+      @socket.onClose => @trigger "disconnect"
+      @socket.onError => @trigger "error"
 
 `export default SocketService`

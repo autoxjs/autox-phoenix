@@ -3,7 +3,14 @@
 
 moduleForModel 'shop', 'Unit | Adapter | relationship', {
   # Specify the other units that are required for this test.
-  needs: ['adapter:relationship', 'serializer:relationship', 'model:owner', 'model:salsa', 'model:taco', 'model:relationship']
+  needs: ['adapter:relationship', 
+    'serializer:relationship', 
+    'model:owner', 
+    'model:salsa', 
+    'model:taco', 
+    'model:relationship',
+    'model:chair',
+    'model:kitchen']
 }
 
 # Replace this with your real tests.

@@ -18,23 +18,24 @@ SessionService = Service.extend Evented,
 
   connect: (key) ->
     @get "model"
-    ?.get key
-    ?.then (model) =>
+    .get key
+    .then (model) =>
       @channelFor(key)
-      ?.connect model
+      .connect model
 
   disconnect: (key) ->
     @get "model"
-    ?.get key
-    ?.then =>
+    .get key
+    .then =>
       @channelFor(key)
-      ?.disconnect()
+      .disconnect()
 
   updateModel: -> 
     model = @get "model"
     event = if model.get("isNew") then "login" else "change"
-    model.save (model) =>
-      @trigger event
+    model.save()
+    .then (model) =>
+      @trigger event, model
       model
 
   destroyModel: ->

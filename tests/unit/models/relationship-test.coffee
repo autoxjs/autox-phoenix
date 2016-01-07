@@ -3,7 +3,12 @@
 
 moduleForModel 'shop', 'Unit | Model | relationship', {
   # Specify the other units that are required for this test.
-  needs: ["model:relationship", "model:owner", "model:salsa", "model:taco"]
+  needs: ['model:owner', 
+    'model:salsa', 
+    'model:taco', 
+    'model:relationship',
+    'model:chair',
+    'model:kitchen']
 }
 
 test 'it exists', (assert) ->

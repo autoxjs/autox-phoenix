@@ -1,4 +1,7 @@
 defmodule Dummy.UserChannel do
+  alias Autox.MetaUtils
+  alias Dummy.User
+  alias Dummy.UserView
   use Dummy.Web, :channel
 
   def join("users:" <> room, payload, socket) do
