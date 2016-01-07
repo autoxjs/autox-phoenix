@@ -30,7 +30,7 @@ defmodule Dummy.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    autox = File.cwd! |> Path.join("../../")
+    autox = File.cwd! |> Path.join("../..")
 
     [{:phoenix, "~> 1.1.1"},
      {:autox, path: autox},

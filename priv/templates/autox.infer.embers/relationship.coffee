@@ -1,3 +1,3 @@
-`import Relationship from 'ember-autox/models/relationship'`
+`import Relationship from 'autox/models/relationship'`
 
 `export default Relationship`

@@ -10,7 +10,7 @@ defmodule Dummy.BroadcastSessionPlugTest do
     |> post("/api/sessions", %{"data" => %{"type" => "sessions", "attributes" => session_attributes}})
 
     {:ok, socket} = UserSocket |> connect(%{"user_id" => user.id})
-    topic = "users:#{user.id}:tacos"
+    topic = "users:#{user.id}"
     {:ok, socket: socket, user: user, conn: conn, topic: topic}
   end
 
@@ -26,6 +26,30 @@ defmodule Dummy.BroadcastSessionPlugTest do
     |> assert
 
     assert_broadcast "update", %{data: data, meta: _, links: _}
+    assert %{id: _, links: _, type: :tacos, attributes: attributes, relationships: relationships} = data    
+    assert %{
+      name: "al pastor",
+      calories: 9000
+    } = attributes
+    assert %{
+      shops: %{
+        links: _
+      }
+    } = relationships
+  end
+
+  test "deleting tacos should trigger broadcast", %{conn: conn, topic: topic} do
+    assert conn |> SessionUtils.logged_in?
+
+    @endpoint.subscribe(self(), topic)
+    taco = build_taco
+    path = conn |> taco_path(:delete, taco.id)
+    conn
+    |> delete(path, %{})
+    |> response(204)
+    |> assert
+
+    assert_broadcast "destroy", %{data: data, meta: _, links: _}
     assert %{id: _, links: _, type: :tacos, attributes: attributes, relationships: relationships} = data    
     assert %{
       name: "al pastor",

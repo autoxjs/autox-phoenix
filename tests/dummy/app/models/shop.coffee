@@ -1,5 +1,5 @@
 `import DS from 'ember-data'`
-`import {RelateableMixin} from 'ember-autox'`
+`import {RelateableMixin} from 'autox'`
 
 Model = DS.Model.extend RelateableMixin,
   

@@ -19,7 +19,7 @@ defmodule Dummy.SessionControllerTest do
     assert conn |> Su.logged_in?
     assert %{"data" => data} = conn |> json_response(201)
     assert %{
-      "id" => _,
+      "id" => ^user_id,
       "type" => "sessions",
       "attributes" => attributes,
       "relationships" => %{"user" => user_relation}

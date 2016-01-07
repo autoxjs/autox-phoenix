@@ -2,13 +2,14 @@ defmodule <%= base %>.Session do
   use <%= base %>.Web, :model
   alias <%= base %>.Repo
   alias <%= base %>.User
-
+  @primary_key false
   schema "virtual:session-authentication" do
-    belongs_to :user, User, foreign_key: :email, references: :email
-
+    belongs_to :user, User
+    field :id, :integer
+    field :email, :string
     field :password, :string, virtual: true
-    field :remember_me, :boolean, virtual: true
-    field :remember_token, :string, virtual: true
+    field :remember_me, :boolean
+    field :remember_token, :string
   end
 
   @create_fields ~w(email password)
@@ -19,7 +20,7 @@ defmodule <%= base %>.Session do
     model
     |> cast(params, @create_fields, @optional_fields)
     |> validate_user_authenticity
-    |> infer_remember_token
+    |> cache_user_fields
   end
 
   def update_changeset(model, params\\:empty) do 
@@ -59,9 +60,14 @@ defmodule <%= base %>.Session do
     end
   end
 
-  def infer_remember_token(%{valid?: false}=x), do: x
-  def infer_remember_token(changeset) do
-    remember_token = changeset |> get_field(:user) |> Map.get(:remember_token)
-    changeset |> put_change(:remember_token, remember_token)
+  def cache_user_fields(%{valid?: false}=x), do: x
+  def cache_user_fields(changeset) do
+    %{remember_token: token, email: email, id: user_id} = changeset 
+    |> get_field(:user) 
+    changeset 
+    |> put_change(:remember_token, token)
+    |> put_change(:email, email)
+    |> put_change(:user_id, user_id)
+    |> put_change(:id, user_id)
   end
 end

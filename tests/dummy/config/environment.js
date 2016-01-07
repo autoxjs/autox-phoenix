@@ -7,6 +7,7 @@ module.exports = function(environment) {
     baseURL: '/',
     locationType: 'auto',
     namespace: "api",
+    socketNamespace: "ws://localhost:4000/socket",
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build

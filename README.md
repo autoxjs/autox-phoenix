@@ -4,6 +4,27 @@ Phoenix Ember addon for rapidly building jsonapi backends
 
 >Note: This is super alpha software! Use at your own peril
 
+## Howto: Test
+The server-side tests live in the sample app named `dummy`
+test by doing:
+
+```shell
+cd dummy
+mix test
+```
+
+In order to test the js end of autox, you'll need to run the server dummy:
+
+```shell
+cd dummy
+iex -S mix phoenix.server
+```
+Then, open up another terminal tab and run:
+```shell
+ember s
+```
+Then, open up your browser and navigate to localhost:4200/tests
+
 ## Assumptions
 
 In order to ultra rapidly scaffold out the backend, I make the following

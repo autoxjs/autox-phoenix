@@ -3,9 +3,11 @@ defmodule Dummy.Session do
   alias Dummy.Repo
   alias Dummy.User
   alias Dummy.Owner
+  @primary_key false
   schema "virtual:session-authentication" do
     belongs_to :owner, Owner
     belongs_to :user, User
+    field :id, :integer
     field :email, :string
     field :password, :string, virtual: true
     field :remember_me, :boolean
@@ -68,5 +70,6 @@ defmodule Dummy.Session do
     |> put_change(:remember_token, token)
     |> put_change(:email, email)
     |> put_change(:user_id, user_id)
+    |> put_change(:id, user_id)
   end
 end

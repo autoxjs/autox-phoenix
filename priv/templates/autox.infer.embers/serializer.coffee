@@ -1,3 +1,3 @@
-`import Serializer from 'ember-autox/serializers/relationship'`
+`import Serializer from 'autox/serializers/relationship'`
 
 `export default Serializer`

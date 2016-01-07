@@ -24,7 +24,7 @@ defmodule Mix.Tasks.Autox.Infer.Views do
   end
 
   @parent_id ~r/:[a-z0-9_]+_id/
-  defp parent_ids(route) do
+  def parent_ids(route) do
     Map.get(route, :path) 
     |> String.replace(@parent_id, ":id")
     |> StringExt.consume("/")

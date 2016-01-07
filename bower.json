@@ -12,7 +12,9 @@
     "loader.js": "^3.5.0",
     "qunit": "~1.20.0",
     "moment": ">= 2.8.0",
-    "moment-timezone": ">= 0.1.0"
+    "moment-timezone": ">= 0.1.0",
+    "js-cookie": "~2.0.3",
+    "phoenix": "phoenixframework/phoenix#v1.1.1"
   },
   "resolutions": {
     "ember": "2.2.0"

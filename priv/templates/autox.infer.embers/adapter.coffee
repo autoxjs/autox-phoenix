@@ -1,4 +1,4 @@
-`import Adapter from 'ember-autox/adapters/relationship'`
+`import Adapter from 'autox/adapters/relationship'`
 `import ENV from '../config/environment'`
 
 RelAdapter = Adapter.extend

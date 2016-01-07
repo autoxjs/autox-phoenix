@@ -1,1 +1,1 @@
-`export { default } from 'ember-autox/serializers/relationship'`
+`export { default } from 'autox/serializers/relationship'`

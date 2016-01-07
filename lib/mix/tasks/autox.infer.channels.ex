@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Autox.Infer.Channels do
   alias Ecto.Association.BelongsTo
 
   @shortdoc "Reads your Session model and generates channels for every belongs_to relationship in there"
-  def run(args) do
+  def run(_) do
     Mix.Task.run "compile", []
     scaffold_socket
     Mix.Phoenix.base
@@ -21,12 +21,14 @@ defmodule Mix.Tasks.Autox.Infer.Channels do
     ]
   end
 
+  def related_to_string(related), do: related |> Module.split |> List.last
+
   @socket_insertions """
   channel "<%= collection %>:*", <%= base %>.<%= model %>Channel
   """
   def scaffold_chan(%{field: field, related: related}) do
     collection = field |> Atom.to_string |> StringExt.pluralize
-    model = related |> Module.split |> List.last
+    model = related |> related_to_string
     base = Mix.Phoenix.base
     binding = [base: base, collection: collection, model: model]
     paths = Mix.Autox.paths
@@ -41,7 +43,7 @@ defmodule Mix.Tasks.Autox.Infer.Channels do
     |> Mix.Autox.inject_into_file("web/channels/user_socket.ex", after: "## Channels")
   end
 
-  defp infer_belongs_to(session_module) do
+  def infer_belongs_to(session_module) do
     session_module.__schema__(:associations)
     |> Enum.map(&(session_module.__schema__(:association, &1)))
     |> Enum.filter(&belongs_to?/1)

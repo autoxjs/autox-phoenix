@@ -1,1 +1,1 @@
-`export { default } from 'ember-autox/models/relationship'`
+`export { default } from 'autox/models/relationship'`

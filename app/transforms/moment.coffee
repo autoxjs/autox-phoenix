@@ -1,1 +1,1 @@
-`export { default } from 'ember-autox/transforms/moment'`
+`export { default } from 'autox/transforms/moment'`

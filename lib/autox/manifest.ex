@@ -29,6 +29,15 @@ defmodule Autox.Manifest do
   end
 
   defmacro can_login! do
+    can_login_core([])
+  end
+  defmacro can_login!(sessionable) when is_atom(sessionable) do
+    can_login_core([sessionable])
+  end
+  defmacro can_login!(sessionables) when is_list(sessionables) do
+    can_login_core(sessionables)
+  end
+  defp can_login_core(_) do
     quote do
       resources "sessions", SessionController, only: [:create], singleton: true
       resources "users", UserController, only: [:create]
@@ -37,11 +46,9 @@ defmodule Autox.Manifest do
   defmacro can_logout! do
     quote do
       resources "sessions", SessionController, only: [:show, :update, :delete], singleton: true
+      resources "sessions", SessionController, only: [:show, :update, :delete]
       resources "users", UserController, only: [:update, :show]
     end
-  end
-  def session_core(actions) do
-    uactions = actions |> Enum.reject(&(&1 == :delete))
   end
 
   @an_actions [:show, :index, :update, :create, :delete]

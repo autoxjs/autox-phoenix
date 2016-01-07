@@ -9,13 +9,13 @@ defmodule Autox.AnnounceUtils do
 
   def destroy(%{data: model}=pack, view_class, target) do
     data = view_class.render("show.json", pack)
-    target |> infer_topic(model) |> @endpoint.broadcast("destroy", data)
+    target |> infer_topic |> @endpoint.broadcast("destroy", data)
     model
   end
 
   def update(%{data: model}=pack, view_class, target) do
     data = view_class.render("show.json", pack)
-    target |> infer_topic(model) |> @endpoint.broadcast("update", data)
+    target |> infer_topic |> @endpoint.broadcast("update", data)
     model
   end
 

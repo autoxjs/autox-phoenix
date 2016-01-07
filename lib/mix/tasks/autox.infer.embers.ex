@@ -1,4 +1,6 @@
 defmodule Mix.Tasks.Autox.Infer.Embers do
+  alias Mix.Tasks.Autox.Infer.Views
+  alias Mix.Tasks.Autox.Infer.Channels
   alias Fox.StringExt
   alias Fox.DictExt
   use Mix.Task
@@ -6,14 +8,37 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
   Scaffolds ember models
   """
   def run(args) do
+    Mix.Task.run "compile", []
     switches = [test: :boolean, setup: :boolean]
-    {[test: test, setup: setup], _, _} = OptionParser.parse(args, switches: switches)
+    {test, setup} = case OptionParser.parse(args, switches: switches) do
+      {[test: test, setup: setup], _, _} -> {test, setup}
+      {_, _, _} -> {false, false}
+    end
     if setup, do: setup(test)
     Mix.Phoenix.base
     |> Module.concat("Router")
     |> apply(:__routes__, [])
+    |> Enum.map(&Views.parent_ids/1)
     |> Enum.reduce(%{}, &view_class_associations/2)
     |> Enum.map(&scaffold(test, &1))
+
+    scaffold_channels(test)
+  end
+
+  defp scaffold_channels(test) do
+    Mix.Phoenix.base
+    |> Module.safe_concat("Session")
+    |> Mix.Tasks.Autox.Infer.Channels.infer_belongs_to
+    |> Enum.map(&scaffold_chan(&1, test))
+  end
+
+  defp scaffold_chan(%{field: field}, test) do
+    destination = if(test, do: "tests/dummy/", else: "")
+    paths = Mix.Autox.paths
+
+    Mix.Phoenix.copy_from paths, "priv/templates/autox.infer.embers", "", [], [
+      {:eex, "channel.coffee", destination <> "app/services/#{field}-chan.coffee"}
+    ]
   end
 
   defp setup(test) do
@@ -23,6 +48,21 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
       {:eex, "relationship.coffee", destination <> "app/models/relationship.coffee" },
       {:eex, "adapter.coffee", destination <> "app/adapters/relationship.coffee" },
       {:eex, "serializer.coffee", destination <> "app/serializers/relationship.coffee" }
+    ]
+  end
+  defp scaffold(test, {"sessions", _}) do
+    {session, view} = "sessions" |> model_view_class_from_key 
+    
+    attributes = infer_attributes({session, view})
+    relationships = session
+    |> Channels.infer_belongs_to
+    |> Enum.map(fn %{field: field, related: related} -> 
+      {jkey(field), "belongsTo", Channels.related_to_string(related) |> StringExt.dasherize} end)
+    paths = Mix.Autox.paths
+    binding = [attrs: attributes, assocs: relationships]
+    destination = if(test, do: "tests/dummy/", else: "")
+    Mix.Phoenix.copy_from paths, "priv/templates/autox.infer.embers", "", binding, [
+      {:eex, "session.coffee", destination <> "app/models/session.coffee"}
     ]
   end
   defp scaffold(test, {key, assocs}) do
@@ -52,15 +92,16 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
   defp jrelate(:show), do: "belongsTo"
 
   def view_class_associations(%{path: path, opts: opts}, map) do
-    case path |> String.split("/") |> Enum.reverse |> Enum.take(4) do
-      [field, "relationships", _, parent_name] ->
-        map |> Map.update(parent_name, %{}, &Map.put_new(&1, field, opts))
-      [field, _, parent_name] ->
-        map |> Map.update(parent_name, %{}, &Map.put_new(&1, field, opts))
-      [":id", model_name|_] ->
-        map |> Map.put_new(model_name, %{})
-      [model_name|_] ->
-        map |> Map.put_new(model_name, %{})
+    case path |> String.split("/") |> Enum.take(5) do
+      [_api, collection, ":id", "relationships", field] ->
+        map |> Map.update(collection, %{}, &Map.put_new(&1, field, opts))
+      [_api, collection, ":id", field] ->
+        map |> Map.update(collection, %{}, &Map.put_new(&1, field, opts))
+      [_api, collection, ":id"] ->
+        map |> Map.put_new(collection, %{})
+      [_api, collection] ->
+        map |> Map.put_new(collection, %{})
+      _ -> map
     end
   end
 

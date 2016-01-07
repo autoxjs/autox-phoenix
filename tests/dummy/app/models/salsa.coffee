@@ -1,5 +1,5 @@
 `import DS from 'ember-data'`
-`import {RelateableMixin} from 'ember-autox'`
+`import {RelateableMixin} from 'autox'`
 
 Model = DS.Model.extend RelateableMixin,
   
@@ -8,6 +8,8 @@ Model = DS.Model.extend RelateableMixin,
   name: DS.attr "string"
   
   price: DS.attr "number"
+  
+  secretSauce: DS.attr "string"
   
   updatedAt: DS.attr "moment"
   

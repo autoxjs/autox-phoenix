@@ -4,7 +4,7 @@ defmodule Autox.EchoRepo do
   """
   def insert!(cs) do
     case cs |> insert do
-      {:ok, model} -> cs
+      {:ok, model} -> model
       {:error, cs} -> raise cs
     end
   end
@@ -15,7 +15,11 @@ defmodule Autox.EchoRepo do
   def insert(%{model: model, changes: changes}) do
     model = model 
     |> Map.merge(changes)
-    |> Map.put(:id, calculate_id(changes))
+    |> Map.pop(:id)
+    |> case do
+      {nil, map} -> map |> Map.put(:id, calculate_id(changes))
+      {id, map} -> map |> Map.put(:id, id)
+    end
     {:ok, model}
   end
 
