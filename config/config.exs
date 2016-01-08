@@ -29,3 +29,12 @@ import_config "#{Mix.env}.exs"
 config :phoenix, :generators,
   migration: true,
   binary_id: false
+
+config :autox, Autox.Defaults,
+  repo: Autox.Repo,
+  session_header: "autox-remember-token",
+  autox_master_key: "default-master-key-change-me",
+  endpoint: Autox.Endpoint,
+  error_view: Autox.ErrorView,
+  user_class: Autox.User,
+  session_class: Autox.Session
