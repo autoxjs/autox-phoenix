@@ -3,8 +3,8 @@ defmodule Autox.BroadcastSessionPlug do
   import Phoenix.Controller, only: [action_name: 1, view_module: 1]
   import Autox.SessionUtils, only: [current_session: 1]
   alias Autox.AnnounceUtils, as: Au
-  def init([]), do: {:user, __MODULE__, :always_yes}
-  def init(key) when is_atom(key), do: {key, __MODULE__, :always_yes}
+  def init([]), do: {:user, __MODULE__, :ok?}
+  def init(key) when is_atom(key), do: {key, __MODULE__, :ok?}
   def init([key: key, class: class, check: check]), do: {key, class, check}
 
   def call(conn, {target, module, check}) do
@@ -12,7 +12,8 @@ defmodule Autox.BroadcastSessionPlug do
     conn |> register_before_send(&consider_broadcast(&1, broadcast?, target))
   end
 
-  def always_yes(_), do: true
+  def ok?(%{status: status}) when status in [200, 201, 204], do: true
+  def ok?(_), do: false
 
   defp consider_broadcast(conn, f, target) do
     if f.(conn) do
