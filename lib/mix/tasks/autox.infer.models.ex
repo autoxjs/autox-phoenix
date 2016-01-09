@@ -1,9 +1,7 @@
 defmodule Mix.Tasks.Autox.Infer.Models do
   alias Fox.StringExt
   use Mix.Task
-  @shortdoc """
-  Scaffolds models after inferring from the `router.ex` file
-  """
+  @shortdoc "Scaffolds models after inferring from the `router.ex` file"
   def run(_) do
     Mix.Task.run "compile", []
     Mix.Phoenix.base

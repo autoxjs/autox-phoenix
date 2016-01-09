@@ -4,9 +4,7 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
   alias Fox.StringExt
   alias Fox.DictExt
   use Mix.Task
-  @shortdoc """
-  Scaffolds ember models
-  """
+  @shortdoc "Scaffolds ember models, services, serializers, and adapters"
   def run(args) do
     Mix.Task.run "compile", []
     switches = [test: :boolean, setup: :boolean]

@@ -1,9 +1,7 @@
 defmodule Mix.Tasks.Autox.Infer.Views do
   alias Fox.StringExt
   use Mix.Task
-  @shortdoc """
-  Scaffolds views after inferring from the `router.ex` file
-  """
+  @shortdoc "Scaffolds views after inferring from the `router.ex` file"
   def run(_) do
     Mix.Task.run "compile", []
     Mix.Phoenix.base
@@ -15,6 +13,7 @@ defmodule Mix.Tasks.Autox.Infer.Views do
   end
 
   def scaffold({controller, fields}) do
+    fields = fields |> Enum.map(&StringExt.underscore/1)
     binding = controller |> Mix.Autox.ctrl_2_model |> Mix.Autox.inflect |> Kernel.++([relationships: fields])
     model = binding[:model] |> StringExt.underscore
     paths = Mix.Autox.paths
@@ -55,6 +54,7 @@ defmodule Mix.Tasks.Autox.Infer.Views do
   defp controlify(collection) do
     Mix.Phoenix.base 
     |> Module.safe_concat collection
+    |> StringExt.underscore
     |> StringExt.singularize
     |> StringExt.camelize
     |> Kernel.<>("Controller")

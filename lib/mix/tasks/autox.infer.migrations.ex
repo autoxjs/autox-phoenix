@@ -3,9 +3,7 @@ defmodule Mix.Tasks.Autox.Infer.Migrations do
   alias Fox.AtomExt
   alias Ecto.Association.BelongsTo
   use Mix.Task
-  @shortdoc """
-  Attempts to write migrations for all the files in the `web/models` folder
-  """
+  @shortdoc "Attempts to write migrations for all the files in the `web/models` folder"
   def run(_) do
     Mix.Task.run "compile", []
 

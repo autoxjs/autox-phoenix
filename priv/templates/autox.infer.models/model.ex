@@ -18,4 +18,8 @@ defmodule <%= base %>.<%= model %> do
   def update_changeset(model, params\\:empty) do 
     create_changeset(model, params)
   end
+
+  def delete_changeset(model, _) do
+    model
+  end
 end

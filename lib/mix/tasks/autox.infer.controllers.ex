@@ -1,9 +1,7 @@
 defmodule Mix.Tasks.Autox.Infer.Controllers do
   alias Fox.StringExt
   use Mix.Task
-  @shortdoc """
-  Scaffolds controllers after inferring from the `router.ex` file
-  """
+  @shortdoc "Scaffolds controllers after inferring from the `router.ex` file"
   def run(_) do
     Mix.Task.run "compile", []
     Mix.Phoenix.base
