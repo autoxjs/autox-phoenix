@@ -9,18 +9,20 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
     Mix.Task.run "compile", []
     switches = [test: :boolean, setup: :boolean]
     {test, setup} = case OptionParser.parse(args, switches: switches) do
-      {[test: test, setup: setup], _, _} -> {test, setup}
+      {parsed, _, _} -> {parsed[:test], parsed[:setup]}
       {_, _, _} -> {false, false}
     end
-    if setup, do: setup(test)
-    Mix.Phoenix.base
-    |> Module.concat("Router")
-    |> apply(:__routes__, [])
-    |> Enum.map(&Views.parent_ids/1)
-    |> Enum.reduce(%{}, &view_class_associations/2)
-    |> Enum.map(&scaffold(test, &1))
-
-    scaffold_channels(test)
+    if setup do
+      setup(test)
+    else
+      Mix.Phoenix.base
+      |> Module.concat("Router")
+      |> apply(:__routes__, [])
+      |> Enum.map(&Views.parent_ids/1)
+      |> Enum.reduce(%{}, &view_class_associations/2)
+      |> Enum.map(&scaffold(test, &1))
+      scaffold_channels(test)
+    end
   end
 
   defp scaffold_channels(test) do
@@ -68,8 +70,9 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
     |> model_view_class_from_key 
     |> infer_attributes
 
-    relationships = assocs 
+    relationships = assocs
     |> DictExt.value_map(&jrelate/1)
+    |> DictExt.reject_blank_keys
     |> Enum.map(fn {key, card} -> {jkey(key), card, model_name_from_key(key)} end)
 
     binding = [attrs: attributes] ++ [assocs: relationships]
@@ -88,6 +91,7 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
 
   defp jrelate(:index), do: "hasMany"
   defp jrelate(:show), do: "belongsTo"
+  defp jrelate(_), do: nil
 
   def view_class_associations(%{path: path, opts: opts}, map) do
     case path |> String.split("/") |> Enum.take(5) do
@@ -104,7 +108,8 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
   end
 
   def model_view_class_from_key(name) do
-    model_name = name 
+    model_name = name
+    |> StringExt.underscore
     |> StringExt.singularize
     |> StringExt.camelize
     view_name = model_name <> "View"

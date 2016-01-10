@@ -7,17 +7,20 @@ defmodule Mix.Tasks.Autox.Infer.Migrations do
   def run(_) do
     Mix.Task.run "compile", []
 
-    migration_cores = models_dir
-    |> File.ls!
-    |> Enum.map(&infer_model_plural_class/1)
-    |> Enum.filter(&concrete_tables?/1)
+    migration_cores = models_dir |> File.ls! |> Enum.map(&infer_model_plural_class/1)
+    concrete_cores = migration_cores |> Enum.filter(&concrete_tables?/1)
+    polymorph_cores = migration_cores |> Enum.map(&elem(&1, 2)) |> Enum.flat_map(&polymorphic_plural_class/1)
 
-    creates = migration_cores 
+    creates = (concrete_cores ++ polymorph_cores)
     |> Enum.map(&create_table_migration/1)
+    |> Enum.sort_by(&elem(&1, 1))
+    |> Enum.reduce([], &merge_sources/2)
     
-    alters = migration_cores 
+    alters = (concrete_cores ++ polymorph_cores)
     |> Enum.map(&add_reference_migration/1)
     |> Enum.reject(&last_blank?/1)
+    |> Enum.sort_by(&elem(&1, 1))
+    |> Enum.reduce([], &merge_sources/2)
     
     (creates ++ alters)
     |> List.foldl(0, &run_migration/2)
@@ -25,9 +28,28 @@ defmodule Mix.Tasks.Autox.Infer.Migrations do
   defp last_blank?({_, _, []}), do: true
   defp last_blank?(_), do: false
 
+  defp merge_sources({model, source, attrs}, [{_, source, attrs2}|tuples]) do
+    tuple = {model, source, Enum.uniq(attrs ++ attrs2)}
+    [tuple|tuples]
+  end
+  defp merge_sources(tuple, tuples), do: [tuple|tuples]
+
   def run_migration({class, plural, attrs}, n) do
     Mix.Tasks.Autox.Phoenix.Migration.run([n, class, plural] ++ attrs)
     n + 1
+  end
+
+  def polymorphic_plural_class(class) do
+    class.__schema__(:associations)
+    |> Enum.map(&class.__schema__(:association, &1))
+    |> Enum.filter_map(&just_polymorphic_has?/1, &class_model_plural_from_relation/1)
+  end
+
+  def just_polymorphic_has?(%{queryable: {_, _}}), do: true
+  def just_polymorphic_has?(_), do: false
+  def class_model_plural_from_relation(%{queryable: {source, class}}) do
+    model = class |> Module.split |> List.last
+    {model, source, class}
   end
 
   def infer_model_plural_class(filename) do
@@ -44,11 +66,13 @@ defmodule Mix.Tasks.Autox.Infer.Migrations do
     table_name |> String.match?(@underscored)
   end
 
-  def add_reference_migration({model, plural, class}) do
+  def add_reference_migration({_, plural, class}) do
+    model = plural |> StringExt.camelize
     {model, plural, infer_assocs(class)} 
   end
 
-  def create_table_migration({model, plural, class}) do
+  def create_table_migration({_, plural, class}) do
+    model = plural |> StringExt.camelize
     {model, plural, infer_types(class)} 
   end
 

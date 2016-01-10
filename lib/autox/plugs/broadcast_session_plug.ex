@@ -22,6 +22,7 @@ defmodule Autox.BroadcastSessionPlug do
       conn
     end
   end
+  defp do_broadcast(conn, nil), do: conn
   defp do_broadcast(conn, target) do
     case conn |> action_target(target) do
       {_, nil, _} -> nil
@@ -33,7 +34,6 @@ defmodule Autox.BroadcastSessionPlug do
     end
     conn
   end
-  defp do_broadcast(conn, _), do: conn
 
   defp action_target(%{assigns: a}=conn, target) do
     target = conn |> current_session |> Map.get(target)
