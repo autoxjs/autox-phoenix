@@ -30,6 +30,17 @@ SessionService = Service.extend Evented,
       @channelFor(key)
       .disconnect()
 
+  login: (params={}) ->
+    {email, password} = params
+    if email? and password?
+      model = @get "model"
+      model.set "email", email
+      model.set "password", password
+    @updateModel()
+
+  logout: ->
+    @destroyModel()
+
   updateModel: -> 
     model = @get "model"
     event = if model.get("isNew") then "login" else "change"

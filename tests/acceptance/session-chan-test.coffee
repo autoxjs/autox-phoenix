@@ -31,14 +31,11 @@ test 'visiting /', (assert) ->
   andThen =>
     assert.notOk @session.get("loggedIn")
     assert.ok @user.get("id"), "user id should be present"
-    session = @session.get "model"
-    session.set "email", @userParams.email
-    session.set "password", @userParams.password
     @session.on "login", ->
       @set "testLoginFlag", true
     @session.on "change", ->
       @set "testChangeFlag", true
-    @session.updateModel()
+    @session.login @userParams
   
   andThen =>
     assert.ok @session.get("model.isValid"), "should not have errors"
