@@ -31,11 +31,14 @@ SessionService = Service.extend Evented,
       .disconnect()
 
   login: (params={}) ->
+    model = @get "model"
     {email, password} = params
     if email? and password?
-      model = @get "model"
       model.set "email", email
       model.set "password", password
+    {rememberToken} = params
+    if rememberToken?
+      model.set "rememberToken", rememberToken
     @updateModel()
 
   logout: ->
