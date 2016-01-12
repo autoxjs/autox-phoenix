@@ -25,6 +25,9 @@ test 'visiting /', (assert) ->
   visit '/'
 
   andThen =>
+    @session.logout() if @session.get('loggedIn')
+
+  andThen =>
     @user = @store.createRecord "user", @userParams
     @user.save()
   
@@ -39,7 +42,7 @@ test 'visiting /', (assert) ->
   
   andThen =>
     assert.ok @session.get("model.isValid"), "should not have errors"
-    assert.equal @session.get("loggedIn"), true, "we should be logged in"
+    assert.ok @session.get("loggedIn"), "we should be logged in"
     assert.ok @session.get("model.rememberToken"), "session token should be present"
     assert.equal Cookies.get("remember-token"), @session.get("model.rememberToken"), "session token should match"
     assert.equal @session.get("testLoginFlag"), true, "login event should have been called"

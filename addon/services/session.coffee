@@ -11,7 +11,8 @@ SessionService = Service.extend Evented,
   instanceInit: ->
     store = @get "store"
     store.findAll "session"
-    .then ([session]) =>
+    .then (sessions) =>
+      session = sessions.objectAt(0)
       session ?= store.createRecord "session"
       @set "model", session
     .catch (errors) =>

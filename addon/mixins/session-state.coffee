@@ -1,9 +1,10 @@
 `import Ember from 'ember'`
-{Mixin, String} = Ember
+{Mixin, String, computed: {or: ifPresent}} = Ember
 
 cookieKill = (key) -> Cookies.remove String.dasherize key
 
 SessionStateMixin = Mixin.create
+  loggedIn: ifPresent "id"
   cookieGet: (key) -> 
     if (value = Cookies.get key)?
       @set key, value
@@ -17,14 +18,11 @@ SessionStateMixin = Mixin.create
   didCreate: ->
     @_super arguments...
     @cookieSet "rememberToken"
-    @set "loggedIn", true
   didDelete: ->
     @_super arguments...
     cookieKill "rememberToken"
-    @set "loggedIn", false
   ready: ->
     @_super arguments...
     @cookieGet "rememberToken"
-    @set "loggedIn", false
 
 `export default SessionStateMixin`

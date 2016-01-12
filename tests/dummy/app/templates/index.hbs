@@ -1,0 +1,5 @@
+{{#if session.loggedIn}}
+  {{#link-to "user"}}Already Logged in{{/link-to}}
+{{else}}
+  <button {{action "attemptLogin"}}>Login</button>
+{{/if}}

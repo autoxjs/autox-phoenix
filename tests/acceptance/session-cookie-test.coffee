@@ -25,6 +25,9 @@ test 'visiting /', (assert) ->
   visit '/'
 
   andThen =>
+    @session.logout() if @session.get('loggedIn')
+
+  andThen =>
     @session.login @userParams
 
   andThen =>

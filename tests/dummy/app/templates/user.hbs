@@ -1,0 +1,8 @@
+{{#link-to "index"}}Back{{/link-to}}
+
+{{#if session.loggedIn}}
+  <h4>Logged in!</h4>
+{{else}}
+  <h4>Anonymous</h4>
+{{/if}}
+<h2>user - {{model.id}}</h2>
