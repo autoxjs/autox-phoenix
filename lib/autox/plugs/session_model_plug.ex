@@ -1,4 +1,5 @@
 defmodule Autox.SessionModelPlug do
+  import Plug.Conn
   defmodule SessionModelError do
    defexception [:message]
     def exception(_) do

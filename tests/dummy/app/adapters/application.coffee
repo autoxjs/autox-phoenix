@@ -5,4 +5,10 @@ AppAdapter = Adapter.extend
   host: ENV.host
   namespace: ENV.namespace
 
+  handleResponse: (status, headers, payload) ->
+    console.log status
+    console.log headers
+    console.log payload
+    @_super arguments...
+
 `export default AppAdapter`

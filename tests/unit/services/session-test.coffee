@@ -10,7 +10,3 @@ test 'it exists and works', (assert) ->
   service = @subject()
   assert.ok service
   assert.equal typeof service.instanceInit, "function"
-  Ember.run =>
-    service.instanceInit()
-    assert.ok session = service.get("model")
-    assert.notOk session.get("loggedIn")

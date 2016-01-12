@@ -57,10 +57,12 @@ defmodule Autox do
   ember s
   ```
   """
+  def default_origin, do: Application.get_env(:autox, Autox.Defaults)[:host]
   def default_repo, do: Application.get_env(:autox, Autox.Defaults)[:repo]
   def default_endpoint, do: Application.get_env(:autox, Autox.Defaults)[:endpoint]
   def default_user_class, do: Application.get_env(:autox, Autox.Defaults)[:user_class]
   def default_error_view, do: Application.get_env(:autox, Autox.Defaults)[:error_view]
   def default_session_class, do: Application.get_env(:autox, Autox.Defaults)[:session_class]
   def default_session_header, do: Application.get_env(:autox, Autox.Defaults)[:session_header]
+
 end

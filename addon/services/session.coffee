@@ -9,7 +9,12 @@ SessionService = Service.extend Evented,
 
   instanceInit: ->
     store = @get "store"
-    @set "model", store.createRecord "session"
+    store.findAll "session"
+    .then ([session]) =>
+      session ?= store.createRecord "session"
+      @set "model", session
+    .catch (errors) =>
+      @set "model", store.createRecord "session"
   channelFor: (key) ->
     key = "#{key}-chan"
     return service if (service = @get key)?

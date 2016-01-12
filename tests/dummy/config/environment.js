@@ -7,6 +7,7 @@ module.exports = function(environment) {
     baseURL: '/',
     locationType: 'auto',
     namespace: "api",
+    host: "http://localhost:4000",
     socketNamespace: "ws://localhost:4000/socket",
     EmberENV: {
       FEATURES: {
@@ -18,6 +19,15 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    },
+    contentSecurityPolicy: { 
+      'connect-src': "'self' * http://localhost:4000 ws://localhost:4000",
+      "img-src": "*",
+      "media-src": "'self' *",
+      "font-src": "*",
+      "style-src": "'self' 'unsafe-inline'",
+      "script-src": "'self'",
+      "frame-src": "'self'"
     }
   };
 

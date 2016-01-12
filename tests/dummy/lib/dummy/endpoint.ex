@@ -31,9 +31,12 @@ defmodule Dummy.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_dummy_key",
-    signing_salt: "tXVNJL9p"
+    signing_salt: "tXVNJL9p",
+    http_only: false,
+    max_age: 26_280_000 # 10 months
 
   plug CORSPlug,
+    origin: ["http://localhost:4200"],
     headers: ["Authorization", "Content-Type", "Accept", "Origin",
               "User-Agent", "DNT","Cache-Control", "X-Mx-ReqToken",
               "Keep-Alive", "X-Requested-With", "If-Modified-Since",

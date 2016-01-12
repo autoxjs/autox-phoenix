@@ -14,6 +14,7 @@ defmodule Mix.Tasks.Autox.Install do
   ## Autox Installed
   config :plug, :mimes, %{"application/vnd.api+json" => ["json-api"]}
   config :autox, Autox.Defaults,
+    host: "http://localhost:4200",
     repo: <%= base %>.Repo,
     session_header: "autox-remember-token",
     error_view: <%= base %>.ErrorView,
@@ -69,6 +70,7 @@ defmodule Mix.Tasks.Autox.Install do
   @endpoint_inject """
   ## Autox Installed
   plug CORSPlug,
+    origin: [Autox.default_origin]
     headers: ["Authorization", "Content-Type", "Accept", "Origin",
               "User-Agent", "DNT","Cache-Control", "X-Mx-ReqToken",
               "Keep-Alive", "X-Requested-With", "If-Modified-Since",

@@ -1,5 +1,6 @@
 `import Ember from 'ember'`
 `import { moduleForModel, test } from 'ember-qunit'`
+`import ENV from 'dummy/config/environment'`
 
 moduleForModel 'shop', 'Unit | Adapter | relationship', {
   # Specify the other units that are required for this test.
@@ -28,7 +29,7 @@ test 'it should exist and operate as expected', (assert) ->
     relation.set "secretSauce", "hikari no naka"
     snapshot = relation._internalModel.createSnapshot()
     adapter.ajax = (url, verb, {data}) ->
-      assert.equal url, "/api/shops/33/relationships/salsas", "url should match"
+      assert.equal url, ENV.host + "/api/shops/33/relationships/salsas", "url should match"
       assert.equal verb, "DELETE", "verb should match"
       assert.deepEqual data,
         data:
@@ -39,7 +40,7 @@ test 'it should exist and operate as expected', (assert) ->
     adapter.deleteRecord(store, store.modelFor("relationship"), snapshot)
 
     adapter.ajax = (url, verb, {data}) ->
-      assert.equal url, "/api/shops/33/relationships/salsas", "url should match"
+      assert.equal url, ENV.host + "/api/shops/33/relationships/salsas", "url should match"
       assert.equal verb, "POST", "verb should match"
       assert.deepEqual data,
         data:
