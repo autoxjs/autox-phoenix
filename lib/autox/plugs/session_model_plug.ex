@@ -16,11 +16,8 @@ defmodule Autox.SessionModelPlug do
   end
 
   defp session_model(conn) do
-    case conn |> SessionUtils.current_session do
-      nil -> raise SessionModelError
-      session -> 
-        params = Map.put(conn.params, "model", session)
-        %{conn | params: params}
-    end
+    session = conn |> SessionUtils.current_session
+    params = Map.put(conn.params, "model", session)
+    %{conn | params: params}
   end
 end

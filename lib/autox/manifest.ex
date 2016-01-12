@@ -39,13 +39,13 @@ defmodule Autox.Manifest do
   end
   defp can_login_core(_) do
     quote do
-      resources "sessions", SessionController, only: [:create], singleton: true
+      resources "sessions", SessionController, only: [:show, :create], singleton: true
       resources "users", UserController, only: [:create]
     end
   end
   defmacro can_logout! do
     quote do
-      resources "sessions", SessionController, only: [:show, :update, :delete], singleton: true
+      resources "sessions", SessionController, only: [:update, :delete], singleton: true
       resources "sessions", SessionController, only: [:show, :update, :delete]
       resources "users", UserController, only: [:update, :show]
     end

@@ -56,10 +56,10 @@ defmodule Dummy.SessionControllerTest do
 
   test "show session - forbidden", %{conn: conn} do
     path = conn |> session_path(:show)
-    %{"errors" => errors} = conn
+    resp = conn
     |> get(path, %{})
-    |> json_response(:forbidden)
-    assert %{"detail" => _} = errors
+    |> json_response(200)
+    assert %{"data" => nil} = resp
   end
 
   test "update session", %{conn: conn, user: %{id: user_id, email: email}} do
