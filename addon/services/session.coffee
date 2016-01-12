@@ -1,12 +1,13 @@
 `import Ember from 'ember'`
 
-{Service, Evented, inject, computed: {alias}} = Ember
+{RSVP, Service, Evented, inject, computed: {alias}} = Ember
 
 SessionService = Service.extend Evented,
   store: inject.service("store")
   id: alias "model.id"
   loggedIn: alias "model.loggedIn"
-
+  initDeference: RSVP.defer()
+  self: alias "initDeference.promise"
   instanceInit: ->
     store = @get "store"
     store.findAll "session"
@@ -15,6 +16,8 @@ SessionService = Service.extend Evented,
       @set "model", session
     .catch (errors) =>
       @set "model", store.createRecord "session"
+    .finally =>
+      @get("initDeference").resolve(@)
   channelFor: (key) ->
     key = "#{key}-chan"
     return service if (service = @get key)?
