@@ -2,6 +2,12 @@
 `import DS from 'ember-data'`
 
 RelationshipAdapter = DS.JSONAPIAdapter.extend
+  ajaxOptions: ->
+    hash = @_super arguments...
+    hash.xhrFields = 
+      withCredentials: true
+    hash
+
   deleteRecord: (store, type, snapshot) ->
     data = {}
     serializer = store.serializerFor(type.modelName)
