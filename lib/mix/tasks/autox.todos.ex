@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Autox.Todos do
   @todos [
     "edit prod.exs so that Autox knows the host where you're Ember frontend is served",
     "edit environment.js in the front-end Ember app for host, namespace, and CSRP",
-    "edit prod.exs to infer heroku environment variables"
+    "edit prod.exs to infer heroku environment variables",
     "edit endpoint.ex and set a max_age to cookie sessions"
   ]
   def run(_) do
