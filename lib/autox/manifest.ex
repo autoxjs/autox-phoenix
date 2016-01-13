@@ -46,6 +46,7 @@ defmodule Autox.Manifest do
   defmacro can_logout! do
     quote do
       resources "sessions", SessionController, only: [:update, :delete], singleton: true
+      post "/sessions/:id", SessionController, :update 
       resources "sessions", SessionController, only: [:show, :update, :delete]
       resources "users", UserController, only: [:update, :show]
     end

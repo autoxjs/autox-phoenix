@@ -69,12 +69,39 @@ defmodule Dummy.SessionControllerTest do
     conn = conn |> post(path, %{"data" => data})
     path = conn |> session_path(:update)
     data = %{
-      "type" => "sessions", "id" => "not-important",
+      "type" => "sessions",
       "relationships" => %{"owner" => %{"data" => %{"id" => owner.id, "type" => "owners"}}} 
     }
-    session = conn
+    conn = conn
     |> ensure_recycled
     |> put(path, %{"data" => data})
+
+    session = conn
+    |> ensure_recycled
+    |> get("/api/sessions/33", %{})
+    |> Su.current_session
+
+    assert session.user_id == user_id
+    assert session.owner_id == owner.id
+  end
+
+  test "update session via post", %{conn: conn, user: %{id: user_id, email: email}} do
+    owner = build_owner
+    path = conn |> session_path(:create)
+    data = %{ "type" => "sessions", "attributes" => %{"email" => email, "password" => "password123"} }
+    conn = conn |> post(path, %{"data" => data})
+    path = "/api/sessions/fjasj8"
+    data = %{
+      "type" => "sessions",
+      "relationships" => %{"owner" => %{"data" => %{"id" => owner.id, "type" => "owners"}}} 
+    }
+    conn = conn
+    |> ensure_recycled
+    |> post(path, %{"data" => data})
+
+    session = conn
+    |> ensure_recycled
+    |> get("/api/sessions/33", %{})
     |> Su.current_session
 
     assert session.user_id == user_id
