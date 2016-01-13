@@ -11,7 +11,9 @@ defmodule Autox.AuthSessionPlug do
     |> permission_check(checker)
     |> case do
       {:ok, _} -> conn
+      true -> conn
       {:error, reason} -> conn |> Fu.forbidden(reason)
+      nil -> conn |> Fu.forbidden("no reason given")
     end
   end
   defp session_class, do: Autox.default_session_class

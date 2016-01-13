@@ -37,3 +37,22 @@ test 'visiting /', (assert) ->
       assert.ok tacos, "we should be able to access auth stuff"
     .catch (errors) ->
       assert.notOk errors, "we should not get here"
+
+  andThen =>
+    @owner = @store.createRecord "owner",
+      name: "Daryl Hammond"
+    @owner.save()
+  andThen =>
+    session = @session.get("model")
+    session.set "owner", @owner
+    session.save()
+
+  andThen =>
+    @session
+    .get("model")
+    .reload()
+    .then (session) =>
+      session.get("owner")
+    .then (owner) =>
+      assert.ok owner
+      assert.ok owner.get('id')
