@@ -46,8 +46,18 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
     paths = Mix.Autox.paths
     Mix.Phoenix.copy_from paths, "priv/templates/autox.infer.embers", "", [], [
       {:eex, "relationship.coffee", destination <> "app/models/relationship.coffee" },
-      {:eex, "adapter.coffee", destination <> "app/adapters/relationship.coffee" },
       {:eex, "serializer.coffee", destination <> "app/serializers/relationship.coffee" }
+    ]
+
+    ["session", "relationship", "application"]
+    |> Enum.map(&setup_adapter(destination, &1))
+  end
+
+  defp setup_adapter(destination, model) do
+    paths = Mix.Autox.paths
+    binding = [model: model, class: StringExt.camelize(model)]
+    Mix.Phoenix.copy_from paths, "priv/templates/autox.infer.embers", "", binding, [
+      {:eex, "adapter.coffee", destination <> "app/adapters/#{model}.coffee" }
     ]
   end
   defp scaffold(test, {"sessions", _}) do

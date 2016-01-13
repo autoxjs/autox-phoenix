@@ -5,6 +5,8 @@ import RelationshipModel from './models/relationship';
 import RelationshipSerializer from './serializers/relationship';
 import Payload from './utils/payload';
 import SessionStateMixin from './mixins/session-state';
+import PostUpdateMixin from './mixins/post-update';
+import CookieCredentialsMixin from './mixins/cookie-credentials';
 export {
   ApplicationAdapter,
   RelationshipAdapter,
@@ -12,5 +14,7 @@ export {
   RelationshipModel,
   RelationshipSerializer,
   Payload,
-  SessionStateMixin
+  SessionStateMixin,
+  PostUpdateMixin,
+  CookieCredentialsMixin
 };

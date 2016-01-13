@@ -1,13 +1,8 @@
 `import Ember from 'ember'`
 `import DS from 'ember-data'`
+`import CookieCred from '../mixins/cookie-credentials'`
 
-RelationshipAdapter = DS.JSONAPIAdapter.extend
-  ajaxOptions: ->
-    hash = @_super arguments...
-    hash.xhrFields = 
-      withCredentials: true
-    hash
-
+RelationshipAdapter = DS.JSONAPIAdapter.extend CookieCred,
   deleteRecord: (store, type, snapshot) ->
     data = {}
     serializer = store.serializerFor(type.modelName)

@@ -1,10 +1,6 @@
 `import DS from 'ember-data'`
+`import CookieCred from '../mixins/cookie-credentials'`
 
-ApplicationAdapter = DS.JSONAPIAdapter.extend
-  ajaxOptions: ->
-    hash = @_super arguments...
-    hash.xhrFields = 
-      withCredentials: true
-    hash
+ApplicationAdapter = DS.JSONAPIAdapter.extend CookieCred, {}
 
 `export default ApplicationAdapter`
