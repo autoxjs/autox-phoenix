@@ -43,6 +43,7 @@ test 'visiting /', (assert) ->
       name: "Daryl Hammond"
     @owner.save()
   andThen =>
+    @oldCookie = Cookies.get("_dummy_key")
     session = @session.get("model")
     session.set "owner", @owner
     session.save()
@@ -56,3 +57,5 @@ test 'visiting /', (assert) ->
     .then (owner) =>
       assert.ok owner
       assert.ok owner.get('id')
+      assert.ok @oldCookie
+      assert.notEqual @oldCookie, Cookies.get("_dummy_key"), "should have changed the cookie"

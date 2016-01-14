@@ -63,6 +63,5 @@ defmodule Autox do
   def default_user_class, do: Application.get_env(:autox, Autox.Defaults)[:user_class]
   def default_error_view, do: Application.get_env(:autox, Autox.Defaults)[:error_view]
   def default_session_class, do: Application.get_env(:autox, Autox.Defaults)[:session_class]
-  def default_session_header, do: Application.get_env(:autox, Autox.Defaults)[:session_header]
 
 end

@@ -28,7 +28,7 @@ defmodule Dummy.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
 
-  plug Plug.Session,
+  plug Autox.InsecureSessionPlug,
     store: :cookie,
     key: "_dummy_key",
     signing_salt: "tXVNJL9p",
