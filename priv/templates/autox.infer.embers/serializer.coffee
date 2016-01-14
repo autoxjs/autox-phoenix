@@ -1,3 +1,3 @@
-`import Serializer from 'autox/serializers/relationship'`
+`import Serializer from 'autox/serializers/<%= model %>'`
 
 `export default Serializer`

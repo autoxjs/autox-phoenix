@@ -80,7 +80,7 @@ test 'visiting /', (assert) ->
     assert.equal @chan.tacoTestCtn.kill, true
     assert.notOk @store.peekRecord "taco", @taco.id
 
-    @session.destroyModel()
+    @session.logout()
 
   andThen =>
     assert.notOk @session.get("loggedIn"), "we should be logged out"

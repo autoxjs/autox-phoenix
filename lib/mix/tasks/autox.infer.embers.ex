@@ -45,12 +45,21 @@ defmodule Mix.Tasks.Autox.Infer.Embers do
     destination = if(test, do: "tests/dummy/", else: "")
     paths = Mix.Autox.paths
     Mix.Phoenix.copy_from paths, "priv/templates/autox.infer.embers", "", [], [
-      {:eex, "relationship.coffee", destination <> "app/models/relationship.coffee" },
-      {:eex, "serializer.coffee", destination <> "app/serializers/relationship.coffee" }
+      {:eex, "relationship.coffee", destination <> "app/models/relationship.coffee" }
     ]
 
-    ["session", "relationship", "application"]
+    ["relationship", "application"]
+    |> Enum.map(&setup_serializer(destination, &1))
+    ["relationship", "application"]
     |> Enum.map(&setup_adapter(destination, &1))
+  end
+
+  defp setup_serializer(destination, model) do
+    paths = Mix.Autox.paths
+    binding = [model: model]
+    Mix.Phoenix.copy_from paths, "priv/templates/autox.infer.embers", "", binding, [
+      {:eex, "serializer.coffee", destination <> "app/serializers/%{model}.coffee" }
+    ]
   end
 
   defp setup_adapter(destination, model) do

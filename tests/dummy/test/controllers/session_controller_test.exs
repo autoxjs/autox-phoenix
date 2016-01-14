@@ -85,14 +85,18 @@ defmodule Dummy.SessionControllerTest do
     assert session.owner_id == owner.id
   end
 
-  test "update session via post", %{conn: conn, user: %{id: user_id, email: email}} do
+  test "update session via delete-post", %{conn: conn, user: %{id: user_id, email: email, remember_token: token}} do
     owner = build_owner
     path = conn |> session_path(:create)
     data = %{ "type" => "sessions", "attributes" => %{"email" => email, "password" => "password123"} }
-    conn = conn |> post(path, %{"data" => data})
-    path = "/api/sessions/fjasj8"
+    conn = conn 
+    |> post(path, %{"data" => data})
+    |> ensure_recycled
+    |> delete(path, %{})
+
     data = %{
       "type" => "sessions",
+      "attributes" => %{"remember_token" => token},
       "relationships" => %{"owner" => %{"data" => %{"id" => owner.id, "type" => "owners"}}} 
     }
     conn = conn
@@ -104,6 +108,7 @@ defmodule Dummy.SessionControllerTest do
     |> get("/api/sessions/33", %{})
     |> Su.current_session
 
+    assert session.id == user_id
     assert session.user_id == user_id
     assert session.owner_id == owner.id
   end

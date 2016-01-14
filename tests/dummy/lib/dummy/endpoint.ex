@@ -36,11 +36,7 @@ defmodule Dummy.Endpoint do
     max_age: 26_280_000 # 10 months
 
   plug CORSPlug,
-    origin: ["http://localhost:4200"],
-    headers: ["Authorization", "Content-Type", "Accept", "Origin",
-              "User-Agent", "DNT","Cache-Control", "X-Mx-ReqToken",
-              "Keep-Alive", "X-Requested-With", "If-Modified-Since",
-              "X-CSRF-Token", "autox-master-key"] ++ [Autox.default_session_header]
+    origin: ["http://localhost:4200"]
 
   plug Dummy.Router
 end

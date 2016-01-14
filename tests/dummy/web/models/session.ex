@@ -14,19 +14,35 @@ defmodule Dummy.Session do
     field :remember_token, :string
   end
 
-  @create_fields ~w(email password)
-  @update_fields @create_fields
-  @optional_fields ~w(remember_me remember_token owner_id)
+  @create_fields ~w(email password remember_token)
+  @update_fields ~w()
+  @optional_fields ~w(remember_me owner_id)
 
   def create_changeset(model, params\\:empty) do
     model
-    |> cast(params, @create_fields, @optional_fields)
+    |> cast(params, [], @create_fields ++ @optional_fields)
+    |> validate_at_least_one(["email", "remember_token"])
     |> validate_user_authenticity
     |> cache_user_fields
+    |> cache_relations([:owner])
   end
 
   def update_changeset(model, params\\:empty) do 
-    create_changeset(model, params)
+    model
+    |> cast(params, [], @optional_fields)
+    |> cache_relations([:owner])
+  end
+
+  def validate_at_least_one(changeset, []) do 
+    changeset |> cast(%{}, @create_fields)
+  end
+  def validate_at_least_one(changeset, [field|fields]) do
+    changeset 
+    |> get_field(field |> String.to_existing_atom)
+    |> case do
+      nil -> validate_at_least_one(changeset, fields)
+      _ -> changeset
+    end
   end
 
   def validate_user_authenticity(%{valid?: false}=c), do: c
@@ -71,5 +87,27 @@ defmodule Dummy.Session do
     |> put_change(:email, email)
     |> put_change(:user_id, user_id)
     |> put_change(:id, user_id)
+  end
+
+  def cache_relations(changeset, []), do: changeset
+  def cache_relations(changeset, [key|keys]) when is_atom(key) do
+    %{related: class, owner_key: field} = __MODULE__.__schema__(:association, key)
+
+    changeset
+    |> get_field(field)
+    |> case do
+      nil -> {:done, changeset}
+      id -> {:ok, id}
+    end
+    |> case do
+      {:ok, id} -> {:ok, class |> Repo.get(id)}
+      other -> other
+    end
+    |> case do
+      {:ok, nil} -> changeset |> add_error(field, "no such model")
+      {:ok, model} -> changeset |> put_change(key, model)
+      {:done, changeset} -> changeset
+    end
+    |> cache_relations(keys)
   end
 end

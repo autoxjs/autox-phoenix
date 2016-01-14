@@ -13,8 +13,4 @@ defmodule Dummy.AutoxDefaultsTest do
     assert Autox.default_session_class
       == Dummy.Session
   end
-  test "default_session_header" do
-    assert Autox.default_session_header
-      == "autox-remember-token"
-  end
 end

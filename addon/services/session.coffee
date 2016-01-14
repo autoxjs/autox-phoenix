@@ -41,32 +41,41 @@ SessionService = Service.extend Evented,
 
   login: (params={}) ->
     model = @get "model"
-    {email, password} = params
-    if email? and password?
-      model.set "email", email
-      model.set "password", password
-    {rememberToken} = params
-    if rememberToken?
-      model.set "rememberToken", rememberToken
-    @updateModel()
-
-  logout: ->
-    @destroyModel()
-
-  updateModel: -> 
-    model = @get "model"
-    event = if model.get("isNew") then "login" else "change"
+    @cast(model, params)
     model.save()
     .then (model) =>
-      @trigger event, model
+      @trigger "login", model
       model
 
-  destroyModel: ->
+  logout: ->
     store = @get "store"
     @get "model"
     .destroyRecord()
     .then => 
       @trigger "logout"
       @set "model", store.createRecord("session")
+
+  update: (params={}) ->
+    rememberToken = Cookies.get("remember-token")
+    store = @get "store"
+    @get "model"
+    .destroyRecord()
+    .then (m) =>
+      model = store.createRecord("session", {rememberToken})
+      @cast(model, params)
+      model.save()
+    .then (model) =>
+      @trigger "change"
+      @set "model", model
+
+  cast: (model, params) ->
+    store = @get "store"
+    sessionClass = store.modelFor "session"
+    sessionClass.eachAttribute (name) ->
+      if (value = Ember.get(params, name))?
+        model.set name, value
+    sessionClass.eachRelatedType (name) ->
+      if (value = Ember.get(params, name))?
+        model.set name, value
 
 `export default SessionService`

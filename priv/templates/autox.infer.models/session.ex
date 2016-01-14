@@ -12,19 +12,34 @@ defmodule <%= base %>.Session do
     field :remember_token, :string
   end
 
-  @create_fields ~w(email password)
-  @update_fields @create_fields
-  @optional_fields ~w(remember_me remember_token)
+  @create_fields ~w(email password remember_token)
+  @update_fields ~w()
+  @optional_fields ~w(remember_me)
 
   def create_changeset(model, params\\:empty) do
     model
-    |> cast(params, @create_fields, @optional_fields)
+    |> cast(params, [], @create_fields ++ @optional_fields)
+    |> validate_at_least_one(["email", "remember_token"])
     |> validate_user_authenticity
     |> cache_user_fields
   end
 
   def update_changeset(model, params\\:empty) do 
-    create_changeset(model, params)
+    model
+    |> cast(params, [], @update_fields)
+    |> cache_relations([])
+  end
+
+  def validate_at_least_one(changeset, []) do 
+    changeset |> cast(%{}, @create_fields)
+  end
+  def validate_at_least_one(changeset, [field|fields]) do
+    changeset 
+    |> get_field(field |> String.to_existing_atom)
+    |> case do
+      nil -> validate_at_least_one(changeset, fields)
+      _ -> changeset
+    end
   end
 
   def validate_user_authenticity(%{valid?: false}=c), do: c
@@ -69,5 +84,23 @@ defmodule <%= base %>.Session do
     |> put_change(:email, email)
     |> put_change(:user_id, user_id)
     |> put_change(:id, user_id)
+  end
+
+  def cache_relations(changeset, []), do: changeset
+  def cache_relations(changeset, [key|keys]) do
+    atom = String.to_existing_atom(key)
+    %{related: class, owner_key: field} = __MODULE__.__schema__(:association, atom)
+
+    class
+    |> Repo.get(get_field(changeset, field))
+    |> case do
+      nil -> 
+        changeset
+        |> add_error(field, "no such model")
+        |> cache_relations(keys)
+      model ->
+        changeset
+        |> put_change(atom, model)
+    end
   end
 end
