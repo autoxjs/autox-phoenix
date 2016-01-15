@@ -1,6 +1,11 @@
 defmodule Dummy.Router do
   use Dummy.Web, :router
 
+  def has_owner?(%{owner: %{id: _}}=s) do
+    IO.inspect s
+    true
+  end
+  def has_owner?(_), do: false
   pipeline :api do
     plug :accepts, ["json", "json-api"]
     plug :fetch_session
@@ -14,6 +19,10 @@ defmodule Dummy.Router do
 
   pipeline :auth do
     plug Autox.AuthSessionPlug
+  end
+
+  pipeline :auth2 do
+    plug Autox.AuthSessionPlug, {__MODULE__, :has_owner?}
   end
 
   pipeline :admin do
@@ -40,7 +49,7 @@ defmodule Dummy.Router do
   end
 
   scope "/api", Dummy do
-    pipe_through [:api, :auth, :realtime]
+    pipe_through [:api, :auth, :auth2, :realtime]
 
     the Taco do
       many Shop

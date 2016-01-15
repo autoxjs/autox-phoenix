@@ -32,11 +32,9 @@ defmodule Dummy.Endpoint do
     store: :cookie,
     key: "_dummy_key",
     signing_salt: "tXVNJL9p",
-    http_only: false,
     max_age: 26_280_000 # 10 months
 
   plug CORSPlug,
-    origin: ["http://localhost:4200"],
     headers: CORSPlug.defaults[:headers] ++ ["_dummy_key"],
     expose: ["_dummy_key"]
 

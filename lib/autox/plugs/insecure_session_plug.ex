@@ -52,7 +52,7 @@ defmodule Autox.InsecureSessionPlug do
     conn
     |> Conn.get_req_header(key)
     |> List.first
-    || conn.cookies[key]
+    || conn.cookies[key <> "_cookie"]
   end
 
   defp before_send(sid, config) do
@@ -89,12 +89,12 @@ defmodule Autox.InsecureSessionPlug do
   defp put_cookie(value, conn, %{cookie_opts: opts, key: key}) do 
     conn
     |> Conn.put_resp_header(key, value)
-    |> Conn.put_resp_cookie(key, value, opts)
+    |> Conn.put_resp_cookie(key <> "_cookie", value, opts)
   end
 
   defp delete_cookie(conn, %{cookie_opts: opts, key: key}) do
     conn
     |> Conn.delete_resp_header(key)
-    |> Conn.delete_resp_cookie(key, opts)
+    |> Conn.delete_resp_cookie(key <> "_cookie", opts)
   end
 end
