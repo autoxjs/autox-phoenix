@@ -1,4 +1,4 @@
-defmodule Dummy.Repo.Migrations.CreateChair do
+defmodule Dummy.Repo.Migrations.CreateChairs do
   use Ecto.Migration
 
   def change do

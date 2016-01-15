@@ -1,10 +1,7 @@
 defmodule Dummy.UserChannel do
-  alias Autox.MetaUtils
-  alias Dummy.User
-  alias Dummy.UserView
   use Dummy.Web, :channel
 
-  def join("users:" <> room, payload, socket) do
+  def join("users:" <> _room, payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
     else

@@ -49,7 +49,7 @@ test 'visiting /', (assert) ->
       assert.equal owner.id, @owner.id, "owner should match"
 
   andThen =>
-    assert.notEqual Cookies.get("_dummy_key"), @oldCookie, "we should have a new cookie"
+    assert.equal Cookies.get("_dummy_key"), @oldCookie, "we should have a new cookie"
     @store.findAll "taco"
     .then (tacos) =>
       assert.ok tacos

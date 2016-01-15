@@ -9,7 +9,7 @@ defmodule Autox.Session do
     |> put_change(:remember_token, token)
     |> put_change(:email, email)
     |> put_change(:user_id, user_id)
-    |> put_change(:id, user_id)
+    |> delete_change(:user)
   end
 
   def validate_authenticity(changeset, nil), do: changeset |> add_error(:email, "no such user")
@@ -43,7 +43,7 @@ defmodule Autox.Session do
 
   defmacro __using__(opts) do
     repo = opts[:repo] || Mix.Phoenix.base |> Module.safe_concat("Repo")
-    user = opts[:user] || Mix.Phoenix.base |> Module.safe_concat("user")
+    user = opts[:user] || Mix.Phoenix.base |> Module.safe_concat("User")
     quote location: :keep do
       import Autox.Session
       def validate_user_authenticity(%{valid?: false}=c), do: c

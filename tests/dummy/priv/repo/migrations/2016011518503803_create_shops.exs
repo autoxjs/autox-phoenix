@@ -1,4 +1,4 @@
-defmodule Dummy.Repo.Migrations.CreateShop do
+defmodule Dummy.Repo.Migrations.CreateShops do
   use Ecto.Migration
 
   def change do

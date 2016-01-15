@@ -44,7 +44,7 @@ defmodule Dummy.SeedSupport do
   def build_session do
     %Session{}
     |> Session.create_changeset(session_attributes)
-    |> Autox.EchoRepo.insert!
+    |> Repo.insert!
   end
 
   def build_user do

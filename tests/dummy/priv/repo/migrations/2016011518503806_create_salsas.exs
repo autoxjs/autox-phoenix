@@ -1,4 +1,4 @@
-defmodule Dummy.Repo.Migrations.CreateSalsa do
+defmodule Dummy.Repo.Migrations.CreateSalsas do
   use Ecto.Migration
 
   def change do

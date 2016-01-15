@@ -56,8 +56,15 @@ defmodule Autox.ResourceController do
         end
       end
 
+      def show(conn, %{"model" => nil}) do
+        show_core(conn, nil)
+      end
       def show(conn, %{"model" => model}) do
-        model = model |> repo(conn).preload(preload_fields)
+        model = repo(conn)
+        |> apply(:preload, [model, preload_fields])
+        show_core(conn, model)
+      end
+      defp show_core(conn, model) do
         meta = conn |> MetaUtils.from_conn
         conn |> render("show.json", data: model, meta: meta)
       end

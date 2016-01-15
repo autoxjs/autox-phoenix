@@ -1,4 +1,4 @@
-defmodule Dummy.Repo.Migrations.AlterShop do
+defmodule Dummy.Repo.Migrations.AlterShops do
   use Ecto.Migration
 
   def change do

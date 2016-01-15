@@ -11,7 +11,6 @@ module 'Acceptance: SessionCookie',
     ###
     @store = @application.__container__.lookup("service:store")
     @session = @application.__container__.lookup("service:session")
-    @socket = @application.__container__.lookup("service:socket")
     @userParams =
       email: "test@test.test"
       password: "password123"
@@ -61,4 +60,4 @@ test 'visiting /', (assert) ->
       assert.ok owner
       assert.ok owner.get('id')
       assert.ok @oldCookie
-      assert.notEqual @oldCookie, Cookies.get("_dummy_key"), "should have changed the cookie"
+      assert.equal @oldCookie, Cookies.get("_dummy_key"), "cookies stay the same"

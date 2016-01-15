@@ -20,7 +20,7 @@ defmodule Dummy.SessionControllerTest do
     assert conn |> Su.logged_in?
     assert %{"data" => data} = conn |> json_response(201)
     assert %{
-      "id" => ^user_id,
+      "id" => _,
       "type" => "sessions",
       "attributes" => attributes,
       "relationships" => %{"user" => user_relation}
@@ -78,7 +78,7 @@ defmodule Dummy.SessionControllerTest do
     |> ensure_recycled
     |> patch(path, %{"data" => data})
 
-    refute apiv4_key == conn |> get_resp_header("_dummy_key") |> List.first
+    assert apiv4_key == conn |> get_resp_header("_dummy_key") |> List.first
     session = conn
     |> ensure_recycled
     |> get("/api/sessions/33", %{})
@@ -111,7 +111,7 @@ defmodule Dummy.SessionControllerTest do
     |> get("/api/sessions/33", %{})
     |> Su.current_session
 
-    assert session.id == user_id
+    assert session.id
     assert session.user_id == user_id
     assert session.owner_id == owner.id
   end

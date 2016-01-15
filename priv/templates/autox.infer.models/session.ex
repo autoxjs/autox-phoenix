@@ -5,20 +5,21 @@ defmodule <%= base %>.Session do
   use Autox.Session, 
     repo: Repo, 
     user: User
-  @primary_key false
-  schema "virtual:session-authentication" do
+  schema "sessions" do
     belongs_to :user, User
-    field :id, :integer
-    field :email, :string
     field :password, :string, virtual: true
-    field :remember_me, :boolean
+    field :remember_me, :boolean, virtual: true
+    field :email, :string
     field :remember_token, :string
+    timestamps
   end
 
   @create_fields ~w(email password remember_token)
   @update_fields ~w()
   @optional_fields ~w(remember_me)
+  @preload_fields ~w(user)a
 
+  def preload_fields, do: @preload_fields
   def create_changeset(model, params\\:empty) do
     model
     |> cast(params, [], @create_fields ++ @optional_fields)

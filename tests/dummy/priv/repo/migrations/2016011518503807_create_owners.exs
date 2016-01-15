@@ -1,4 +1,4 @@
-defmodule Dummy.Repo.Migrations.CreateOwner do
+defmodule Dummy.Repo.Migrations.CreateOwners do
   use Ecto.Migration
 
   def change do

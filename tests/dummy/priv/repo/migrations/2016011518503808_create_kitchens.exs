@@ -1,4 +1,4 @@
-defmodule Dummy.Repo.Migrations.CreateKitchen do
+defmodule Dummy.Repo.Migrations.CreateKitchens do
   use Ecto.Migration
 
   def change do

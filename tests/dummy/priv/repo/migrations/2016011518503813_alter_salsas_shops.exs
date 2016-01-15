@@ -1,4 +1,4 @@
-defmodule Dummy.Repo.Migrations.AlterSalsasShopsRelationship do
+defmodule Dummy.Repo.Migrations.AlterSalsasShops do
   use Ecto.Migration
 
   def change do
