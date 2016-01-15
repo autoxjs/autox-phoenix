@@ -1,6 +1,7 @@
 `import Ember from 'ember'`
 
-{RSVP, Service, Evented, inject, computed: {alias}} = Ember
+{RSVP, Service, Evented, isBlank, inject, computed} = Ember
+{alias} = computed
 
 SessionService = Service.extend Evented,
   store: inject.service("store")
@@ -8,7 +9,20 @@ SessionService = Service.extend Evented,
   loggedIn: alias "model.loggedIn"
   initDeference: RSVP.defer()
   self: alias "initDeference.promise"
-  instanceInit: ->
+  cookie: computed "cookieKey",
+    get: -> 
+      key = @get "cookieKey"
+      Cookies.get key
+    set: (_, cookie) ->
+      key = @get "cookieKey"
+      if isBlank cookie
+        Cookies.remove key
+      else
+        Cookies.set key, cookie, expires: 365
+      cookie
+
+  instanceInit: (cookieKey) ->
+    @set "cookieKey", cookieKey
     store = @get "store"
     store.findAll "session"
     .then (sessions) =>
@@ -56,17 +70,12 @@ SessionService = Service.extend Evented,
       @set "model", store.createRecord("session")
 
   update: (params={}) ->
-    rememberToken = Cookies.get("remember-token")
-    store = @get "store"
-    @get "model"
-    .destroyRecord()
-    .then (m) =>
-      model = store.createRecord("session", {rememberToken})
-      @cast(model, params)
-      model.save()
+    model = @get "model"
+    @cast(model, params)
+    model.save()
     .then (model) =>
-      @trigger "change"
-      @set "model", model
+      @trigger "change", model
+      model
 
   cast: (model, params) ->
     store = @get "store"

@@ -16,6 +16,7 @@ defmodule Dummy.SessionControllerTest do
       "type" => "sessions",
       "attributes" => %{"email" => email, "password" => "password123"} }
     conn = conn |> post(path, %{"data" => data})
+    assert conn |> get_resp_header("_dummy_key") |> List.first
     assert conn |> Su.logged_in?
     assert %{"data" => data} = conn |> json_response(201)
     assert %{
@@ -117,11 +118,14 @@ defmodule Dummy.SessionControllerTest do
     path = conn |> session_path(:create)
     data = %{ "type" => "sessions", "attributes" => %{"email" => email, "password" => "password123"} }
     conn = conn |> post(path, %{"data" => data})
+    dummy_key = conn |> get_resp_header("_dummy_key") |> List.first
     path = conn |> session_path(:delete)
+    conn = conn |> ensure_recycled |> delete(path, %{})
     conn
-    |> ensure_recycled
-    |> delete(path, %{})
     |> Su.logged_in?
     |> refute
+
+    refute dummy_key == conn |> get_resp_header("_dummy_key") |> List.first
+
   end
 end

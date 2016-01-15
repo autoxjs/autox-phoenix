@@ -1,6 +1,6 @@
 # Takes two parameters: container and application
-initialize = (instance) ->
-  instance.lookup("service:session").instanceInit()
+initialize = (application) ->
+  application.inject "adapter", "session", "service:session"
 
 SessionInitializer =
   name: 'session'

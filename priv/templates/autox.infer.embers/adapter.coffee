@@ -4,5 +4,6 @@
 <%= class %>Adapter = Adapter.extend
   host: ENV.host
   namespace: ENV.namespace
+  cookieKey: ENV.cookieKey
 
 `export default <%= class %>Adapter`

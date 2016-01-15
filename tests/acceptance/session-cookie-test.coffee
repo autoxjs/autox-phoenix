@@ -28,6 +28,7 @@ test 'visiting /', (assert) ->
     @session.logout() if @session.get('loggedIn')
 
   andThen =>
+    assert.equal @session.get("cookieKey"), "_dummy_key"
     @session.login @userParams
 
   andThen =>
