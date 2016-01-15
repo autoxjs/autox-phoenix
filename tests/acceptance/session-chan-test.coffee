@@ -64,6 +64,13 @@ test 'visiting /', (assert) ->
       @tacoTestCtn.flag = true
     @chan.on "destroy", ->
       @tacoTestCtn.kill = true
+    @owner = @store.createRecord "owner", name: "death 2 sessions"
+    @owner.save()
+
+  andThen =>
+    @session.update owner: @owner
+
+  andThen =>
     @taco = @store.createRecord "taco",
       name: "steak al pastor"
       calories: 666

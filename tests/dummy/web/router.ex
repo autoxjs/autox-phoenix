@@ -1,10 +1,7 @@
 defmodule Dummy.Router do
   use Dummy.Web, :router
 
-  def has_owner?(%{owner: %{id: _}}=s) do
-    IO.inspect s
-    true
-  end
+  def has_owner?(%{owner: %{id: _}}=s), do: true
   def has_owner?(_), do: false
   pipeline :api do
     plug :accepts, ["json", "json-api"]

@@ -68,6 +68,7 @@ defmodule Dummy.SessionControllerTest do
     path = conn |> session_path(:create)
     data = %{ "type" => "sessions", "attributes" => %{"email" => email, "password" => "password123"} }
     conn = conn |> post(path, %{"data" => data})
+    apiv4_key = conn |> get_resp_header("_dummy_key") |> List.first
     path = conn |> session_path(:update)
     data = %{
       "type" => "sessions",
@@ -75,8 +76,9 @@ defmodule Dummy.SessionControllerTest do
     }
     conn = conn
     |> ensure_recycled
-    |> put(path, %{"data" => data})
+    |> patch(path, %{"data" => data})
 
+    refute apiv4_key == conn |> get_resp_header("_dummy_key") |> List.first
     session = conn
     |> ensure_recycled
     |> get("/api/sessions/33", %{})

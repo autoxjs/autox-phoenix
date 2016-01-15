@@ -6,8 +6,23 @@ defmodule Dummy.BroadcastSessionPlugTest do
   
   setup do
     user = build_user
-    conn = conn() 
-    |> post("/api/sessions", %{"data" => %{"type" => "sessions", "attributes" => session_attributes}})
+    owner = build_owner
+    relationships = %{
+      "owner" => %{
+        "data" => %{
+          "id" => owner.id,
+          "type" => "owners"
+        }
+      }
+    }
+    conn = conn()
+    |> post("/api/sessions", %{
+      "data" => %{
+        "type" => "sessions", 
+        "attributes" => session_attributes, 
+        "relationships" => relationships
+      }
+    })
 
     {:ok, socket} = UserSocket |> connect(%{"user_id" => user.id})
     topic = "users:#{user.id}"

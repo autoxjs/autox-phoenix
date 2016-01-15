@@ -16,6 +16,7 @@ module 'Acceptance: SessionCookie',
       email: "test@test.test"
       password: "password123"
     Cookies.remove "remember-token"
+    Cookies.remove "_dummy_key"
     return
 
   afterEach: ->
@@ -33,21 +34,22 @@ test 'visiting /', (assert) ->
 
   andThen =>
     assert.ok @session.get("loggedIn"), "we should be logged in"
+    @oldCookie = Cookies.get("_dummy_key")
+    assert.ok @oldCookie
+    assert.equal @oldCookie, @session.get("cookie")
+    @owner = @store.createRecord "owner",
+      name: "Daryl Hammond"
+    @owner.save()
+
+  andThen =>
+    @session.update owner: @owner
+
+  andThen =>
     @store.findAll "taco"
     .then (tacos) ->
       assert.ok tacos, "we should be able to access auth stuff"
     .catch (errors) ->
       assert.notOk errors, "we should not get here"
-
-  andThen =>
-    @owner = @store.createRecord "owner",
-      name: "Daryl Hammond"
-    @owner.save()
-  andThen =>
-    @oldCookie = Cookies.get("_dummy_key")
-    session = @session.get("model")
-    session.set "owner", @owner
-    session.save()
 
   andThen =>
     @session
