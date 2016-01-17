@@ -3,6 +3,19 @@ defmodule Dummy.Router do
 
   def has_owner?(%{owner: %{id: _}}), do: true
   def has_owner?(_), do: false
+  @moduledoc """
+  Upcoming:
+  ## Characteristics
+  Characteristics should be a bit like the regular plug pipeline,
+  except it's all compile-time manifest about the underlining data.
+
+  For example:
+  characteristics :physical do
+    is Filmable
+    is Historical
+    is GridLocateable, {:x, :y, :z}
+  end
+  """
   pipeline :api do
     plug :accepts, ["json", "json-api"]
     plug :fetch_session
