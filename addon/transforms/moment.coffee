@@ -10,6 +10,6 @@ MomentTransform = DS.Transform.extend
   serialize: (deserialized) ->
     return if Ember.isBlank deserialized
     moment deserialized
-    .format()
+    .toISOString()
 
 `export default MomentTransform`
