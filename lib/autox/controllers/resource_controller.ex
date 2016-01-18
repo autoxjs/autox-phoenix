@@ -16,6 +16,7 @@ defmodule Autox.ResourceController do
       alias Autox.ContextUtils
       alias Autox.ChangesetUtils
       alias Autox.MetaUtils
+      alias Autox.QueryUtils
       @collection_key Module.get_attribute(__MODULE__, :collection_key) 
       || AtomExt.infer_collection_key(__MODULE__)
 
@@ -24,7 +25,7 @@ defmodule Autox.ResourceController do
       def repo(conn), do: @repo || ContextUtils.get!(conn, :repo)
       def preload_fields, do: []
 
-      def index_query(_conn, _params), do: infer_model_module
+      def index_query(_conn, params), do: infer_model_module |> QueryUtils.construct(params)
       def index(conn, params) do
         models = conn
         |> index_query(params)

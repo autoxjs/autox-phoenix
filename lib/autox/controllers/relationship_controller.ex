@@ -15,6 +15,7 @@ defmodule Autox.RelationshipController do
       alias Autox.RelationUtils, as: Ru
       alias Autox.ContextUtils, as: Cu
       alias Autox.BreakupUtils, as: Bu
+      alias Autox.QueryUtils, as: Qu
       alias Autox.MetaUtils, as: Mu
       
       def repo(conn), do: @repo || Cu.get!(conn, :repo)
@@ -29,10 +30,11 @@ defmodule Autox.RelationshipController do
         |> render("show.json", data: model, meta: meta)
       end
 
-      def index(conn, %{"parent" => parent}) do
+      def index(conn, %{"parent" => parent}=p) do
         association_key = Rc.infer_relationship_field(conn)
         models = parent
         |> assoc(association_key)
+        |> Qu.construct(p)
         |> repo(conn).all
         meta = conn |> Mu.from_conn
         conn

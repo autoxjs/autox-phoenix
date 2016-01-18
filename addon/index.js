@@ -6,6 +6,7 @@ import RelationshipSerializer from './serializers/relationship';
 import Payload from './utils/payload';
 import SessionStateMixin from './mixins/session-state';
 import CookieCredentialsMixin from './mixins/cookie-credentials';
+import QueryUtils from './utils/query';
 export {
   ApplicationAdapter,
   RelationshipAdapter,
@@ -14,5 +15,6 @@ export {
   RelationshipSerializer,
   Payload,
   SessionStateMixin,
-  CookieCredentialsMixin
+  CookieCredentialsMixin,
+  QueryUtils
 };
