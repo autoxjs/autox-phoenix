@@ -25,16 +25,18 @@ defmodule Autox.QueryUtils do
   def consider_filtering(class, key, opval) when is_binary(opval) do
     key = key |> String.to_existing_atom
     case opval do
-      "==null"  -> class |> where([x], is_nil(field(x, ^key)))
-      "=="<>val -> class |> where([x], field(x, ^key) == ^val)
-      "!=null"  -> class |> where([x], not is_nil(field(x, ^key)))
-      "!="<>val -> class |> where([x], field(x, ^key) != ^val)
-      "<="<>val -> class |> where([x], field(x, ^key) <= ^val)
-      ">="<>val -> class |> where([x], field(x, ^key) >= ^val)
-      "<"<>val  -> class |> where([x], field(x, ^key) < ^val)
-      ">"<>val  -> class |> where([x], field(x, ^key) > ^val)
-      "~"<>val  -> class |> where([x], like(field(x, ^key), ^val))
-      "i~"<>val -> class |> where([x], ilike(field(x, ^key), ^val))
+      "==null"   -> class |> where([x], is_nil(field(x, ^key)))
+      "=="<>val  -> class |> where([x], field(x, ^key) == ^val)
+      "!=null"   -> class |> where([x], not(is_nil(field(x, ^key))))
+      "!="<>val  -> class |> where([x], field(x, ^key) != ^val)
+      "<="<>val  -> class |> where([x], field(x, ^key) <= ^val)
+      ">="<>val  -> class |> where([x], field(x, ^key) >= ^val)
+      "!<"<>val  -> class |> where([x], not(field(x, ^key) < ^val))
+      "<"<>val   -> class |> where([x], field(x, ^key) < ^val)
+      "!>"<>val  -> class |> where([x], not(field(x, ^key) > ^val))
+      ">"<>val   -> class |> where([x], field(x, ^key) > ^val)
+      "~"<>val   -> class |> where([x], like(field(x, ^key), ^val))
+      "i~"<>val  -> class |> where([x], ilike(field(x, ^key), ^val))
     end
   end
   def consider_filtering(class, key, [opval|opvals]) do

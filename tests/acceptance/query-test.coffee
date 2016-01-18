@@ -23,7 +23,7 @@ test 'visiting /', (assert) ->
     query = new QueryUtils()
     query.orderBy "name", "desc"
     query.filterBy "insertedAt", ">=", moment()
-    query.filterBy "insertedAt", "<", moment()
+    query.filterBy "insertedAt", "!<", moment()
     query.pageBy offset: 1, limit: 3
     @store
     .query "shop", query.toParams()
