@@ -2,6 +2,10 @@
 
 {Service, Evented, inject, RSVP} = Ember
 
+BadUserError = """
+You attempt to establish socket connection failed,
+I expected an non-null user, but got a null user.
+"""
 errMsg = """
 You tried to create a channel synchronously, 
 but the socket hasn't connected yet.
@@ -43,9 +47,14 @@ SocketService = Service.extend Evented,
     session.on "logout", =>
       @socket?.disconnect => @trigger "disconnect"
     session.on "login", =>
-      id = session.get("id")
-      @socket = new Socket socketNamespace, params: user_id: id
-      @socket.connect()
+      session
+      .get("model")
+      .get("user")
+      .then (user) =>
+        id = user.get "id"
+        throw BadUserError
+        @socket = new Socket socketNamespace, params: user_id: id
+        @socket.connect()
       @socket.onOpen => @trigger "connect"
       @socket.onClose => @trigger "disconnect"
       @socket.onError => @trigger "error"
