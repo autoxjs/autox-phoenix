@@ -32,7 +32,10 @@ SessionService = Service.extend Evented,
     store.findAll "session"
     .then (sessions) =>
       session = sessions.objectAt(0)
-      session ?= store.createRecord "session"
+      if session?
+        @trigger "login", session
+      else
+        session = store.createRecord "session"
       @set "model", session
     .catch (errors) =>
       @set "model", store.createRecord "session"
