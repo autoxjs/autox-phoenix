@@ -3,6 +3,11 @@
 {RSVP, Service, Evented, isBlank, inject, computed} = Ember
 {alias} = computed
 
+NullModelError = (key) -> """
+  You called SessionService.connect with argument '#{key}',
+  but is currently null on the session model.
+  """
+
 SessionService = Service.extend Evented,
   store: inject.service("store")
   id: alias "model.id"
@@ -43,6 +48,7 @@ SessionService = Service.extend Evented,
     @get "model"
     .get key
     .then (model) =>
+      throw NullModelError(key) if isBlank model 
       @channelFor(key)
       .connect model
 

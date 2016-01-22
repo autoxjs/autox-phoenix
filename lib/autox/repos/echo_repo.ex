@@ -13,11 +13,12 @@ defmodule Autox.EchoRepo do
 
   def insert(%{valid?: false}=changeset), do: {:error, changeset}
   def insert(%{model: model, changes: changes}) do
-    model = model 
-    |> Map.merge(changes)
+    x = model |> Map.merge(changes)
+    fields = Autox.ModelUtils.fields(model.__struct__)
+    model = x
     |> Map.pop(:id)
     |> case do
-      {nil, map} -> map |> Map.put(:id, calculate_id(changes))
+      {nil, map} -> map |> Map.put(:id, x |> Map.take(fields) |> calculate_id)
       {id, map} -> map |> Map.put(:id, id)
     end
     {:ok, model}
@@ -50,6 +51,16 @@ defmodule Autox.EchoRepo do
   defp ok?({:ok, x}, f), do: f.(x)
   defp ok?(whatever, _), do: whatever
 
+  def get_by!(class, [id: id]) do
+    class |> get!(id)
+  end
+
+  def get!(class, id) do
+    case get(class, id) do
+      nil -> raise Ecto.NoResultsError, message: "no results #{id}"
+      x -> x
+    end
+  end
   def get(class, id) do
     use Pipe
     result = pipe_with &ok?/2,
@@ -57,6 +68,7 @@ defmodule Autox.EchoRepo do
 
     case result do
       {:ok, model} -> model
+      {:error, _} -> nil
       nil -> nil
     end
   end

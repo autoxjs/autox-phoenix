@@ -1,5 +1,8 @@
 defmodule Autox.ModelUtils do
   
+  def fields(class) do
+    class.__schema__(:fields)
+  end  
   def has_one_throughs(class) do
     class
     |> relationships
