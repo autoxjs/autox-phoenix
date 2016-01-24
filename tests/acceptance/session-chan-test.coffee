@@ -16,6 +16,7 @@ module 'Acceptance: SessionChan',
       email: "acceptance-session-#{Math.random()}@test.co"
       password: "password123"
     Cookies.remove "remember-token"
+    Cookies.remove "_dummy_key"
     return
 
   afterEach: ->
@@ -23,9 +24,6 @@ module 'Acceptance: SessionChan',
 
 test 'visiting /', (assert) ->
   visit '/'
-
-  andThen =>
-    @session.logout() if @session.get('loggedIn')
 
   andThen =>
     @user = @store.createRecord "user", @userParams

@@ -31,15 +31,13 @@ SessionService = Service.extend Evented,
     store = @get "store"
     store.findAll "session"
     .then (sessions) =>
-      session = sessions.objectAt(0)
-      if session?
-        @trigger "login", session
-      else
-        session = store.createRecord "session"
+      session = sessions.objectAt 0
+      session ?= store.createRecord "session"
       @set "model", session
     .catch (errors) =>
       @set "model", store.createRecord "session"
     .finally =>
+      @trigger("login", @get("model")) if @get("model.id")
       @get("initDeference").resolve(@)
   channelFor: (key) ->
     key = "#{key}-chan"

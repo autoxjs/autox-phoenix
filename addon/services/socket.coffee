@@ -1,6 +1,6 @@
 `import Ember from 'ember'`
 
-{Service, Evented, inject, RSVP} = Ember
+{isBlank, Service, Evented, inject, RSVP} = Ember
 
 BadUserError = """
 You attempt to establish socket connection failed,
@@ -52,11 +52,11 @@ SocketService = Service.extend Evented,
       .get("user")
       .then (user) =>
         id = user.get "id"
-        throw BadUserError
+        throw BadUserError if isBlank id
         @socket = new Socket socketNamespace, params: user_id: id
         @socket.connect()
-      @socket.onOpen => @trigger "connect"
-      @socket.onClose => @trigger "disconnect"
-      @socket.onError => @trigger "error"
+        @socket.onOpen => @trigger "connect"
+        @socket.onClose => @trigger "disconnect"
+        @socket.onError => @trigger "error"
 
 `export default SocketService`

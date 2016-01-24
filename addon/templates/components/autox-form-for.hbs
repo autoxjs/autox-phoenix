@@ -1,0 +1,26 @@
+{{#em-form-for model action="save" as |f|}}
+  {{#each formFields as |field|}}
+    {{#if field.canDisplay}}
+      {{#if field.isBasic}}
+        {{#component field.componentName f 
+          name=field.name
+          label=field.label
+          prefix=field.prefix
+          disabled=field.canModify}}
+          <small class="autox-form-for__help-block">{{field.description}}</small>
+        {{/component}}
+      {{else}}
+        {{#em-select-field f 
+          name=field.name
+          label=field.label
+          options=field.choices
+          prefix=field.prefix
+          disabled=field.canModify 
+          as |choice|}}
+          {{component field.selectChoiceComponent model=choice}}
+        {{/em-select-field}}
+        <small class="autox-form-for__help-block">{{field.description}}</small>
+      {{/if}}
+    {{/if}}
+  {{/each}}
+{{/em-form-for}}
