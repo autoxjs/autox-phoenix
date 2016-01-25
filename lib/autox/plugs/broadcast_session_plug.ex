@@ -30,6 +30,8 @@ defmodule Autox.BroadcastSessionPlug do
       {:create, target, view} -> Au.update(conn.assigns, view, target)
       {:update, target, view} -> Au.update(conn.assigns, view, target)
       {:delete, target, view} -> Au.destroy(conn.assigns, view, target)
+      {:relate, target, _} -> conn.assigns |> Map.get(:relate) |> elem(0) |> Au.refresh(target)
+      {:unrelate, target, _} -> conn.assigns |> Map.get(:unrelate) |> elem(0) |> Au.refresh(target)
       {_, _, _} -> nil
     end
     conn

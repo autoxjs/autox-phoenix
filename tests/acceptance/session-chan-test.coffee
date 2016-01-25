@@ -1,7 +1,7 @@
 `import Ember from 'ember'`
 `import { module, test } from 'qunit'`
 `import startApp from '../../tests/helpers/start-app'`
-
+{RSVP} = Ember
 module 'Acceptance: SessionChan',
   beforeEach: ->
     @application = startApp()
@@ -26,10 +26,14 @@ test 'visiting /', (assert) ->
   visit '/'
 
   andThen =>
+    @shop = @store.createRecord "shop",
+      name: "jackson Davis Shop"
+      location: "nowhere"
     @user = @store.createRecord "user", @userParams
-    @user.save()
+    RSVP.all [@user.save(), @shop.save()]
   
   andThen =>
+    assert.ok @shop.get("id"), "shop should be ok"
     assert.notOk @session.get("loggedIn")
     assert.ok @user.get("id"), "user id should be present"
     @session.on "login", ->
@@ -75,15 +79,21 @@ test 'visiting /', (assert) ->
     @taco.save()
 
   andThen =>
-    assert.ok @chan.tacoTestCtn.flag, true, "the server should have beamed down the broadcast"
+    @refreshFlag = false
+    @chan.on "refresh", ({type, id}) =>
+      assert.equal type, "tacos"
+      assert.equal id, @taco.get("id")
+      @refreshFlag = true
+    @taco.relate "shops"
+    .associate @shop
+    .save()
+
+  andThen =>
+    assert.ok @refreshFlag, "we should have received an order to refresh"
+    assert.ok @chan.tacoTestCtn.flag, "the server should have beamed down the broadcast"
     assert.ok @taco.id
     assert.equal @taco.get("name"), "steak al pastor"
     assert.equal @taco.get("calories"), 666
-    @taco.destroyRecord()
-
-  andThen =>
-    assert.equal @chan.tacoTestCtn.kill, true
-    assert.notOk @store.peekRecord "taco", @taco.id
 
     @session.logout()
 

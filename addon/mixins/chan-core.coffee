@@ -25,7 +25,13 @@ ChanCoreMixin = Mixin.create
       chan.on "notify", (payload) => @trigger "notify", payload
       chan.on "update", (payload) => @trigger "update", payload
       chan.on "destroy", (payload) => @trigger "destroy", payload
+      chan.on "refresh", (payload) => @trigger "refresh", payload
       @joinChan chan
+
+  onRefresh: Ember.on "refresh", ({type, id}) ->
+    type = dashingularize(type)
+    if (record = @get("store").peekRecord type, id)? and not record.get("isReloading")
+      Ember.run -> record.reload()
 
   onNotify: Ember.on "notify", ({level, message}) ->
     level ?= "info"

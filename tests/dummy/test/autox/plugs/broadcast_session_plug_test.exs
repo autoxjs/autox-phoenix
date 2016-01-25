@@ -87,5 +87,7 @@ defmodule Dummy.BroadcastSessionPlugTest do
     |> post(path, %{"data" => data})
     |> response(204)
     |> assert
+    taco_id = taco.id
+    assert_broadcast "refresh", %{id: ^taco_id, type: :tacos}
   end
 end

@@ -2,7 +2,7 @@
 
 moduleForModel 'shop', 'Unit | Serializer | application',
   # Specify the other units that are required for this test.
-  needs: ['serializer:application', 'model:owner', 'model:salsa', 'model:taco']
+  needs: ['serializer:application', 'model:owner', 'model:salsa', 'model:taco', 'model:history']
 
 # Replace this with your real tests.
 test 'it extracts hashes properly', (assert) ->

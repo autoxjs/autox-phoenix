@@ -11,7 +11,8 @@ moduleForModel 'shop', 'Unit | Adapter | relationship', {
     'model:taco', 
     'model:relationship',
     'model:chair',
-    'model:kitchen']
+    'model:kitchen',
+    'model:history']
 }
 
 # Replace this with your real tests.
