@@ -1,4 +1,6 @@
 `import Ember from 'ember'`
+`import moment from 'moment'`
+
 {Object, A, isBlank} = Ember
 Payload = Object.extend
   init: ->
@@ -21,7 +23,7 @@ Payload = Object.extend
     type = t if (t = typeof value) in ["number", "string", "boolean"]
     type ?= switch value.constructor
       when Date then "date"
-      when Moment then "moment"
+      when moment().constructor then "moment"
       else null
     @attributeMetas[key] = 
       type: type
