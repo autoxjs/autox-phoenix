@@ -8,6 +8,7 @@ defmodule Dummy.Salsa do
     field :whatever, :string, virtual: true
     has_many :salsas_shops_relationship, Dummy.SalsasShopsRelationship
     has_many :shops, through: [:salsas_shops_relationship, :shop]
+    has_many :histories, {"salsa_histories", Dummy.History}, foreign_key: :recordable_id
     timestamps
   end
 

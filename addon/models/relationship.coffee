@@ -2,6 +2,11 @@
 `import DS from 'ember-data'`
 `import Payload from '../utils/payload'`
 {isBlank, computed} = Ember
+missUseError = (key, child) ->
+  "You tried to associate a dirty '#{child.constructor.modelName}' to field '#{key}'," +
+  "You should just pass in a regular hash instead"
+retardedUserError = (key, x) ->
+  "You tried to associate some dumb shit '#{x}' into field '#{key}'"
 
 Relationship = DS.Model.extend
   relatedParentModelName: DS.attr "string", virtual: true
@@ -18,7 +23,16 @@ Relationship = DS.Model.extend
     parent
 
   relatedChild: computed set: (key, child) ->
-    @set "relatedChildId", @assertCorrectType(child).get("id")
+    if child?.id? and child?.constructor?.modelName?
+      @set "relatedChildId", @assertCorrectType(child).get("id")
+    else if child?.constructor?.modelName?
+      throw missUseError(key, child)
+    else if isBlank child
+      throw retardedUserError(key)
+    else if typeof child is "object"
+      @set(key, value) for key, value of child
+    else
+      throw retardedUserError(key, child)
     child
 
   relatedChildMeta: computed set: (key, meta) ->
@@ -35,7 +49,7 @@ Relationship = DS.Model.extend
     expected = child?.constructor?.modelName
     actual = @get("relatedChildModelName")
     return child if expected? and expected is actual
-    throw new Error "Expected a child of type #{expected} but got #{actual}"
+    throw "Expected a child of type #{expected} but got #{actual}"
 
   get: (key) ->
     if isBlank(@[key]) then @get("relatedAttributes").get(key) else @_super(arguments...)

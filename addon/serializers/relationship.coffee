@@ -3,9 +3,9 @@
 
 RelationshipSerializer = DS.JSONAPISerializer.extend
   serialize: (snapshot, options) ->
-    data =
-      id: snapshot.attr("relatedChildId")
+    data = 
       type: @payloadKeyFromModelName snapshot.attr("relatedChildModelName")
+    data.id = snapshot.attr("relatedChildId") if snapshot.attr("relatedChildId")?
     attributes = snapshot.attr("relatedAttributes")
     attributes.eachAttribute (key, meta) =>
       @serializeAttribute attributes, data, key, meta

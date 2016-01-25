@@ -14,9 +14,8 @@ Model = DS.Model.extend RelateableMixin,
   updatedAt: DS.attr "moment"
   
   whatever: DS.attr "string"
-  
 
-  
+  histories: DS.hasMany "history", async: true
   shops: DS.hasMany "shop", async: true
   
 

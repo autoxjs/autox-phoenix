@@ -48,7 +48,7 @@ defmodule Dummy.Router do
     end
 
     the Salsa do
-      many Shop
+      many [Shop, History]
     end
 
     the Owner do
