@@ -1,6 +1,6 @@
 `import { moduleFor, test } from 'ember-qunit'`
 
-moduleFor 'service:context', 'Unit | Service | context', {
+moduleFor 'service:workflow', 'Unit | Service | workflow', {
   # Specify the other units that are required for this test.
   # needs: ['service:foo']
 }

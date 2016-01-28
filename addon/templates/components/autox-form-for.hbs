@@ -6,7 +6,7 @@
           name=field.name
           label=field.label
           prefix=field.prefix
-          disabled=field.canModify}}
+          disabled=(not field.canModify)}}
           <small class="autox-form-for__help-block">{{field.description}}</small>
         {{/component}}
       {{else}}
@@ -15,12 +15,21 @@
           label=field.label
           options=field.choices
           prefix=field.prefix
-          disabled=field.canModify 
+          disabled=(not field.canModify) 
           as |choice|}}
-          {{component field.selectChoiceComponent model=choice}}
+          {{component field.selectChoice model=choice}}
         {{/em-select-field}}
         <small class="autox-form-for__help-block">{{field.description}}</small>
       {{/if}}
     {{/if}}
   {{/each}}
+  <div class="autox-form-for__actions">
+    <button class="autox-form-for__button btn btn-primary {{if model.isSaving "disabled"}}" {{action "submit"}}>
+      {{#if model.isSaving}}
+        <span class="fa">Busy</span>
+      {{else}}
+        <span class="fa">Submit</span>
+      {{/if}}
+    </button>
+  </div>
 {{/em-form-for}}

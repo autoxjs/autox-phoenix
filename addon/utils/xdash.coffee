@@ -1,26 +1,30 @@
 `import _ from 'lodash/lodash'`
 `import Ember from 'ember'`
 
-{isEmpty, computed} = Ember
-{isEqualWith, isEqual, isFunction, isRegExp, isString, map} = _
+{isPresent, computed, A} = Ember
+{trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map} = _
+
+consumeEnd = (string, substr) ->
+  if (isOk = endsWith(string, substr))
+    string = trimRight string, substr
+  [isOk, string, substr]
 
 noMatchError = (value) -> "Nothing matched `#{value}`"
-match = (value, matchPair, matchPairs...) ->
-  throw noMatchError(value) unless matchPair?
-  [matcher, action] = matchPair
-  [isEq, newVal] = isEqualWith(matcher, value, matchEqual)
+match = (value, [matcher, action], matchPairs...) ->
+  throw noMatchError(value) unless action?
+  [isEq, newVal] = matchEqual(matcher, value)
   if isEq
     action(newVal)
   else
-    match(value, matchPairs)
+    match(value, matchPairs...)
 
 matchEqual = (matcher, value) ->
   return [true, value] if matcher is _
   return [matcher is value, value] if typeof matcher in ["number", "string"]
   return matcher(value) if isFunction(matcher)
   if isRegExp(matcher) and isString(value)
-    value = matcher.exec(value)[1...]
-    return [isEmpty(value), value]
+    results = matcher.exec(value) ? []
+    return [isPresent(results), results]
   return [isEqual(matcher, value), value]
   
 _computed =
@@ -37,9 +41,10 @@ _computed =
   match: (key, matchers...) ->
     computed key,
       get: ->
-        match @get(key), matchers...
+        boundMatchers = A(matchers).map ([matcher, action]) => [matcher, action.bind(@)] 
+        match @get(key), boundMatchers...
 
-_x = {match, computed: _computed}
+_x = {match, consumeEnd, computed: _computed}
 
 `export {_computed, _x}`
 `export default _x`

@@ -11,7 +11,21 @@ Dumb shit like putting modify: ["show"] is ignored
 ###
 
 Model = DS.Model.extend RelateableMixin,
-  
+  name: DS.attr "string",
+    display: ["show", "index"]
+    modify: ["new", "edit"]
+    description: "Some chairs have specific names"
+
+  reference: DS.attr "string",
+    display: ["new", "edit"]
+    description: "Some reference field that isn't by the user"
+
+  cost: DS.attr "number",
+    display: ["show"]
+    modify: ["new", "edit"]
+    description: "The purchase price in cents of this chair"
+    label: "Purchase Cost (cents)"
+
   insertedAt: DS.attr "moment",
     display: ["show", "index"]
     description: "The time when this model was created"
@@ -26,7 +40,7 @@ Model = DS.Model.extend RelateableMixin,
   updatedAt: DS.attr "moment"
   
   shop: DS.belongsTo "shop",
-    defaultValue: (ctx) -> ctx.fetch("shop")
+    defaultValue: (router) -> router.modelFor "shop"
     async: true
   
 

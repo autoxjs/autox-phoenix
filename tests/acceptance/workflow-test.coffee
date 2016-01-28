@@ -2,7 +2,7 @@
 `import { module, test } from 'qunit'`
 `import startApp from '../../tests/helpers/start-app'`
 
-module 'Acceptance: Context',
+module 'Acceptance: Workflow',
   beforeEach: ->
     @application = startApp()
     ###
@@ -21,8 +21,8 @@ test 'visiting /', (assert) ->
   andThen =>
     assert.equal currentURL(), '/'
     assert.ok @lookup, "the lookup service should be present"
-    @context = @lookup.other("service:context")
-    assert.ok @context, "it should have successfully looked up the context"
+    @workflow = @lookup.other("service:workflow")
+    assert.ok @workflow, "it should have successfully looked up the workflow"
 
-    @context.update "dummy", 44
-    assert.equal 44, @context.fetch "dummy"
+    @workflow.update "dummy", 44
+    assert.equal 44, @workflow.fetch "dummy"
