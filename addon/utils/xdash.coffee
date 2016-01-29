@@ -2,7 +2,7 @@
 `import Ember from 'ember'`
 
 {isBlank, isPresent, computed, A} = Ember
-{trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map, every} = _
+{trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map, every, partial, partialRight, curry, flow} = _
 
 consumeEnd = (string, substr) ->
   if (isOk = endsWith(string, substr))
@@ -28,10 +28,11 @@ matchEqual = (matcher, value) ->
   return [isEqual(matcher, value), value]
 
 isntObject = (x) -> typeof x isnt "object"
-isntFunction = (x) -> not isFunction(x)
-areFunctions = (xs...) -> every xs, isFunction
-arentFunctions = (xs...) -> not arentFunctions(xs)
-isntModel = (x) -> isBlank(model) or isArray(model) or isntObject(model) or arentFunctions(model.get, model.save)
+hasFunctions = (x, fs...) -> every map(fs, (f) -> x[f]), isFunction
+missingFunctions = (x, fs...) -> not hasFunctions x, fs...
+modelChecks = [isBlank, isArray, isntObject, partialRight(missingFunctions, "get", "save")]
+apply = (x) -> (f) -> f x
+isntModel = flow curry(apply), partial(every, modelChecks)
 isModel = (x) -> not isntModel(x)
   
 _computed =
