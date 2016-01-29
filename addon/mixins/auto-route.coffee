@@ -5,6 +5,10 @@
 
 {match, apply} = _computed
 {Mixin, isPresent, computed, inject, isArray, isBlank, String} = Ember
+{isFunction} = _
+
+isntObject = (x) -> typeof x isnt "object"
+isntFunction = (x) -> not isFunction(x)
 
 Core =
   lookup: inject.service("lookup")
@@ -57,7 +61,7 @@ Core =
 
   cleanup: Ember.on "deactivate", ->
     model = @get "controller.model"
-    return if isBlank(model) or isArray(model)
+    return if isBlank(model) or isArray(model) or isntObject(model) or isntFunction(model?.get)
     model.rollbackAttributes() if model?.get "hasDirtyAttributes"
     @workflow.cleanCtx(model, @get("routeAction"))
 
