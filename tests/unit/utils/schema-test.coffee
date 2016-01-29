@@ -33,17 +33,17 @@ test "it should spit out the fields", (assert) ->
 
     fields = SchemaUtils.getFields 
       factory: chairFactory
-      ctx: {}
-      action: "show"
+      ctx:
+        action: "show"
 
     assert.ok fields
-    assert.equal fields.get("length"), 4, "THERE ARE 4 LIGHTS"
+    assert.equal fields.get("length"), 8, "THERE ARE 4 LIGHTS"
 
-    [insertField, sizeField, updateField, shopField] = fields
+    [idField, nameField, refField, costField, insertField, sizeField, updateField, shopField] = fields
     assert.ok insertField, "all four fields should be present"
     assert.equal insertField.get("type"), "moment"
-    assert.notOk insertField.get("canModify")
-    assert.ok insertField.get("canDisplay")
+    assert.notOk insertField.get("canModify"), "insert can't be modified"
+    assert.ok insertField.get("canDisplay"), "insert can be displayed"
     assert.ok insertField.get("isBasic")
     assert.equal insertField.get("componentName"), "em-datetime-field"
     assert.ok sizeField, "all four fields should be present"

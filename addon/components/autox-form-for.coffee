@@ -12,4 +12,8 @@ AutoxFormForComponent = Ember.Component.extend
   ctx: apply "workflow", "model", (wf, model) -> wf.fetchCtx(model)
   formFields: alias "ctx.fields"
 
+  actions:
+    submit: (model) ->
+      @sendAction "action", model
+
 `export default AutoxFormForComponent`

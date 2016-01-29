@@ -40,8 +40,15 @@ Model = DS.Model.extend RelateableMixin,
   updatedAt: DS.attr "moment"
   
   shop: DS.belongsTo "shop",
-    defaultValue: (router) -> router.modelFor "shop"
+    display: ["show"]
+    description: "The shop which owns this chair"
+    defaultValue: (_, store) -> store.findRecord "shop", 1
     async: true
-  
+
+# Self is a meta field that describes how   
+Model.aboutMe =
+  label: "chair id"
+  description: "chairs are objects that belong in shops for people to sit on"
+  display: ["show", "index"]
 
 `export default Model`

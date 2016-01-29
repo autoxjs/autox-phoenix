@@ -23,6 +23,3 @@ test 'visiting /', (assert) ->
     assert.ok @lookup, "the lookup service should be present"
     @workflow = @lookup.other("service:workflow")
     assert.ok @workflow, "it should have successfully looked up the workflow"
-
-    @workflow.update "dummy", 44
-    assert.equal 44, @workflow.fetch "dummy"

@@ -1,7 +1,7 @@
 `import Ember from 'ember'`
 `import {_computed} from '../utils/xdash'`
 `import _ from 'lodash/lodash'`
-`import routeSplit from '../utils/route-split'`
+`import {routeSplit, routeJoin} from '../utils/route-split'`
 
 {match, apply} = _computed
 {Mixin, isPresent, computed, inject, isArray, String} = Ember
@@ -25,7 +25,7 @@ Core =
   defaultModelShowPath: (model) ->
     modelName = model.constructor.modelName
     [prefix, uriName, suffix] = routeSplit @routeName
-    [prefix, modelName, "index"].join(".")
+    routeJoin [prefix, modelName, "index"]
 
   defaultModelCollection: ->
     @store.findAll @get "defaultModelName"
@@ -42,10 +42,9 @@ Core =
 
   afterModel: (model) ->
     action = @get("routeAction")
-    switch action
-      when "new", "edit"
-        @workflow.setupCtx @, model, "new"
-      else model
+    if action in ["new", "edit", "index"] and model?
+      action = "show" if action is "index" and model.id?
+      @workflow.setupCtx @, model, action
 
   modelCreated: (model) ->
     @transitionTo @defaultModelShowPath(model), model

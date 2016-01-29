@@ -3,12 +3,31 @@
     <div class="row">
       <div class="col-xs-12">
         <h2 id="title">Welcome to Ember</h2>
+        {{#if session.loggedIn}}
+          <small>You are logged in!</small>
+        {{/if}}
       </div>
     </div>
   </div>
 </div>
 
 <div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="btn-group">
+        {{#link-to "chairs.index" class="btn btn-default"}}chairs index{{/link-to}}
+        {{#link-to "chairs.new" class="btn btn-default"}}new chair{{/link-to}}
+        {{#link-to "chair.index" 1 class="btn btn-default"}}chair 1{{/link-to}}
+        {{#link-to "chair.edit" 1 class="btn btn-default"}}edit chair 1{{/link-to}}
+      </div>
+      <div class="btn-group">
+        {{#link-to "shops.index" class="btn btn-default"}}shops index{{/link-to}}
+        {{#link-to "shops.new" class="btn btn-default"}}new shop{{/link-to}}
+        {{#link-to "shop.index" 1 class="btn btn-default"}}shop 1{{/link-to}}
+        {{#link-to "shop.edit" 1 class="btn btn-default"}}edit shop 1{{/link-to}}
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col-xs-12">
       {{outlet}}

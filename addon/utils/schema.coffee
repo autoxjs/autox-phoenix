@@ -7,9 +7,9 @@
 {match, apply, access} = _computed
 {alias, empty, or: ifAny} = computed
 {conditional, join} = Macros
-{noop, isFunction} = _
+{noop, isFunction, tap} = _
 
-isPromise = (x) -> isFunction(x.then)
+isPromise = (x) -> isFunction(x?.then)
 
 TextType = /^string&(comment|note|body|description)/
 DateType = /(date|moment|datetime)/
@@ -48,6 +48,8 @@ Field = Object.extend
   autoxSelectChoice: "autox-select-choice"
   userSelectChoice: apply "type", (type) -> "#{type}-select-choice"
   description: alias "meta.options.description"
+  presenter: alias "meta.options.presenter"
+  isRelationship: alias "meta.isRelationship"
 
   preload: (router, store, model) ->
     RSVP.hash
@@ -57,15 +59,15 @@ Field = Object.extend
   preloadDefaults: (router, store, model) ->
     defaultValue = @get "defaultValue"
     name = @get "name"
-    notRelevant = not @get "canDisplay"
-    if notRelevant or @get("action") isnt "new" or isBlank(defaultValue)
+    if (@get("action") isnt "new") or isBlank(defaultValue)
       return RSVP.resolve(@)
     if isFunction(defaultValue)
       defaultValue = defaultValue(router, store, model)
     if isPromise(defaultValue)
-      defaultValue.then (value) => model.set name, value
+      defaultValue.then (value) =>
+        model.set name, value
     else
-      model.set name, value
+      model.set name, defaultValue
       RSVP.resolve(@)
   preloadChoices: (router, store, model) ->
     among = @get "among"
@@ -81,11 +83,30 @@ Field = Object.extend
     RSVP.resolve(@)
 
 class SchemaUtils
-  @getFields = ({factory, ctx}) ->
-    fields = A([])
-    factory.eachAttribute (name, meta) ->
-      fields.pushObject Field.create {name, meta, ctx}
-    factory.eachRelationship (name, meta) ->
-      fields.pushObject Field.create {name, meta, ctx}
-    fields
+  @aboutMeDefault = (factory) ->
+    label: "#{factory.modelName} id"
+    description: "#{factory.modelName} objects are resourceful representations of data"
+    display: ["show", "index"]
+
+  @getIdField = ({factory, ctx}) ->
+    aboutMe = factory.aboutMe ? @aboutMeDefault(factory)
+    meta =
+      type: "string"
+      options: aboutMe
+    Field.create {meta, ctx, name: "id"}
+  @getAttributeFields = ({factory, ctx}) ->
+    tap A(), (fields) ->
+      factory.eachAttribute (name, meta) ->
+        fields.pushObject Field.create {name, meta, ctx}
+
+  @getRelationshipFields = ({factory, ctx}) ->
+    tap A(), (fields) ->
+      factory.eachRelationship (name, meta) ->
+        fields.pushObject Field.create {name, meta, ctx}
+  @getFields = (params) ->
+    A()
+    .pushObjects [@getIdField params]
+    .pushObjects @getAttributeFields params
+    .pushObjects @getRelationshipFields params
+
 `export default SchemaUtils`

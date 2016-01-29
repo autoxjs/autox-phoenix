@@ -1,1 +1,15 @@
+{{#each collection as |model|}}
+  {{#link-to modelPath model class="list-group-item"}}
+    {{#each fields as |field|}}
+      {{#if field.contDisplay}}
+        <div class="autox-collection-for__block">
+          <strong class="autox-show-for__label">{{field.label}} - </strong>
+          <small class="autox-show-for__content">
+            {{txt (get model field.name) type=field.type formatter=field.presenter}}
+          </small>
+        </div>
+      {{/if}}
+    {{/each}}
+  {{/link-to}}
+{{/each}}
 {{yield}}

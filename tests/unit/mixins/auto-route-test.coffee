@@ -1,5 +1,5 @@
 `import Ember from 'ember'`
-`import AutoRouteMixin from '../../../mixins/auto-route'`
+`import AutoRouteMixin from 'autox/mixins/auto-route'`
 `import { module, test } from 'qunit'`
 
 module 'Unit | Mixin | auto route'

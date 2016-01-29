@@ -26,8 +26,7 @@ test 'visiting /', (assert) ->
     assert.ok @lookup.template("application"), "should find application"
     assert.notOk @lookup.template("dogs/index"), "should not find random crap"
     assert.notOk @lookup.template("dogs.index"), "should not find random crap"
-    assert.ok @lookup.template("shops/index"), "should find the shops index"
-    assert.ok @lookup.template("shops.index"), "should find the shops index"
+
     @store.pushPayload "chair",
       data:
         id: 666
@@ -42,3 +41,8 @@ test 'visiting /', (assert) ->
     assert.ok @chair
     assert.equal @chair.constructor.modelName, "chair"
     assert.equal @chair.id, 666
+
+    visit "/chairs/new"
+
+  andThen =>
+    assert.equal currentPath(), "chairs.new"

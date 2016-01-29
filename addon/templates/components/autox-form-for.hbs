@@ -1,4 +1,4 @@
-{{#em-form-for model action="save" as |f|}}
+{{#em-form-for model action="submit" as |f|}}
   {{#each formFields as |field|}}
     {{#if field.canDisplay}}
       {{#if field.isBasic}}
@@ -24,7 +24,7 @@
     {{/if}}
   {{/each}}
   <div class="autox-form-for__actions">
-    <button class="autox-form-for__button btn btn-primary {{if model.isSaving "disabled"}}" {{action "submit"}}>
+    <button class="autox-form-for__button btn btn-primary {{if model.isSaving "disabled"}}" type="submit">
       {{#if model.isSaving}}
         <span class="fa">Busy</span>
       {{else}}
