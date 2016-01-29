@@ -4,7 +4,7 @@
 `import {routeSplit, routeJoin} from '../utils/route-split'`
 
 {match, apply} = _computed
-{Mixin, isPresent, computed, inject, isArray, String} = Ember
+{Mixin, isPresent, computed, inject, isArray, isBlank, String} = Ember
 
 Core =
   lookup: inject.service("lookup")
@@ -57,6 +57,7 @@ Core =
 
   cleanup: Ember.on "deactivate", ->
     model = @get "controller.model"
+    return if isBlank(model) or isArray(model)
     model.rollbackAttributes() if model?.get "hasDirtyAttributes"
     @workflow.cleanCtx(model, @get("routeAction"))
 
