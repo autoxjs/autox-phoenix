@@ -1,8 +1,8 @@
 `import _ from 'lodash/lodash'`
 `import Ember from 'ember'`
 
-{isPresent, computed, A} = Ember
-{trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map} = _
+{isBlank, isPresent, computed, A} = Ember
+{trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map, every} = _
 
 consumeEnd = (string, substr) ->
   if (isOk = endsWith(string, substr))
@@ -26,6 +26,13 @@ matchEqual = (matcher, value) ->
     results = matcher.exec(value) ? []
     return [isPresent(results), results]
   return [isEqual(matcher, value), value]
+
+isntObject = (x) -> typeof x isnt "object"
+isntFunction = (x) -> not isFunction(x)
+areFunctions = (xs...) -> every xs, isFunction
+arentFunctions = (xs...) -> not arentFunctions(xs)
+isntModel = (x) -> isBlank(model) or isArray(model) or isntObject(model) or arentFunctions(model.get, model.save)
+isModel = (x) -> not isntModel(x)
   
 _computed =
   access: (objKey, memKey) ->
@@ -44,7 +51,7 @@ _computed =
         boundMatchers = A(matchers).map ([matcher, action]) => [matcher, action.bind(@)] 
         match @get(key), boundMatchers...
 
-_x = {match, consumeEnd, computed: _computed}
+_x = {match, consumeEnd, isntModel, isModel, isntObject, computed: _computed}
 
 `export {_computed, _x}`
 `export default _x`

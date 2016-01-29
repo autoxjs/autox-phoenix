@@ -1,14 +1,11 @@
 `import Ember from 'ember'`
-`import {_computed} from '../utils/xdash'`
+`import _x from '../utils/xdash'`
 `import _ from 'lodash/lodash'`
 `import {routeSplit, routeJoin} from '../utils/route-split'`
 
+{_computed, isntModel} = _x
 {match, apply} = _computed
 {Mixin, isPresent, computed, inject, isArray, isBlank, String} = Ember
-{isFunction} = _
-
-isntObject = (x) -> typeof x isnt "object"
-isntFunction = (x) -> not isFunction(x)
 
 Core =
   lookup: inject.service("lookup")
@@ -27,7 +24,8 @@ Core =
   .readOnly()
   
   defaultModelShowPath: (model) ->
-    modelName = model.constructor.modelName
+    modelName = model?.constructor?.modelName
+    return if isBlank modelName
     [prefix, uriName, suffix] = routeSplit @routeName
     routeJoin [prefix, modelName, "index"]
 
@@ -61,7 +59,7 @@ Core =
 
   cleanup: Ember.on "deactivate", ->
     model = @get "controller.model"
-    return if isBlank(model) or isArray(model) or isntObject(model) or isntFunction(model?.get)
+    return if isntModel(model)
     model.rollbackAttributes() if model?.get "hasDirtyAttributes"
     @workflow.cleanCtx(model, @get("routeAction"))
 
