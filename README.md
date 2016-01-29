@@ -51,6 +51,20 @@ Yeah, don't nest shit unnecessarily
 5. If your app needs session authentication, you're naming the models "Session", and "User" (this decision is *not* negotiable, go use another library if you don't like it)
 6. There is no zeroth level route; i.e., everything lives in a scope block
 
+## Dependencies
+The ember side has a large number of dependencies; they are as listed:
+```sh
+ember install ember-bootstrap-datetimepicker
+ember install ember-cli-format-number
+ember install ember-cpm
+ember install foxnewsnetwork/ember-form-tool
+ember install ember-lodash
+ember install ember-moment
+ember install ember-notify
+ember install ember-phoenix-chan
+ember install ember-power-select
+ember install ember-truth-helpers
+```
 To start your Phoenix app:
 
   1. Install dependencies with `mix deps.get`

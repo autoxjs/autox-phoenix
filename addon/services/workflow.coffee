@@ -2,7 +2,7 @@
 `import SchemaUtils from '../utils/schema'`
 `import _ from 'lodash/lodash'`
 
-{RSVP, Service, isArray, Object, Map, inject} = Ember
+{RSVP, Service, isBlank, isArray, Object, Map, inject} = Ember
 {isFunction: isF, merge} = _
 isFactory = (x) ->
   isF(x?.eachAttribute) and isF(x?.eachRelationship)
@@ -13,6 +13,7 @@ WorkflowService = Service.extend
     @grid = Map.create()
 
   setupCtx: (router, model, action) -> 
+    return if isBlank(model)
     if action is "index" and isArray(model)
       factory = model.get("firstObject.constructor")
       modelPath = router.defaultModelShowPath(model.get("firstObject"))
