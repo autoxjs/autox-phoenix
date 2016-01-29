@@ -1,7 +1,7 @@
 `import _ from 'lodash/lodash'`
 `import Ember from 'ember'`
 
-{isBlank, isPresent, computed, A} = Ember
+{isBlank, isPresent, isArray, computed, A} = Ember
 {trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map, every, partial, partialRight, curry, flow} = _
 
 consumeEnd = (string, substr) ->
