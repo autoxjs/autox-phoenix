@@ -2,7 +2,7 @@
 `import Ember from 'ember'`
 
 {isBlank, isPresent, isArray, computed, A} = Ember
-{trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map, every, partial, partialRight, curry, flow} = _
+{trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map, every, partial, partialRight, curry, flow, negate} = _
 
 consumeEnd = (string, substr) ->
   if (isOk = endsWith(string, substr))
@@ -27,13 +27,12 @@ matchEqual = (matcher, value) ->
     return [isPresent(results), results]
   return [isEqual(matcher, value), value]
 
-isntObject = (x) -> typeof x isnt "object"
+isObject = (x) -> x? and typeof x is "object"
 hasFunctions = (x, fs...) -> every map(fs, (f) -> x[f]), isFunction
-missingFunctions = (x, fs...) -> not hasFunctions x, fs...
-modelChecks = [isBlank, isArray, isntObject, partialRight(missingFunctions, "get", "save")]
-apply = (x) -> (f) -> f x
-isntModel = flow curry(apply), partial(every, modelChecks)
-isModel = (x) -> not isntModel(x)
+modelChecks = [isPresent, negate(isArray), isObject, partialRight(hasFunctions, "get", "save")]
+into = (x) -> (f) -> f x
+isModel = flow into, partial(every, modelChecks)
+isntModel = negate(isModel)
   
 _computed =
   access: (objKey, memKey) ->
@@ -52,7 +51,7 @@ _computed =
         boundMatchers = A(matchers).map ([matcher, action]) => [matcher, action.bind(@)] 
         match @get(key), boundMatchers...
 
-_x = {match, consumeEnd, isntModel, isModel, isntObject, computed: _computed}
+_x = {match, consumeEnd, isntModel, isModel, isObject, computed: _computed}
 
 `export {_computed, _x}`
 `export default _x`
