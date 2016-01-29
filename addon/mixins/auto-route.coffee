@@ -3,8 +3,7 @@
 `import _ from 'lodash/lodash'`
 `import {routeSplit, routeJoin} from '../utils/route-split'`
 
-{_computed, isntModel} = _x
-{match, apply} = _computed
+{isntModel, computed: {match, apply}} = _x
 {Mixin, isPresent, computed, inject, isArray, isBlank, String} = Ember
 
 Core =
