@@ -14,6 +14,13 @@
         {{/if}}
       {{/each}}
     {{/link-to}}
+  {{else}}
+    <div class="autox-collection-for__block-null">
+      <strong class="autox-show-for__label-null">No Results!</strong>
+      <small class="autox-show-for__content-null">
+        Your request returned empty, too bad, so sad.
+      </small>
+    </div>
   {{/each}}
   {{yield}}
 {{/if}}
