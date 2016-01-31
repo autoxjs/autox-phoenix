@@ -10,6 +10,7 @@ AutoxShowForComponent = Ember.Component.extend
   layout: layout
   tagName: "ul"
   workflow: inject.service "workflow"
+  lookup: inject.service "lookup"
   classNames: ["autox-show-for"]
   classNameBindings: ["userHasDefinedComponent::list-group"]
   ctx: apply "workflow", "model", (wf, model) -> wf.fetchCtx(model)
