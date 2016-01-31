@@ -2,7 +2,7 @@
 `import layout from '../templates/components/autox-show-for'`
 `import {_computed} from '../utils/xdash'`
 
-{computed, inject} = Ember
+{computed, inject, isPresent} = Ember
 {apply} = _computed
 {alias} = computed
 
