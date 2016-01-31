@@ -8,7 +8,11 @@
           <div class="autox-collection-for__block">
             <strong class="autox-show-for__label">{{field.label}} - </strong>
             <small class="autox-show-for__content">
-              {{txt (get model field.name) type=field.type formatter=field.presenter}}
+              {{#if field.isRelationship}}
+                {{txt (get model (concat field.name "." field.proxyKey))}}
+              {{else}}
+                {{txt (get model field.name) type=field.type formatter=field.presenter}}
+              {{/if}}
             </small>
           </div>
         {{/if}}
