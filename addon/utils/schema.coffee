@@ -50,6 +50,7 @@ Field = Object.extend
   description: alias "meta.options.description"
   presenter: alias "meta.options.presenter"
   isRelationship: alias "meta.isRelationship"
+  proxyKey: apply "meta.options.proxyKey", (key) -> key ? "id"
 
   preload: (router, store, model) ->
     RSVP.hash

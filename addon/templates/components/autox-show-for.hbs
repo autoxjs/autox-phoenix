@@ -7,7 +7,7 @@
         <strong class="autox-show-for__label list-group-item-heading">{{field.label}}</strong>
         <div class="autox-show-for__content list-group-item-text">
           {{#if field.isRelationship}}
-            {{get model (concat field.name "." "id")}}
+            {{get model (concat field.name "." field.proxyKey)}}
           {{else}}
             {{txt (get model field.name) type=field.type formatter=field.presenter}}
           {{/if}}
