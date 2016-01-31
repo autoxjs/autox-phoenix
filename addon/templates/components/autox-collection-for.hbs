@@ -9,7 +9,7 @@
             <strong class="autox-show-for__label">{{field.label}} - </strong>
             <small class="autox-show-for__content">
               {{#if field.isRelationship}}
-                {{txt (get model (concat field.name "." field.proxyKey))}}
+                {{get model (concat field.name "." field.proxyKey)}}
               {{else}}
                 {{txt (get model field.name) type=field.type formatter=field.presenter}}
               {{/if}}
