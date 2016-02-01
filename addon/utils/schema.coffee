@@ -73,7 +73,7 @@ Field = Object.extend
   preloadChoices: (router, store, model) ->
     among = @get "among"
     cantModify = not @get("canModify")
-    if cantModify or isBlank(among)
+    if cantModify or isBlank(among) or (@get("action") in ["show", "index"])
       return RSVP.resolve(@)
     if isFunction(among)
       among = among(router, store, model)

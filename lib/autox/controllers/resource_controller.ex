@@ -11,7 +11,6 @@ defmodule Autox.ResourceController do
   defmacro __using__(_) do
     quote location: :keep do
       alias Fox.AtomExt
-      use AtomExt
       alias Autox.ResourceController
       alias Autox.ContextUtils
       alias Autox.ChangesetUtils
@@ -20,12 +19,15 @@ defmodule Autox.ResourceController do
       @collection_key Module.get_attribute(__MODULE__, :collection_key) 
       || AtomExt.infer_collection_key(__MODULE__)
 
+      @model_key Module.get_attribute(__MODULE__, :model_key)
+      || AtomExt.infer_model_module(__MODULE__)
+
       @repo Module.get_attribute(__MODULE__, :repo)
 
       def repo(conn), do: @repo || ContextUtils.get!(conn, :repo)
       def preload_fields, do: []
 
-      def index_query(_conn, params), do: infer_model_module |> QueryUtils.construct(params)
+      def index_query(_conn, params), do: @model_key |> QueryUtils.construct(params)
       def index(conn, params) do
         models = conn
         |> index_query(params)
@@ -39,10 +41,10 @@ defmodule Autox.ResourceController do
         |> ChangesetUtils.activemodel_paramify
 
         case conn |> ContextUtils.get(:parent) do
-          nil -> struct(infer_model_module)
+          nil -> struct(@model_key)
           parent -> parent |> Ecto.build_assoc(@collection_key)
         end
-        |> infer_model_module.create_changeset(make_params)
+        |> @model_key.create_changeset(make_params)
         |> repo(conn).insert
         |> case do
           {:ok, model} ->
@@ -90,9 +92,9 @@ defmodule Autox.ResourceController do
         change_params = params 
         |> ChangesetUtils.activemodel_paramify
         || params
-        |> Dict.fetch!(infer_model_key |> Atom.to_string)
+        |> Dict.fetch!(@model_key |> Atom.to_string)
         model 
-        |> infer_model_module.update_changeset(change_params)
+        |> @model_key.update_changeset(change_params)
         |> repo(conn).update
         |> case do
           {:ok, model} ->

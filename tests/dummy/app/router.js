@@ -19,6 +19,7 @@ Router.map(function() {
   this.route("shop", {path: "/shop/:shop_id"}, function() {
     this.route("edit");
   });
+  this.route("finite-state-machine");
 });
 
 export default Router;
