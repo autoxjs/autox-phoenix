@@ -41,9 +41,12 @@ Model = DS.Model.extend RelateableMixin,
   
   shop: DS.belongsTo "shop",
     display: ["show"]
+    modify: ["new"]
     description: "The shop which owns this chair"
     defaultValue: (_, store) -> store.findRecord "shop", 1
+    among: (_, store) -> store.findAll "shop"
     async: true
+    proxyKey: "name"
 
 # Self is a meta field that describes how   
 Model.aboutMe =

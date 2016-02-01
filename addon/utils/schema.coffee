@@ -1,15 +1,13 @@
 `import Ember from 'ember'`
-`import {_computed} from './xdash'`
+`import _x from './xdash'`
 `import {Macros} from 'ember-cpm'`
 `import _ from 'lodash/lodash'`
 
+{isPromise, computed: {match, apply, access}} = _x
 {Object, computed, isPresent, A, isArray, isBlank, RSVP} = Ember
-{match, apply, access} = _computed
 {alias, empty, or: ifAny} = computed
 {conditional, join} = Macros
 {noop, isFunction, tap} = _
-
-isPromise = (x) -> isFunction(x?.then)
 
 TextType = /^string&(comment|note|body|description)/
 DateType = /(date|moment|datetime)/
@@ -60,12 +58,14 @@ Field = Object.extend
   preloadDefaults: (router, store, model) ->
     defaultValue = @get "defaultValue"
     name = @get "name"
-    if (@get("action") isnt "new") or isBlank(defaultValue)
+    notRelationship = not @get "isRelationship"
+    if (@get("action") isnt "new") or isBlank(defaultValue) or notRelationship
       return RSVP.resolve(@)
     if isFunction(defaultValue)
       defaultValue = defaultValue(router, store, model)
     if isPromise(defaultValue)
-      defaultValue.then (value) =>
+      defaultValue
+      .then (value) =>
         model.set name, value
     else
       model.set name, defaultValue
@@ -78,7 +78,10 @@ Field = Object.extend
     if isFunction(among)
       among = among(router, store, model)
     if isPromise(among)
-      return among.then (choices) => @set "choices", choices
+      return among.then (choices) => 
+        choices
+      .then (choices) =>
+        @set "choices", choices
     if isArray(among)
       @set "choices", among
     RSVP.resolve(@)

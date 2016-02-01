@@ -29,7 +29,8 @@ Core =
     routeJoin [prefix, modelName, "index"]
 
   defaultModelCollection: ->
-    @store.findAll @get "defaultModelName"
+    modelName = @get "defaultModelName"
+    @store.findAll modelName if isPresent modelName
 
   model: (params) ->
     action = @get("routeAction")
