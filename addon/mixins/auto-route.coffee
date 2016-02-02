@@ -30,7 +30,7 @@ Core =
 
   defaultModelCollection: ->
     modelName = @get "defaultModelName"
-    @store.findAll modelName if isPresent modelName
+    @store.findAll modelName if isPresent(modelName) and typeof modelName is "string"
 
   model: (params) ->
     action = @get("routeAction")
