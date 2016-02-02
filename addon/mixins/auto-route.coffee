@@ -15,12 +15,7 @@ assertRoute = (router, name) ->
     as a route, but it wasn't one. Fix it, dumbass
     """
 firstRouteable = (router, routeNames...) ->
-  routeName = A(routeNames).find router.hasRoute.bind(router)
-  return routeName if isPresent routeName
-  throw """
-  Tried out the route names: '#{routeNames.join(", ")}', but none
-  were declared routes. You gon' fucked up, mate
-  """
+  A(routeNames).find router.hasRoute.bind(router)
 
 Core =
   lookup: inject.service("lookup")
