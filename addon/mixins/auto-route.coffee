@@ -3,11 +3,28 @@
 `import _ from 'lodash/lodash'`
 `import {routeSplit, routeJoin} from '../utils/route-split'`
 
+{isFunction} = _
 {isntModel, computed: {match, apply}} = _x
-{Mixin, isPresent, computed, inject, isArray, isBlank, String} = Ember
+{Mixin, isPresent, computed, inject, isArray, isBlank, String, A} = Ember
+
+assertRoute = (router, name) ->
+  if router.hasRoute name
+    return name
+  else
+    throw """In the route for you tried to pass off '#{name}'
+    as a route, but it wasn't one. Fix it, dumbass
+    """
+firstRouteable = (router, routeNames...) ->
+  routeName = A(routeNames).find router.hasRoute.bind(router)
+  return routeName if isPresent routeName
+  throw """
+  Tried out the route names: '#{routeNames.join(", ")}', but none
+  were declared routes. You gon' fucked up, mate
+  """
 
 Core =
   lookup: inject.service("lookup")
+  routing: inject.service("-routing")
   userHasDefinedTemplate: apply "lookup", "routeName", (lookup, routeName) ->
     isPresent lookup.template routeName
   .readOnly()
@@ -23,10 +40,18 @@ Core =
   .readOnly()
   
   defaultModelShowPath: (model) ->
-    modelName = model?.constructor?.modelName
+    factory = model?.constructor
+    return if isBlank factory
+    routeName = factory?.aboutMe?.routeName
+    return assertRoute(@get("routing"), routeName(@, model)) if isFunction(routeName)
+    return assertRoute(@get("routing"), routeName) if isPresent routeName
+    return if routeName is false
+    modelName = factory?.modelName
     return if isBlank modelName
     [prefix, uriName, suffix] = routeSplit @routeName
-    routeJoin [prefix, modelName, "index"]
+    firstRouteable @get("routing"),
+      routeJoin([prefix, uriName, modelName, "index"]),
+      routeJoin([prefix, modelName, "index"])
 
   defaultModelCollection: ->
     modelName = @get "defaultModelName"
@@ -49,7 +74,8 @@ Core =
       @workflow.setupCtx @, model, action
 
   modelCreated: (model) ->
-    @transitionTo @defaultModelShowPath(model), model
+    path = @defaultModelShowPath(model)
+    @transitionTo path, model if isPresent path
 
   modelUpdated: (model) ->
     @modelCreated(model)

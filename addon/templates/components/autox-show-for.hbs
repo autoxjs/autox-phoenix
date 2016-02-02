@@ -3,7 +3,7 @@
 {{else}}
   {{#each fields as |field|}}
     {{#if field.contDisplay}}
-      <li class="autox-show-for__list-member list-group-item">
+      <div class="autox-show-for__list-member list-group-item">
         <strong class="autox-show-for__label list-group-item-heading">{{field.label}}</strong>
         <div class="autox-show-for__content list-group-item-text">
           {{#if field.isRelationship}}
@@ -13,12 +13,12 @@
           {{/if}}
         </div>
         <small class="autox-show-for__description">{{field.description}}</small>
-      </li>
+      </div>
     {{/if}}
   {{else}}
-    <li class="autox-show-for__list-member list-group-item">
+    <div class="autox-show-for__list-member list-group-item">
       <strong class="autox-show-for__label list-group-item-heading">No Fields Are Avaible to Show!</strong>
       <small class="autox-show-for__description">You probably did something wrong</small>
-    </li>
+    </div>
   {{/each}}
 {{/if}}

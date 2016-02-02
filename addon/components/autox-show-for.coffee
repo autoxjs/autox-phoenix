@@ -8,7 +8,6 @@
 
 AutoxShowForComponent = Ember.Component.extend
   layout: layout
-  tagName: "ul"
   workflow: inject.service "workflow"
   lookup: inject.service "lookup"
   classNames: ["autox-show-for"]

@@ -48,10 +48,15 @@ Model = DS.Model.extend RelateableMixin,
     async: true
     proxyKey: "name"
 
-# Self is a meta field that describes how   
+# Self is a meta field that describes how to render this thing
 Model.aboutMe =
   label: "chair id"
   description: "chairs are objects that belong in shops for people to sit on"
   display: ["show", "index"]
+  routeName: "chair.index"
+
+# You can provide either a string like "apiv2.chair.index"
+# Or you may provide a function that will calculate the route from the router
+# if the route does not exist, an error is thrown
 
 `export default Model`
