@@ -15,6 +15,7 @@ defmodule Mix.Tasks.Autox.Install do
   config :plug, :mimes, %{"application/vnd.api+json" => ["json-api"]}
   config :autox, Autox.Defaults,
     host: "http://localhost:4200",
+    base: <%= base %>,
     repo: <%= base %>.Repo,
     error_view: <%= base %>.ErrorView,
     user_class: <%= base %>.User,

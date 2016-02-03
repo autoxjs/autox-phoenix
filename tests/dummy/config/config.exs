@@ -31,6 +31,7 @@ config :phoenix, :generators,
 ## Autox installed configurations
 config :plug, :mimes, %{"application/vnd.api+json" => ["json-api"]}
 config :autox, Autox.Defaults,
+  base: Dummy,
   repo: Dummy.Repo,
   session_header: "autox-remember-token",
   autox_master_key: "sore ue subete ga tsunagareru",

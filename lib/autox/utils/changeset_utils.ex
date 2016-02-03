@@ -85,7 +85,7 @@ defmodule Autox.ChangesetUtils do
   end
   def model_module_from_collection_name(type) when is_binary(type) do 
     name = type |> StringExt.singularize |> StringExt.camelize
-    Mix.Phoenix.base |> Module.safe_concat(name)
+    Autox.default_base |> Module.safe_concat(name)
   end
 
 end
