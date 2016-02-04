@@ -39,10 +39,6 @@ historify = (common, models, model) ->
   .merge(identify model)
   .value()
 
-makeSaveable = (xs) ->
-  save: partial mapValues, xs, (x) -> x.save()
-
-
 toTuple = (a,b) -> [a,b]
 associateHistory = ([params, model]) -> model.relate("histories").associate(params)
 createHistory = (common, models) ->
@@ -55,8 +51,9 @@ createHistory = (common, models) ->
 
 persistHistory = (common, models) ->
   chain(createHistory common, models)
-  .tap(makeSaveable)
+  .mapValues (x) -> x.save()
   .tap(RSVP.hash)
+  .value()
 
 `export {createHistory, associateHistory, historify, rotateValues, persistHistory}`
 `export default createHistory`
