@@ -52,7 +52,7 @@ createHistory = (common, models) ->
 persistHistory = (common, models) ->
   chain(createHistory common, models)
   .mapValues (x) -> x.save()
-  .tap(RSVP.hash)
+  .thru(RSVP.hash)
   .value()
 
 `export {createHistory, associateHistory, historify, rotateValues, persistHistory}`
