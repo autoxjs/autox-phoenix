@@ -1,6 +1,6 @@
 `import Ember from 'ember'`
 `import moment from 'moment'`
-
+{isMoment} = moment
 {Object, A, isBlank} = Ember
 Payload = Object.extend
   init: ->
@@ -21,10 +21,13 @@ Payload = Object.extend
   initializeDSAttribute: (key, value) ->
     @attributeKeys.pushObject key
     type = t if (t = typeof value) in ["number", "string", "boolean"]
-    type ?= switch value.constructor
-      when Date then "date"
-      when moment().constructor then "moment"
-      else null
+    type = "moment" if isMoment(value)
+    type = "date" if value instanceof Date
+    if isBlank type
+      console.log value 
+      throw """You passed into key '#{key}' a value as shown above,
+      this value isn't any of the types I know how to infer, so you gone fucked up
+      """
     @attributeMetas[key] = 
       type: type
       isAttribute: true

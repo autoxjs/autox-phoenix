@@ -15,7 +15,7 @@ RelationshipSerializer = DS.JSONAPISerializer.extend
     type = meta.type
     json.attributes ?= {}
     value = snapshot.attr(key)
-    value = transform.serialize(value) if type? and (transform = @transformFor type)?
+    value = transform.serialize(value) if (transform = @transformFor type)?
     payloadKey = @keyForAttribute(key, "serialize")
     json.attributes[payloadKey] = value
 
