@@ -7,7 +7,9 @@ AutoxSelectChoiceComponent = Ember.Component.extend
   layout: layout
   isObjectType: ifAny "modelValue", "modelName"
   isBasicType: negate "isObjectType"
-  modelProxy: apply "model", "proxyKey", (m, p) -> m?.get(p) if p?
+  modelProxy: apply "model", "proxyKey", (m, p) -> 
+    return m unless typeof m is "object"
+    m?.get(p) if p?
   modelValue: ifAny "modelProxy", "modelId"
   modelName: oneWay "model.constructor.modelName"
   proxyKey: alias "field.proxyKey"

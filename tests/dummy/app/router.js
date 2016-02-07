@@ -15,11 +15,12 @@ Router.map(function() {
   });
   this.route("shops", {path: "/shops"}, function() {
     this.route("new");
-  });
-  this.route("shop", {path: "/shop/:shop_id"}, function() {
-    this.route("edit");
+    this.route("shop", {path: "/shop/:shop_id"}, function() {
+      this.route("edit");
+    });
   });
   this.route("finite-state-machine");
+  this.route("autox-show-for");
 });
 
 export default Router;

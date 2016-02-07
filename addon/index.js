@@ -7,6 +7,10 @@ import Payload from './utils/payload';
 import SessionStateMixin from './mixins/session-state';
 import CookieCredentialsMixin from './mixins/cookie-credentials';
 import QueryUtils from './utils/query';
+import virtual from './utils/virtual';
+import action from './utils/action';
+import about from './utils/about';
+import Schema from './utils/schema';
 export {
   ApplicationAdapter,
   RelationshipAdapter,
@@ -16,5 +20,9 @@ export {
   Payload,
   SessionStateMixin,
   CookieCredentialsMixin,
-  QueryUtils
+  QueryUtils,
+  Schema,
+  about,
+  action,
+  virtual
 };

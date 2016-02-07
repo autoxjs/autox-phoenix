@@ -4,6 +4,10 @@ defmodule Dummy.Shop do
   schema "shops" do
     field :name, :string
     field :location, :string
+    field :theme, :string
+    field :inspected_at, Ecto.DateTime
+
+    has_many :histories, {"shop_histories", Dummy.History}, foreign_key: :recordable_id
 
     belongs_to :owner, Dummy.Owner
 
@@ -20,7 +24,7 @@ defmodule Dummy.Shop do
 
   @create_fields ~w(name location)
   @update_fields @create_fields
-  @optional_fields ~w(owner_id)
+  @optional_fields ~w(owner_id theme inspected_at)
 
   def create_changeset(model, params\\:empty) do
     model

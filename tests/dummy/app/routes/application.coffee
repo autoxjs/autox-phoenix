@@ -8,5 +8,9 @@ ApplicationRoute = Route.extend
     @get "session"
     .get "self"
 
+  actions:
+    shopBubble: ->
+      console.log "shop bubble in the application"
+
 `export default ApplicationRoute`
 

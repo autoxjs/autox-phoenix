@@ -3,7 +3,7 @@
     {{#if field.canDisplay}}
       {{#if field.isBasic}}
         {{#component field.componentName f 
-          name=field.name
+          name=field.accessName
           label=field.label
           prefix=field.prefix
           disabled=(not field.canModify)}}
@@ -11,7 +11,7 @@
         {{/component}}
       {{else}}
         {{#em-select-field f 
-          name=field.name
+          name=field.accessName
           label=field.label
           options=field.choices
           prefix=field.prefix

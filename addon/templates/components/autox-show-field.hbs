@@ -1,0 +1,9 @@
+<strong class="autox-show-for__label list-group-item-heading">{{field.label}}</strong>
+<div class="autox-show-for__content list-group-item-text">
+  {{#if field.isRelationship}}
+    {{get model (concat field.name "." field.proxyKey)}}
+  {{else}}
+    {{txt (get model field.accessName) type=field.type formatter=field.presenter}}
+  {{/if}}
+</div>
+<small class="autox-show-for__description">{{field.description}}</small>

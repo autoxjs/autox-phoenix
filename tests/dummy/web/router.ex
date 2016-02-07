@@ -43,7 +43,7 @@ defmodule Dummy.Router do
     pipe_through :api
 
     the Shop do
-      many [Taco, Salsa, Chair]
+      many [Taco, Salsa, Chair, History]
       one [Owner, Kitchen]
     end
 

@@ -1,116 +1,46 @@
 `import Ember from 'ember'`
-`import _x from './xdash'`
-`import {Macros} from 'ember-cpm'`
+`import Field from './field'`
+`import ActionField from './action-field'`
 `import _ from 'lodash/lodash'`
+{A} = Ember
+{chain, partial, merge} = _
 
-{isPromise, computed: {match, apply, access}} = _x
-{Object, computed, isPresent, A, isArray, isBlank, RSVP} = Ember
-{alias, empty, or: ifAny} = computed
-{conditional, join} = Macros
-{noop, isFunction, tap} = _
+aboutMeDefault = (factory) ->
+  label: "#{factory.modelName} id"
+  description: "#{factory.modelName} objects are resourceful representations of data"
+  display: ["show", "index"]
 
-TextType = /^string&(comment|note|body|description)/
-DateType = /(date|moment|datetime)/
-Field = Object.extend
-  lookup: alias "ctx.lookup"
-  action: alias "ctx.action"
-  contDisplay: apply "meta.options.display", "action", (xs, x) -> A(xs).contains x
-  canDisplay: ifAny "canModify", "contDisplay"
-  canModify: apply "meta.options.modify", "action", (xs, x) -> A(xs).contains x
-  isBasic: empty "choices"
-  type: alias "meta.type"
-  among: alias "meta.options.among"
-  defaultValue: alias "meta.options.defaultValue"
-  label: ifAny "meta.options.label", "name"
-  typeName: join "type", "name", "&"
-  prefix: match "typeName",
-    ["string&email", -> "fa-at"],
-    [TextType, -> "fa-comment-o"],
-    [/^string&password/, -> "fa-lock"],
-    [/^string/, -> "fa-pencil"],
-    [/money$/, -> "fa-money"],
-    [DateType, -> "fa-calendar"],
-    [/phone$/, -> "fa-mobile-phone"]
-    [_, noop]
-  componentName: match "typeName",
-    [/^number/, -> "em-number-field"],
-    ["string&email", -> "em-email-field"],
-    [/^string&password/, -> "em-password-field"],
-    [/^string&timezone/, -> "em-timezone-field"],
-    [TextType, -> "em-textarea-field"],
-    [DateType, -> "em-datetime-field"],
-    [/^string/, -> "em-text-field"],
-    [_, noop]
-  selectChoice: conditional "userChose", "userSelectChoice", "autoxSelectChoice"
-  userChose: apply "lookup", "userSelectChoice", (lookup, name) -> isPresent lookup.component(name)
-  autoxSelectChoice: "autox-select-choice"
-  userSelectChoice: apply "type", (type) -> "#{type}-select-choice"
-  description: alias "meta.options.description"
-  presenter: alias "meta.options.presenter"
-  isRelationship: alias "meta.isRelationship"
-  proxyKey: apply "meta.options.proxyKey", (key) -> key ? "id"
+getIdField = ({factory, ctx}, fields) ->
+  aboutMe = merge aboutMeDefault(factory), factory.aboutMe
+  meta =
+    type: "string"
+    options: aboutMe
+  fields.pushObject Field.create {meta, ctx, name: "id"}
 
-  preload: (router, store, model) ->
-    RSVP.hash
-      defaults: @preloadDefaults(router, store, model)
-      choices: @preloadChoices(router, store, model)
-    .then => @
-  preloadDefaults: (router, store, model) ->
-    defaultValue = @get "defaultValue"
-    name = @get "name"
-    notRelationship = not @get "isRelationship"
-    if (@get("action") isnt "new") or isBlank(defaultValue) or notRelationship
-      return RSVP.resolve(@)
-    if isFunction(defaultValue)
-      defaultValue = defaultValue(router, store, model)
-    if isPromise(defaultValue)
-      defaultValue
-      .then (value) =>
-        model.set name, value
-    else
-      model.set name, defaultValue
-      RSVP.resolve(@)
-  preloadChoices: (router, store, model) ->
-    among = @get "among"
-    cantModify = not @get("canModify")
-    if cantModify or isBlank(among) or (@get("action") in ["show", "index"])
-      return RSVP.resolve(@)
-    if isFunction(among)
-      among = among(router, store, model)
-    if isPromise(among)
-      return among.then (choices) => 
-        choices
-      .then (choices) =>
-        @set "choices", choices
-    if isArray(among)
-      @set "choices", among
-    RSVP.resolve(@)
+getAttributeFields = ({factory, ctx}, fields) ->
+  factory.eachAttribute (name, meta) ->
+    fields.pushObject Field.create {name, meta, ctx}
 
-class SchemaUtils
-  @aboutMeDefault = (factory) ->
-    label: "#{factory.modelName} id"
-    description: "#{factory.modelName} objects are resourceful representations of data"
-    display: ["show", "index"]
+getRelationshipFields = ({factory, ctx}, fields) ->
+  factory.eachRelationship (name, meta) ->
+    fields.pushObject Field.create {name, meta, ctx}
 
-  @getIdField = ({factory, ctx}) ->
-    aboutMe = factory.aboutMe ? @aboutMeDefault(factory)
-    meta =
-      type: "string"
-      options: aboutMe
-    Field.create {meta, ctx, name: "id"}
-  @getAttributeFields = ({factory, ctx}) ->
-    tap A(), (fields) ->
-      factory.eachAttribute (name, meta) ->
-        fields.pushObject Field.create {name, meta, ctx}
+getVirtualFields = ({factory, ctx}, fields) ->
+  factory.eachVirtualAttribute (name, meta) ->
+    fields.pushObject Field.create {name, meta, ctx}
 
-  @getRelationshipFields = ({factory, ctx}) ->
-    tap A(), (fields) ->
-      factory.eachRelationship (name, meta) ->
-        fields.pushObject Field.create {name, meta, ctx}
-  @getFields = (params) ->
-    A()
-    .pushObjects [@getIdField params]
-    .pushObjects @getAttributeFields params
-    .pushObjects @getRelationshipFields params
+getActionFields = ({factory, ctx}, fields) ->
+  factory.eachActionAttribute (name, meta) ->
+    fields.pushObject ActionField.create {name, meta, ctx}
 
-`export default SchemaUtils`
+getFields = (params) ->
+  chain A()
+  .tap partial getIdField, params
+  .tap partial getAttributeFields, params
+  .tap partial getRelationshipFields, params
+  .tap partial getVirtualFields, params
+  .tap partial getActionFields, params
+  .thru (fields) -> fields.sortBy "priority"
+  .value()
+
+`export {getFields, getActionFields, getVirtualFields, getAttributeFields, getIdField, aboutMeDefault}`

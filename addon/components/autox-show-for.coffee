@@ -1,22 +1,25 @@
 `import Ember from 'ember'`
 `import layout from '../templates/components/autox-show-for'`
 `import {_computed} from '../utils/xdash'`
+`import UserCustomize from '../mixins/user-customize'`
 
 {computed, inject, isPresent} = Ember
 {apply} = _computed
 {alias} = computed
 
-AutoxShowForComponent = Ember.Component.extend
+AutoxShowForComponent = Ember.Component.extend UserCustomize,
+  customPrefix: "show-for-model"
   layout: layout
   workflow: inject.service "workflow"
-  lookup: inject.service "lookup"
   classNames: ["autox-show-for"]
   classNameBindings: ["userHasDefinedComponent::list-group"]
   ctx: apply "workflow", "model", (wf, model) -> wf.fetchCtx(model)
   fields: alias "ctx.fields"
-  userHasDefinedComponent: apply "userDefinedComponent", "lookup", (c, lookup) ->
-    c? and isPresent lookup.component c
-  userDefinedComponent: apply "model.constructor.modelName", (name) ->
-    "model-for-#{name}" if isPresent name
+  
+  actions:
+    bubbles: (field, result) ->
+      @set "bubbles", field.get("name")
+      @sendAction "bubbles", result
+      
 
 `export default AutoxShowForComponent`
