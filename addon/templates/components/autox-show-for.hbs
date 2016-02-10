@@ -4,11 +4,17 @@
   {{#each fields as |field|}}
     {{#if field.canDisplay}}
       {{#if field.isAction}}
-        {{autox-show-action-field 
-          field=field
-          model=model
-          invoke="bubbles" 
-          kill=(action (mut field.canDisplay) false)}}
+        {{#if field.presenter}}
+          {{component field.presenter 
+            field=field
+            model=model
+            invoke="bubbles"}}
+        {{else}}
+          {{autox-show-action-field 
+            field=field
+            model=model
+            invoke="bubbles"}}
+        {{/if}}
       {{else}}
         {{autox-show-field field=field model=model}}
       {{/if}}

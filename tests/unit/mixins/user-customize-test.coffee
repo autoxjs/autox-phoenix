@@ -1,5 +1,5 @@
 `import Ember from 'ember'`
-`import UserCustomizeMixin from '../../../mixins/user-customize'`
+`import UserCustomizeMixin from 'autox/mixins/user-customize'`
 `import { module, test } from 'qunit'`
 
 module 'Unit | Mixin | user customize'

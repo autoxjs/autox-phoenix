@@ -36,13 +36,19 @@ Model = DS.Model.extend RelateableMixin,
     label: "time of creation"
     priority: 100
 
+  updatedAt: DS.attr "moment",
+    display: ["show"]
+    description: "The time when this model was updated"
+    label: "time of update"
+    priority: 101
+
   size: DS.attr "string",
     display: ["show"]
     modify: ["new", "edit"]
     description: "The ANSI standard for dimensions"
     among: ["small", "medium", "large"]
+    priority: 4
 
-  updatedAt: DS.attr "moment"
   
   shop: DS.belongsTo "shop",
     display: ["show"]
@@ -52,6 +58,7 @@ Model = DS.Model.extend RelateableMixin,
     among: (_, store) -> store.findAll "shop"
     async: true
     proxyKey: "name"
+    priority: 5
 
   status: virtual "number",
     display: ["new", "edit"]

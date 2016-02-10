@@ -1,10 +1,22 @@
 `import DS from 'ember-data'`
-`import {virtual, action, about, RelateableMixin} from 'autox'`
+`import {virtual, action, about, RelateableMixin, HistoricalMixin} from 'autox'`
 `import {Macros} from 'ember-cpm'`
 `import moment from 'moment'`
+`import {persistHistory} from 'autox/utils/create-history'`
+
 {join} = Macros
 
-Model = DS.Model.extend RelateableMixin,
+Histories =
+  deny:
+    name: "deny-inspection"
+    message: "deny message"
+  approve:
+    name: "approve-inspection"
+    message: "inspection message"
+  open:
+    name: "Open-Business"
+    message: "open business message"
+Model = DS.Model.extend RelateableMixin, HistoricalMixin,
   name: DS.attr "string",
     label: "Shop Name"
     description: "The official brand name of your shop"
@@ -18,6 +30,7 @@ Model = DS.Model.extend RelateableMixin,
     modify: ["new", "edit"]
     display: ["show", "index"]
     among: ["Los Angeles, CA", "Las Vegas, NV", "New York, NY", "Chicago, IL", "Phoenix, AZ"]
+    defaultValue: "Los Angeles, CA"
     priority: 2
   
   theme: DS.attr "string",
@@ -70,23 +83,28 @@ Model = DS.Model.extend RelateableMixin,
     display: ["show"]
     priority: 5
     join "name", "location", "-"
-  
-  consoleLog: action "click",
-    label: "Log to Console"
-    description: "Tests the generic action process"
-    display: ["show"]
-    priority: 5
-    (ctx) ->
-      console.log @get "nickname"
-      console.log ctx
 
-  shopBubble: action "click",
-    label: "Bubble the action up"
-    description: "Tests proper bubbling"
+  approveInspection: action "click",
+    label: "Approve Shop"
+    description: "Give this shop the seal of approval"
     display: ["show"]
-    bubbles: true
-    priority: 5
-    -> console.log "in the shop"
+    priority: 0
+    -> persistHistory(Histories.approve, {shop: @}).then => @get("histories").reload()
+
+  denyInspection: action "click",
+    label: "Deny Shop"
+    description: "Deny approval to this shop"
+    display: ["show"]
+    priority: 0
+    -> persistHistory(Histories.deny, {shop: @}).then => @get("histories").reload()
+
+  openForBusiness: action "click",
+    label: "Open For Business"
+    description: "Open shop for business"
+    display: ["show"]
+    priority: 0
+    presenter: "shop-open-for-business-action-field"
+    -> persistHistory(Histories.open, {shop: @}).then => @get("histories").reload()
 
   chairs: DS.hasMany "chair", async: true
   salsas: DS.hasMany "salsa", async: true
@@ -95,6 +113,5 @@ Model = DS.Model.extend RelateableMixin,
 about Model,
   label: "Shop Name"
   description: "Shops are stores and resturaunts in and around the United States"
-  aliasKey: "nickname"
 
 `export default Model`

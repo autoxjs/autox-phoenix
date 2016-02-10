@@ -1,22 +1,12 @@
 `import Ember from 'ember'`
-`import { module, test } from 'qunit'`
-`import startApp from '../../tests/helpers/start-app'`
+`import { test } from 'qunit'`
+`import moduleForAcceptance from '../../tests/helpers/module-for-acceptance'`
 `import hbs from 'htmlbars-inline-precompile'`
 
-module 'Acceptance: FiniteStateMachine',
-  beforeEach: ->
-    @application = startApp()
-    ###
-    Don't return anything, because QUnit looks for a .then
-    that is present on Ember.Application, but is deprecated.
-    ###
-    @fsm = @application.__container__.lookup("service:finite-state-machine")
-    return
-
-  afterEach: ->
-    Ember.run @application, 'destroy'
+moduleForAcceptance 'Acceptance: FiniteStateMachine'
 
 test 'updating the fsm', (assert) ->
+  @fsm = @application.__container__.lookup("service:finite-state-machine")
   @application.register "template:finite-state-machine", hbs """
     <div id="display">{{fsm.prev}}</div>
     <button id="first" {{action (action (mut fsm.prev) "tfwnogf") on="click"}}>

@@ -17,6 +17,7 @@ Router.map(function() {
     this.route("new");
     this.route("shop", {path: "/shop/:shop_id"}, function() {
       this.route("edit");
+      this.route("histories", {path: "/histories"}, function(){});
     });
   });
   this.route("finite-state-machine");

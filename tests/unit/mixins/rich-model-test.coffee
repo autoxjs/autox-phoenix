@@ -1,5 +1,5 @@
 `import Ember from 'ember'`
-`import RichModelMixin from '../../../mixins/rich-model'`
+`import RichModelMixin from 'autox/mixins/rich-model'`
 `import { module, test } from 'qunit'`
 
 module 'Unit | Mixin | rich model'

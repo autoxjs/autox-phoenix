@@ -26,11 +26,11 @@ getRelationshipFields = ({factory, ctx}, fields) ->
     fields.pushObject Field.create {name, meta, ctx}
 
 getVirtualFields = ({factory, ctx}, fields) ->
-  factory.eachVirtualAttribute (name, meta) ->
+  factory.eachVirtualAttribute? (name, meta) ->
     fields.pushObject Field.create {name, meta, ctx}
 
 getActionFields = ({factory, ctx}, fields) ->
-  factory.eachActionAttribute (name, meta) ->
+  factory.eachActionAttribute? (name, meta) ->
     fields.pushObject ActionField.create {name, meta, ctx}
 
 getFields = (params) ->

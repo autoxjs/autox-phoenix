@@ -1,5 +1,5 @@
 `import Ember from 'ember'`
-`import FieldCoreMixin from '../../../mixins/field-core'`
+`import FieldCoreMixin from 'autox/mixins/field-core'`
 `import { module, test } from 'qunit'`
 
 module 'Unit | Mixin | field core'

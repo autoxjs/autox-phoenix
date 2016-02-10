@@ -1,24 +1,12 @@
-`import Ember from 'ember'`
-`import { module, test } from 'qunit'`
-`import startApp from '../../tests/helpers/start-app'`
-`import moment from 'moment'`
+`import { test } from 'qunit'`
+`import moduleForAcceptance from '../../tests/helpers/module-for-acceptance'`
 
-module 'Acceptance: AutoRoute',
-  beforeEach: ->
-    @application = startApp()
-    ###
-    Don't return anything, because QUnit looks for a .then
-    that is present on Ember.Application, but is deprecated.
-    ###
-    @lookup = @application.__container__.lookup("service:lookup")
-    @route = @application.__container__.lookup("route:application")
-    @store = @application.__container__.lookup("service:store")
-    return
-
-  afterEach: ->
-    Ember.run @application, 'destroy'
+moduleForAcceptance 'Acceptance: DeathRoute'
 
 test 'visiting /', (assert) ->
+  @lookup = @application.__container__.lookup("service:lookup")
+  @route = @application.__container__.lookup("route:application")
+  @store = @application.__container__.lookup("service:store")
   visit '/chairs'
 
   andThen =>

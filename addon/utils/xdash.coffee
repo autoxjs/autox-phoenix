@@ -1,6 +1,6 @@
 `import _ from 'lodash/lodash'`
 `import Ember from 'ember'`
-
+`import computedPromise from './computed-promise'`
 {isBlank, isPresent, isArray, computed, A} = Ember
 {trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map, every, partial, partialRight, curry, flow, negate} = _
 
@@ -36,6 +36,7 @@ isModel = flow into, partial(every, modelChecks)
 isntModel = negate(isModel)
   
 _computed =
+  computedPromise: computedPromise
   access: (objKey, memKey) ->
     computed objKey, memKey,
       get: ->

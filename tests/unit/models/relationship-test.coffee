@@ -4,6 +4,7 @@
 moduleForModel 'shop', 'Unit | Model | relationship', {
   # Specify the other units that are required for this test.
   needs: ['model:owner', 
+    'model:history',
     'model:salsa', 
     'model:taco', 
     'model:relationship',

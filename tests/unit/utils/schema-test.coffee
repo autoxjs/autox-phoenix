@@ -39,7 +39,7 @@ test "it should spit out the fields", (assert) ->
     assert.ok fields
     assert.equal fields.get("length"), 8, "THERE ARE 4 LIGHTS"
 
-    [idField, nameField, refField, costField, insertField, sizeField, updateField, shopField] = fields
+    [idField, nameField, refField, costField, sizeField, shopField, insertField, updateField] = fields
     assert.ok insertField, "all four fields should be present"
     assert.equal insertField.get("type"), "moment"
     assert.notOk insertField.get("canModify"), "insert can't be modified"

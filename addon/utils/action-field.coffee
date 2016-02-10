@@ -7,7 +7,7 @@
 ActionField = Object.extend FieldCore,
   bubbles: alias "meta.options.bubbles"
   confirm: alias "meta.options.confirm"
-  when: alias "meta.options.when"
+  presenter: alias "meta.options.presenter"
   setup: alias "meta.options.setup"
   canDisplay: oneWay "canOnlyDisplay"
 

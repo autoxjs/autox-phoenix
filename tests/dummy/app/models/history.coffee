@@ -5,7 +5,9 @@ History = DS.Model.extend RelateableMixin, {
   recordableId: DS.attr "string"
   permalink: DS.attr 'string'
   type: DS.attr 'string'
-  name: DS.attr 'string'
+  name: DS.attr 'string',
+    display: ["index"]
+    label: "Event Name"
   message: DS.attr 'string'
   scheduledAt: DS.attr 'moment'
   happenedAt: DS.attr 'moment'

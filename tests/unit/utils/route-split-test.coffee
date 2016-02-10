@@ -1,4 +1,4 @@
-`import routeSplit from '../../../utils/route-split'`
+`import routeSplit from 'autox/utils/route-split'`
 `import { module, test } from 'qunit'`
 
 module 'Unit | Utility | route split'
