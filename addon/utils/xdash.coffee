@@ -29,7 +29,7 @@ matchEqual = (matcher, value) ->
 
 isPromise = (x) -> isFunction(x?.then)
 isObject = (x) -> x? and typeof x is "object"
-hasFunctions = (x, fs...) -> every map(fs, (f) -> x[f]), isFunction
+hasFunctions = (x, fs...) -> x? and every map(fs, (f) -> x[f]), isFunction
 modelChecks = [isPresent, negate(isArray), isObject, partialRight(hasFunctions, "get", "save")]
 into = (x) -> (f) -> f x
 isModel = flow into, partial(every, modelChecks)
@@ -53,7 +53,7 @@ _computed =
         boundMatchers = A(matchers).map ([matcher, action]) => [matcher, action.bind(@)] 
         match @get(key), boundMatchers...
 
-_x = {match, isPromise, consumeEnd, isntModel, isModel, isObject, computed: _computed}
+_x = {match, isPromise, consumeEnd, isntModel, isModel, isObject, hasFunctions, computed: _computed}
 
 `export {_computed, _x}`
 `export default _x`

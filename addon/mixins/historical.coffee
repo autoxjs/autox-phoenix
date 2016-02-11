@@ -2,13 +2,14 @@
 `import Ember from 'ember'`
 `import _ from 'lodash/lodash'`
 {isEqual, partial, isFunction} = _
-{get, RSVP, getWithDefault, isPresent, isBlank} = Ember
+{get, RSVP, getWithDefault, isPresent, isBlank, isArray, A} = Ember
 HistoricalMixin = Ember.Mixin.create
   histories: DS.hasMany "history", async: true
   latestHistoryHas: (attr, tester) ->
     f = switch
       when isBlank tester then isPresent
       when isFunction tester then tester
+      when isArray tester then (x) -> A(tester).contains x
       else partial(isEqual, tester)
     @latestHistory()
     .then (history) ->

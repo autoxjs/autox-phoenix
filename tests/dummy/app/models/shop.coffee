@@ -1,11 +1,11 @@
 `import DS from 'ember-data'`
-`import {virtual, action, about, RelateableMixin, HistoricalMixin} from 'autox'`
+`import {virtual, action, about, RelateableMixin, HistoricalMixin, _x} from 'autox'`
 `import {Macros} from 'ember-cpm'`
 `import moment from 'moment'`
 `import {persistHistory} from 'autox/utils/create-history'`
 
 {join} = Macros
-
+{computed: {computedPromise: sync}} = _x
 Histories =
   deny:
     name: "deny-inspection"
@@ -16,6 +16,7 @@ Histories =
   open:
     name: "Open-Business"
     message: "open business message"
+
 Model = DS.Model.extend RelateableMixin, HistoricalMixin,
   name: DS.attr "string",
     label: "Shop Name"
@@ -77,6 +78,12 @@ Model = DS.Model.extend RelateableMixin, HistoricalMixin,
     priority: 5
     async: true
 
+  beersServed: DS.attr "number",
+    label: "Alcoholic Beverages Served"
+    description: "A counter for how much alcohol was served at this shop"
+    display: ["show"]
+    priority: 3,
+    defaultValue: 0
   nickname: virtual "string",
     label: "Shop Nickname"
     description: "Every shop has a nickname which is a portmaneu of its name with its location"
@@ -89,14 +96,23 @@ Model = DS.Model.extend RelateableMixin, HistoricalMixin,
     description: "Give this shop the seal of approval"
     display: ["show"]
     priority: 0
-    -> persistHistory(Histories.approve, {shop: @}).then => @get("histories").reload()
+    -> persistHistory(Histories.approve, {shop: @})
 
   denyInspection: action "click",
     label: "Deny Shop"
     description: "Deny approval to this shop"
     display: ["show"]
     priority: 0
-    -> persistHistory(Histories.deny, {shop: @}).then => @get("histories").reload()
+    -> persistHistory(Histories.deny, {shop: @})
+
+  serveAlcohol: action "click",
+    label: "Serve Alcohol"
+    description: "Provide alcoholic beverages to minors"
+    display: ["show"]
+    priority: 0
+    when: sync "model.histories", -> 
+      @get("model").latestHistoryHas "name", "approve-inspection"
+    -> @incrementProperty "beersServed"
 
   openForBusiness: action "click",
     label: "Open For Business"
@@ -104,7 +120,7 @@ Model = DS.Model.extend RelateableMixin, HistoricalMixin,
     display: ["show"]
     priority: 0
     presenter: "shop-open-for-business-action-field"
-    -> persistHistory(Histories.open, {shop: @}).then => @get("histories").reload()
+    -> persistHistory(Histories.open, {shop: @})
 
   chairs: DS.hasMany "chair", async: true
   salsas: DS.hasMany "salsa", async: true

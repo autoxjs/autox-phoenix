@@ -39,6 +39,14 @@ historify = (common, models, model) ->
   .merge(identify model)
   .value()
 
+thenRefreshHistories = (promise, models) ->
+  promise.then (results) ->
+    chain(models)
+    .mapValues (model) -> model.get("histories").reload()
+    .thru(RSVP.hash)
+    .value()
+    .then -> results
+
 toTuple = (a,b) -> [a,b]
 associateHistory = ([params, model]) -> model.relate("histories").associate(params)
 createHistory = (common, models) ->
@@ -53,6 +61,7 @@ persistHistory = (common, models) ->
   chain(createHistory common, models)
   .mapValues (x) -> x.save()
   .thru(RSVP.hash)
+  .thru(partialRight thenRefreshHistories, models)
   .value()
 
 `export {createHistory, associateHistory, historify, rotateValues, persistHistory}`

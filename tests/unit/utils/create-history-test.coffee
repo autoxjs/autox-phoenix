@@ -14,7 +14,8 @@ class FauxModel
     .merge(model: @, save: @save)
     .value()
   save: -> RSVP.resolve("ok")
-
+  get: -> 
+    reload: -> RSVP.resolve(@)
 
 class Apple extends FauxModel
   @modelName = "apple"

@@ -10,7 +10,7 @@ ActionField = Object.extend FieldCore,
   presenter: alias "meta.options.presenter"
   setup: alias "meta.options.setup"
   canDisplay: oneWay "canOnlyDisplay"
-
+  getWhen: -> @get("meta.options")?.when
   setupArgs: (model) ->
     @getWithDefault "setup", identity
     .call model, @get("ctx")

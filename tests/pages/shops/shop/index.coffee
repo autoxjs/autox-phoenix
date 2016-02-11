@@ -8,6 +8,12 @@ Page = PageObject.create
   canApproveInspection: isVisible "button[aria-label=approveInspection]"
   approveInspection: clickable("button[aria-label=approveInspection]")
 
+  canDenyInspection: isVisible "button[aria-label=denyInspection]"
+  denyInspection: clickable("button[aria-label=denyInspection]")
+
+  canServeAlcohol: isVisible "button[aria-label=serveAlcohol]"
+  serveAlcohol: clickable "button[aria-label=serveAlcohol]"
+
   canOpenForBusiness: isVisible "button[aria-label=openForBusiness]"
   openForBusiness: clickable("button[aria-label=openForBusiness]")
 

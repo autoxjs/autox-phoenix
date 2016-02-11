@@ -72,7 +72,7 @@ Model = DS.Model.extend RelateableMixin,
     description: "Action descriptions may show up on mouse-over or in help-blocks"
     bubbles: false # if true, bubbles this action
     confirm: false # if set to true, generates a pop-up that requires user-confirmation
-    when: -> true # can be a function, or a string
+    when: computed -> true # can be a function, or a string
     setup: (ctrl) -> ctrl.model # setups up the arguments
     (model) -> model.save()
 

@@ -1,7 +1,8 @@
 `import DS from 'ember-data'`
 `import {RelateableMixin} from 'autox'`
 
-History = DS.Model.extend RelateableMixin, {
+History = DS.Model.extend RelateableMixin,
+  owner: DS.belongsTo "historical", polymorphic: true
   recordableId: DS.attr "string"
   permalink: DS.attr 'string'
   type: DS.attr 'string'
@@ -15,6 +16,5 @@ History = DS.Model.extend RelateableMixin, {
   mentionedId: DS.attr 'string'
   insertedAt: DS.attr 'moment'
   updatedAt: DS.attr 'moment'
-}
 
 `export default History`
