@@ -10,7 +10,7 @@ FieldCoreMixin = Ember.Mixin.create
   aliasKey: alias "meta.options.aliasKey"
   type: alias "meta.type"
   label: ifAny "meta.options.label", "name"
-  priority: alias "meta.options.priority"
+  priority: ifAny "meta.options.priority", 1
   description: alias "meta.options.description"
   
   canOnlyDisplay: apply "meta.options.display", "action", (xs, x) -> A(xs).contains x

@@ -3,6 +3,8 @@
 FiniteStateMachineService = Service.extend
   states: A([])
   depth: 2
+  wasA: (modelName) ->
+    modelName? and @get("prev")?.constructor?.modelName is modelName
   prev: computed "states.[]", "depth",
     get: ->
       @states.get "lastObject"
