@@ -3,7 +3,7 @@
 `import {Macros} from 'ember-cpm'`
 `import moment from 'moment'`
 `import {persistHistory} from 'autox/utils/create-history'`
-
+{needs} = action
 {join} = Macros
 {computed: {computedPromise: sync}} = _x
 Histories =
@@ -121,6 +121,13 @@ Model = DS.Model.extend RelateableMixin, HistoricalMixin,
     priority: 0
     presenter: "shop-open-for-business-action-field"
     -> persistHistory(Histories.open, {shop: @})
+
+  incorporateSalsa: action "click",
+    label: "Incorporate Salsa"
+    descriptions: "Finds a salsa and incorporates it into this shop"
+    display: ["show"]
+    priority: 0
+    needs "salsa", (salsa) -> console.log salsa
 
   chairs: DS.hasMany "chair", async: true
   salsas: DS.hasMany "salsa", async: true

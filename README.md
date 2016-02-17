@@ -4,6 +4,20 @@ Phoenix Ember addon for rapidly building jsonapi backends
 
 >Note: This is super alpha software! Use at your own peril
 
+## TODO: Implement Action Symmetry aka multi-action
+There is a natural symmetry in a lot of actions between models
+
+For example, a truck can dock at a dock, but a dock can also be docked at by a truck.
+
+The dock action takes 2 parameters (dock and truck), so it seems possible to automatically
+implement how such "symmetric" action situations are handled using the FSM
+
+## TODO: linkable attributes
+allow all attributes to take a link decorator
+
+## TODO: Smarter Routes
+Allow routes to automatically detected if we're in a namespace, model, collection, or page and have better default choices for model
+
 ## Howto: Test
 The server-side tests live in the sample app named `dummy`
 test by doing:

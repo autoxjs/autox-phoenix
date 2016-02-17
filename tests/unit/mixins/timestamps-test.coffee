@@ -1,5 +1,5 @@
 `import Ember from 'ember'`
-`import TimestampsMixin from '../../../mixins/timestamps'`
+`import TimestampsMixin from 'autox/mixins/timestamps'`
 `import { module, test } from 'qunit'`
 
 module 'Unit | Mixin | timestamps'

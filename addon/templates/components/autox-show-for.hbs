@@ -3,18 +3,21 @@
 {{else}}
   {{#each fields as |field|}}
     {{#if field.canDisplay}}
-      {{#if field.isAction}}
-        {{#if field.presenter}}
-          {{component field.presenter 
-            field=field
-            model=model
-            invoke="bubbles"}}
-        {{else}}
-          {{autox-show-action-field 
-            field=field
-            model=model
-            invoke="bubbles"}}
-        {{/if}}
+      {{#if field.isCustomized}}
+        {{component field.presenter 
+          field=field
+          model=model
+          invoke=invoke}}
+      {{else if field.isAction}}
+        {{autox-show-action-field 
+          field=field
+          model=model
+          invoke=invoke}}
+      {{else if field.isLink}}
+        {{autox-show-link-field field.linkRoute model
+          field=field
+          model=model
+          invokeAction=invoke}}
       {{else}}
         {{autox-show-field field=field model=model}}
       {{/if}}

@@ -2,9 +2,9 @@
 `import _x from '../utils/xdash'`
 `import _ from 'lodash/lodash'`
 `import {routeSplit, routeJoin} from '../utils/route-split'`
-
-{isFunction} = _
-{isntModel, computed: {match, apply}} = _x
+`import {RouteData} from '../utils/router-dsl'`
+{isFunction, last} = _
+{isntModel, computed: {apply}} = _x
 {Mixin, isPresent, computed, inject, isArray, isBlank, String, A} = Ember
 
 assertRoute = (router, name) ->
@@ -22,18 +22,10 @@ Core =
   routing: inject.service("-routing")
   userHasDefinedTemplate: apply "lookup", "routeName", (lookup, routeName) ->
     isPresent lookup.template routeName
-  .readOnly()
-  routeAction: match "routeName",
-    [/edit$/, -> "edit"],
-    [/new$/, -> "new"],
-    [/index$/, -> "index"],
-    [_, ->]
-  .readOnly()
-  defaultModelName: match "routeName",
-    [/([-\d\w]+)\.\w+$/, ([_, name]) -> String.singularize name],
-    [_, ->]
-  .readOnly()
-  
+
+  routeAction: apply "routeName", RouteData.routeAction
+  defaultModelName: apply "routeName", RouteData.routeModel
+
   defaultModelShowPath: (model) ->
     factory = model?.constructor
     return if isBlank factory
@@ -43,30 +35,29 @@ Core =
     return if routeName is false
     modelName = factory?.modelName
     return if isBlank modelName
-    [prefix, uriName, suffix] = routeSplit @routeName
-    firstRouteable @get("routing"),
-      routeJoin([prefix, uriName, modelName, "index"]),
-      routeJoin([prefix, modelName, "index"])
+    RouteData.modelRoute modelName
 
-  defaultModelCollection: ->
-    modelName = @get "defaultModelName"
-    @store.findAll modelName if isPresent(modelName) and typeof modelName is "string"
+  parentNodeRoute: ->
+    RouteData.parentNodeRoute @routeName
+  parentNodeModel: ->
+    @modelFor route if (route = @parentNodeRoute())?
 
   model: (params) ->
-    action = @get("routeAction")
-    switch action
-      when "new"
+    switch @get("routeAction")
+      when "collection#new"
         modelName = @get "defaultModelName"
         @store.createRecord modelName
-      when "index"
-        @_super(arguments...) ? @defaultModelCollection(params)
-      else @_super arguments...
+      when "model#collection"
+        collectionName = last @routeName.split(".")
+        getWithDefault @parentNodeModel(), collectionName, A []
+      when "namespace#collection", "collection"
+        modelName = @get "defaultModelName"
+        @store.findAll modelName
+      else 
+        @_super arguments...
 
   afterModel: (model) ->
-    action = @get("routeAction")
-    if action in ["new", "edit", "index"] and model?
-      action = "show" if action is "index" and model.id?
-      @workflow.setupCtx @, model, action
+    @workflow.setupCtx @, model, @get("routeAction")
 
   modelCreated: (model) ->
     path = @defaultModelShowPath(model)
@@ -86,22 +77,22 @@ Core =
 
   renderTemplate: (controller, model) ->
     return @_super(arguments...) if @get("userHasDefinedTemplate")
-    action = @get "routeAction"
-    if action in ["index", "edit", "new"]
-      action = "show" if action is "index" and not isArray(model)
-      @render "autox/#{action}", {controller, model}
-    else
-      @_super arguments...
+    switch @get "routeAction"
+      when "model#index" 
+        @render "autox/show", {controller, model}
+      when "model#edit" 
+        @render "autox/edit", {controller, model}
+      when "collection#index" 
+        @render "autox/index", {controller, model}
+      when "collection#new" 
+        @render "autox/new", {controller, model}
+      else 
+        @_super arguments...
 
   actions:
-    "new": (model) ->
-      model.save().then @modelCreated.bind(@)
-
-    "edit": (model) ->
-      model.save().then @modelUpdated.bind(@)
-
-    "destroy": (model) ->
-      model.destroyRecord().then @modelDestroyed.bind(@)
+    modelCreated: -> @modelCreated arguments...
+    modelUpdated: -> @modelUpdated arguments...
+    modelDestroyed: -> @modelDestroyed arguments...
 
 AutoRouteMixin = Mixin.create Core
 

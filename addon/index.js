@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import ApplicationAdapter from './adapters/application';
 import RelationshipAdapter from './adapters/relationship';
 import RelateableMixin from './mixins/relateable';
@@ -16,16 +17,25 @@ import action from './utils/action';
 import about from './utils/about';
 import Schema from './utils/schema';
 import _x from './utils/xdash';
+import {RouteData, DSL} from './utils/router-dsl';
 const Mixins = {
   Paranoia,
   Timestamps,
   Realtime,
   Relateable: RelateableMixin,
   Historical: HistoricalMixin
+};
+const VERSION = "0.1.42";
+const computed = _x.computed;
+if (Ember.libraries) {
+  Ember.libraries.register("AutoX", VERSION);
 }
 export {
+  VERSION,
   ApplicationAdapter,
   RelationshipAdapter,
+  RouteData,
+  DSL,
   Mixins,
   RelateableMixin,
   HistoricalMixin,
@@ -40,5 +50,5 @@ export {
   action,
   virtual,
   _x,
-  computed: _x.computed
+  computed
 };

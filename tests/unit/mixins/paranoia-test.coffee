@@ -1,5 +1,5 @@
 `import Ember from 'ember'`
-`import ParanoiaMixin from '../../../mixins/paranoia'`
+`import ParanoiaMixin from 'autox/mixins/paranoia'`
 `import { module, test } from 'qunit'`
 
 module 'Unit | Mixin | paranoia'

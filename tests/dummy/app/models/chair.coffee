@@ -60,21 +60,20 @@ Model = DS.Model.extend RelateableMixin,
     proxyKey: "name"
     priority: 5
 
-  status: virtual "number",
-    display: ["new", "edit"]
-    label: "Status Field"
-    description: "Virtual fields act like regular computed fields, but are picked up by autox"
-    computed "size", "cost", -> @get("size") + "-" + @get("cost")
+  # status: virtual "number",
+  #   display: ["new", "edit"]
+  #   label: "Status Field"
+  #   description: "Virtual fields act like regular computed fields, but are picked up by autox"
+  #   computed "size", "cost", -> @get("size") + "-" + @get("cost")
 
-  doSomething: action "click",
-    display: ["show"]
-    label: "Perform some action"
-    description: "Action descriptions may show up on mouse-over or in help-blocks"
-    bubbles: false # if true, bubbles this action
-    confirm: false # if set to true, generates a pop-up that requires user-confirmation
-    when: computed -> true # can be a function, or a string
-    setup: (ctrl) -> ctrl.model # setups up the arguments
-    (model) -> model.save()
+  # doSomething: action "click",
+  #   display: ["show"]
+  #   label: "Perform some action"
+  #   description: "Action descriptions may show up on mouse-over or in help-blocks"
+  #   bubbles: false # if true, bubbles this action
+  #   confirm: false # if set to true, generates a pop-up that requires user-confirmation
+  #   when: computed -> true # can be a function, or a string
+  #   ->
 
 # Self is a meta field that describes how to render this thing
 # Model.reopenClass

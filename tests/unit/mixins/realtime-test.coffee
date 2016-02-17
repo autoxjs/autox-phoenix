@@ -1,5 +1,5 @@
 `import Ember from 'ember'`
-`import RealtimeMixin from '../../../mixins/realtime'`
+`import RealtimeMixin from 'autox/mixins/realtime'`
 `import { module, test } from 'qunit'`
 
 module 'Unit | Mixin | realtime'

@@ -15,11 +15,5 @@ AutoxShowForComponent = Ember.Component.extend UserCustomize,
   classNameBindings: ["userHasDefinedComponent::list-group"]
   ctx: apply "workflow", "model", (wf, model) -> wf.fetchCtx(model)
   fields: alias "ctx.fields"
-  
-  actions:
-    bubbles: (field, result) ->
-      @set "bubbles", field.get("name")
-      @sendAction "bubbles", result
-      
 
 `export default AutoxShowForComponent`

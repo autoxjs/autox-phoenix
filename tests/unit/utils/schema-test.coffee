@@ -34,7 +34,7 @@ test "it should spit out the fields", (assert) ->
     fields = SchemaUtils.getFields 
       factory: chairFactory
       ctx:
-        action: "show"
+        action: "model#index"
 
     assert.ok fields
     assert.equal fields.get("length"), 8, "THERE ARE 4 LIGHTS"
@@ -49,3 +49,7 @@ test "it should spit out the fields", (assert) ->
     assert.ok sizeField, "all four fields should be present"
     assert.ok updateField, "all four fields should be present"
     assert.ok shopField, "all four fields should be present"
+
+    assert.ok nameField.get("canDisplay"), "the name field should be displayable"
+    assert.deepEqual nameField.get("displayers"), ["model#index", "collection#index"]
+    assert.equal nameField.get("action"), "model#index"

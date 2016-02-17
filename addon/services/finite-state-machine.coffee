@@ -1,10 +1,12 @@
 `import Ember from 'ember'`
 {A, computed, Service} = Ember
+{alias} = computed
 FiniteStateMachineService = Service.extend
   states: A([])
   depth: 2
   wasA: (modelName) ->
     modelName? and @get("prev")?.constructor?.modelName is modelName
+  currentAction: alias "prev"
   prev: computed "states.[]", "depth",
     get: ->
       @states.get "lastObject"

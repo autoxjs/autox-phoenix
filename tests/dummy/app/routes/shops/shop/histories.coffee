@@ -2,7 +2,7 @@
 
 Route = Ember.Route.extend
   model: ->
-    @modelFor "shops.shop"
+    @parentNodeModel()
     .get "histories"
     .reload()
 `export default Route`

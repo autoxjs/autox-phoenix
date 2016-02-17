@@ -5,7 +5,7 @@
 `import _x from '../utils/xdash'`
 {hasFunctions} = _x
 {partialRight} = _
-{computed: {and: ifAll, not: cant}} = Ember
+{isBlank, computed: {and: ifAll, not: cant}} = Ember
 isComputed = partialRight hasFunctions, "get", "meta", "readOnly", "property", "volatile"
 AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize,
   tagName: "button"
@@ -24,10 +24,14 @@ AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize,
 
   attachPermissible: ->
     w = @get("field")?.getWhen()
-    if isComputed(w) then @isPermissible = w
+    if isComputed(w)
+      @isPermissible = w
+      @notifyPropertyChange "isPermissible"
   willDestroyElement: ->
+    throw "No Field Type" if isBlank @get("field.type")
     @off @get("field.type"), @, @invokeAction
   registerInteraction: ->
+    throw "No Field Type" if isBlank @get("field.type")
     @on @get("field.type"), @, @invokeAction
 
   invokeAction: (event) ->
@@ -35,9 +39,9 @@ AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize,
     @set "isBusy", true
     (field = @get "field")
     .invokeAction @get("model")
-    .then (result) =>
+    .then ({results, state}) =>
       if field.get("bubbles")
-        @sendAction "invoke", field, result
+        @sendAction "invoke", field, results, state
     .finally =>
       @set "isBusy", false
 

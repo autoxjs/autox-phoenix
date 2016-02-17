@@ -18,12 +18,13 @@ WorkflowService = Service.extend
 
   setupCtx: (router, model, action) -> 
     return if isBlank(model)
-    if action is "index" and isArray(model)
-      factory = model.get("firstObject.constructor")
-      modelPath = router.defaultModelShowPath(model.get("firstObject"))
-    else
-      factory = model.constructor
-      modelPath = router.defaultModelShowPath(model)
+    switch action
+      when "collection#index"
+        factory = model.get("firstObject.constructor")
+        modelPath = router.defaultModelShowPath(model.get("firstObject"))
+      when "model#index", "model#edit", "collection#new"
+        factory = model.constructor
+        modelPath = router.defaultModelShowPath(model)
     return unless isFactory factory
     ctx = merge {model, action, router, modelPath}, @get("baseCtx")
     fields = SchemaUtils
