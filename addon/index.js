@@ -6,6 +6,7 @@ import HistoricalMixin from './mixins/historical';
 import Paranoia from './mixins/paranoia';
 import Timestamps from './mixins/timestamps';
 import Realtime from './mixins/realtime';
+import Multiaction from './mixins/action-multicast';
 import RelationshipModel from './models/relationship';
 import RelationshipSerializer from './serializers/relationship';
 import Payload from './utils/payload';
@@ -22,10 +23,11 @@ const Mixins = {
   Paranoia,
   Timestamps,
   Realtime,
+  Multiaction,
   Relateable: RelateableMixin,
   Historical: HistoricalMixin
 };
-const VERSION = "0.1.42";
+const VERSION = "0.1.43";
 const computed = _x.computed;
 if (Ember.libraries) {
   Ember.libraries.register("AutoX", VERSION);

@@ -15,6 +15,7 @@ C1 =
     @eachComputedProperty (name, meta) ->
       if meta.isAction
         meta.name = name
+        meta.options.actionState.setProperties({name, @modelName})
         map.set name, meta
     map
 C2 =

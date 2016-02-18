@@ -1,11 +1,12 @@
 `import DS from 'ember-data'`
-`import {virtual, action, about, RelateableMixin, HistoricalMixin, _x} from 'autox'`
+`import {virtual, action, about, Mixins, _x} from 'autox'`
 `import {Macros} from 'ember-cpm'`
 `import moment from 'moment'`
 `import {persistHistory} from 'autox/utils/create-history'`
 {needs} = action
 {join} = Macros
 {computed: {computedPromise: sync}} = _x
+{Relateable, Timestamps, Historical, Multiaction} = Mixins
 Histories =
   deny:
     name: "deny-inspection"
@@ -17,7 +18,7 @@ Histories =
     name: "Open-Business"
     message: "open business message"
 
-Model = DS.Model.extend RelateableMixin, HistoricalMixin,
+Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
   name: DS.attr "string",
     label: "Shop Name"
     description: "The official brand name of your shop"
@@ -41,16 +42,6 @@ Model = DS.Model.extend RelateableMixin, HistoricalMixin,
     display: ["show"]
     priority: 3
 
-  insertedAt: DS.attr "moment",
-    label: "Inserted At"
-    description: "The time when this shop was first recorded into the database"
-    display: ["show"]
-    priority: 500
-  updatedAt: DS.attr "moment",
-    label: "Updated At"
-    description: "The last time the entry for this shop in the database was modified"
-    display: ["show"]
-    priority: 500
   inspectedAt: DS.attr "moment",
     label: "Last Inspection Time"
     description: "The last time this shop was inspected by the inspector general and approved for continued business"

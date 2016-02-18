@@ -17,4 +17,7 @@ Page = PageObject.create
   canOpenForBusiness: isVisible "button[aria-label=openForBusiness]"
   openForBusiness: clickable("button[aria-label=openForBusiness]")
 
+  canSelectForCurrentAction: isVisible "button[aria-label=selectedForAction]"
+  selectForCurrentAction: clickable "button[aria-label=selectedForAction]"
+
 `export default Page`

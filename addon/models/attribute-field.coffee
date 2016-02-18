@@ -19,7 +19,7 @@ AttributeField = Object.extend FieldCore, FieldSelect,
     [TextType, -> "fa-comment-o"],
     [/^string&password/, -> "fa-lock"],
     [/^string/, -> "fa-pencil"],
-    [/money$/, -> "fa-money"],
+    [/(price|cost|money)$/, -> "fa-money"],
     [DateType, -> "fa-calendar"],
     [/phone$/, -> "fa-mobile-phone"]
     [_, noop]

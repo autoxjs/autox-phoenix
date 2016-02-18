@@ -1,11 +1,20 @@
 `import Ember from 'ember'`
-
-{A, computed: {equal}} = Ember
+`import {_computed} from '../utils/xdash'`
+`import _ from 'lodash/lodash'`
+`import {Macros} from 'ember-cpm'`
+{conditional} = Macros
+{apply} = _computed
+{isEqual} = _
+{A, computed: {alias, gt, equal}} = Ember
 ActionNeed = Ember.Object.extend
   init: ->
     @_super arguments...
     @reset()
-  isFulfilled: equal "goods.length", "amount"
+  isFulfilled: apply "goods.length", "amount", isEqual
+  isPlural: gt "amount", 1
+  isSingle: equal "amount", 1
+  preparedGoods: conditional "isPlural", "goods", "good"
+  good: alias "goods.firstObject"
   fulfill: (good) ->
     @get("goods").pushObject good
     @

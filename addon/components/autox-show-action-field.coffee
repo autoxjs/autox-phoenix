@@ -5,7 +5,7 @@
 `import _x from '../utils/xdash'`
 {hasFunctions} = _x
 {partialRight} = _
-{isBlank, computed: {and: ifAll, not: cant}} = Ember
+{isBlank, computed: {alias, and: ifAll, not: cant}} = Ember
 isComputed = partialRight hasFunctions, "get", "meta", "readOnly", "property", "volatile"
 AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize,
   tagName: "button"
@@ -17,7 +17,7 @@ AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize,
   canDisplay: ifAll "field.canOnlyDisplay", "isPermissible"
   disabled: cant "canDisplay"
   isPermissible: true
-
+  actionState: alias "field.actionState"
   didInitAttrs: ->
     @attachPermissible()
     @registerInteraction()
@@ -39,9 +39,8 @@ AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize,
     @set "isBusy", true
     (field = @get "field")
     .invokeAction @get("model")
-    .then ({results, state}) =>
-      if field.get("bubbles")
-        @sendAction "invoke", field, results, state
+    .then ({state}) =>
+      @sendAction "invoke", field, state
     .finally =>
       @set "isBusy", false
 

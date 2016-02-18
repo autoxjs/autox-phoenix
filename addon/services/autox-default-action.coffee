@@ -1,17 +1,24 @@
 `import Ember from 'ember'`
 `import {RouteData} from 'autox/utils/router-dsl'`
 
+route = (state) -> RouteData.collectionRoute state.get "activeModelname"
+gohome = (state) -> 
+  route = RouteData.modelRoute state.get "modelName"
+  model = state.get("model")
+  return [route, model] if route? and model?
 AutoxDefaultActionService = Ember.Service.extend
   handle: (ctrl, field, actionState) ->
     switch
-      when actionState.get("isComplete") and field.get("bubbles")
-        ctrl.send field.get("bubbles"), actionState.get("results")
+      when actionState.get("isComplete")
+        if (name = field.get "bubblesName")?
+          ctrl.send field.get("bubblesName"), actionState.get("results")
+      when actionState.get("allFulfilled")
+        if (link = gohome actionState)?
+          ctrl.transitionToRoute link...
       when actionState.get("needsDeps")
-        @handleDependencyTransition ctrl, actionState
-    
-  handleDependencyTransition: (ctrl, actionState) ->
-    if (link = RouteData.collectionRoute actionState.get "activeModelname")?
-      ctrl.transitionToRoute link
+        ctrl.fsm.set("currentAction", actionState)
+        if (link = route actionState)?
+          ctrl.transitionToRoute link
 
   create: (ctrl, model) ->
     model.save().then (model) -> ctrl.send "modelCreated", model
