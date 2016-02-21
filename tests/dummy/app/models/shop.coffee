@@ -5,7 +5,7 @@
 `import {persistHistory} from 'autox/utils/create-history'`
 {needs} = action
 {join} = Macros
-{computed: {computedPromise: sync}} = _x
+{computed: {computedTask: sync}} = _x
 {Relateable, Timestamps, Historical, Multiaction} = Mixins
 Histories =
   deny:
@@ -55,7 +55,7 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     description: "All shops have an unique kitchen ID as required by the health inspector general"
     display: ["show"]
     modify: ["edit"]
-    among: (_, store) -> store.findAll "kitchen"
+    among: -> @store.findAll "kitchen"
     priority: 50
     async: true
   
@@ -64,7 +64,7 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     description: "The name of the owner of this shop"
     display: ["show"]
     modify: ["new", "edit"]
-    among: (_, store) -> store.findAll "owner"
+    among: -> @store.findAll "owner"
     proxyKey: "name"
     priority: 5
     async: true
@@ -101,7 +101,7 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     description: "Provide alcoholic beverages to minors"
     display: ["show"]
     priority: 0
-    when: sync "model.histories", -> 
+    when: sync "model.histories.firstObject", -> 
       @get("model").latestHistoryHas "name", "approve-inspection"
     -> @incrementProperty "beersServed"
 
@@ -112,13 +112,6 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     priority: 0
     presenter: "shop-open-for-business-action-field"
     -> persistHistory(Histories.open, {shop: @})
-
-  incorporateSalsa: action "click",
-    label: "Incorporate Salsa"
-    descriptions: "Finds a salsa and incorporates it into this shop"
-    display: ["show"]
-    priority: 0
-    needs "salsa", (salsa) -> console.log salsa
 
   chairs: DS.hasMany "chair", async: true
   salsas: DS.hasMany "salsa", async: true

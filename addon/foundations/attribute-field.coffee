@@ -2,8 +2,8 @@
 `import _x from '../utils/xdash'`
 `import {Macros} from 'ember-cpm'`
 `import _ from 'lodash/lodash'`
-`import FieldCore from '../mixins/field-core'`
-`import FieldSelect from '../mixins/field-select'`
+`import FieldFoundation from '../mixins/field-foundation'`
+
 {computed: {match, apply, access}} = _x
 {Object, computed: {alias, or: ifAny}} = Ember
 {join} = Macros
@@ -11,8 +11,7 @@
 
 TextType = /^string&(comment|note|body|description)/
 DateType = /(date|moment|datetime)/
-AttributeField = Object.extend FieldCore, FieldSelect,
-  canDisplay: ifAny "canModify", "canOnlyDisplay"
+AttributeField = Object.extend FieldFoundation,
   typeName: join "type", "name", "&"
   prefix: match "typeName",
     ["string&email", -> "fa-at"],

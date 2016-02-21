@@ -1,5 +1,7 @@
 `import Ember from 'ember'`
 `import _ from 'lodash/lodash'`
+`import {task} from 'ember-concurrency'`
+
 {chain} = _
 {isBlank, RSVP, computed} = Ember
 resolution = (results, fn, key) ->
@@ -26,5 +28,21 @@ computedPromise = (depKeys..., fn) ->
     results.value
   .readOnly()
 
+computedTask = (depKeys..., fn) ->
+  missingTask = true
+  result = null
+  computed (key) ->
+    if missingTask
+      @[key + "Task"] = task =>
+        result = yield fn.call @
+        @notifyPropertyChange key
+      .restartable()
+      for depKey in depKeys
+        @addObserver depKey, @, -> 
+          @get(key + "Task").perform()
+      @get(key + "Task").perform()
+      missingTask = false
+    result
 
+`export {computedPromise, computedTask}`
 `export default computedPromise`

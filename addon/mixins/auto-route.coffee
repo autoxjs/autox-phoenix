@@ -5,7 +5,7 @@
 `import {RouteData} from '../utils/router-dsl'`
 {isFunction, last} = _
 {isntModel, computed: {apply}} = _x
-{Mixin, isPresent, computed, inject, isArray, isBlank, String, A} = Ember
+{Mixin, isPresent, computed, inject, isArray, isBlank, String, A, RSVP} = Ember
 
 assertRoute = (router, name) ->
   if router.hasRoute name
@@ -22,20 +22,19 @@ Core =
   routing: inject.service("-routing")
   userHasDefinedTemplate: apply "lookup", "routeName", (lookup, routeName) ->
     isPresent lookup.template routeName
-
+  dirtyMetaTempStore: null
   routeAction: apply "routeName", RouteData.routeAction
   defaultModelName: apply "routeName", RouteData.routeModel
+  defaultModelFactory: apply "store", "defaultModelName", (store, name) ->
+    store.modelFor(name) if isPresent(name)
 
-  defaultModelShowPath: (model) ->
-    factory = model?.constructor
-    return if isBlank factory
+  defaultModelShowPath: (factory) ->
+    factory ?= @get "defaultModelFactory"
     routeName = factory?.aboutMe?.routeName
     return assertRoute(@get("routing"), routeName(@, model)) if isFunction(routeName)
     return assertRoute(@get("routing"), routeName) if isPresent routeName
     return if routeName is false
-    modelName = factory?.modelName
-    return if isBlank modelName
-    RouteData.modelRoute modelName
+    RouteData.modelRoute factory?.modelName
 
   parentNodeRoute: ->
     RouteData.parentNodeRoute @routeName
@@ -43,10 +42,9 @@ Core =
     @modelFor route if (route = @parentNodeRoute())?
 
   model: (params) ->
-    switch @get("routeAction")
+    data = switch @get("routeAction")
       when "collection#new"
-        modelName = @get "defaultModelName"
-        @store.createRecord modelName
+        @store.createRecord @get "defaultModelName"
       when "model#collection"
         collectionName = last @routeName.split(".")
         getWithDefault @parentNodeModel(), collectionName, A []
@@ -57,10 +55,22 @@ Core =
         @_super arguments...
 
   afterModel: (model) ->
-    @workflow.setupCtx @, model, @get("routeAction")
+    meta = @workflow?.setupMeta
+      model: model
+      modelPath: @defaultModelShowPath()
+      modelName: @get "defaultModelName"
+      routeAction: @get("routeAction")
+    RSVP.resolve meta
+    .then (meta) => 
+      @dirtyMetaTempStore = meta
+
+  setupController: (controller, model) ->
+    controller.set "meta", @dirtyMetaTempStore
+    @dirtyMetaTempStore = null
+    @_super controller, model
 
   modelCreated: (model) ->
-    path = @defaultModelShowPath(model)
+    path = @defaultModelShowPath(model.constructor)
     @transitionTo path, model if isPresent path
 
   modelUpdated: (model) ->
@@ -73,7 +83,6 @@ Core =
     model = @get "controller.model"
     return if isntModel(model)
     model.rollbackAttributes() if model?.get "hasDirtyAttributes"
-    @workflow.cleanCtx(model, @get("routeAction"))
 
   renderTemplate: (controller, model) ->
     return @_super(arguments...) if @get("userHasDefinedTemplate")

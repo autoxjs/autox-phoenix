@@ -30,7 +30,7 @@ test 'visiting /', (assert) ->
     assert.equal @chair.constructor.modelName, "chair"
     assert.equal @chair.id, 666
 
-    assert.equal @route.defaultModelShowPath(@chair), "chair.index"
+    assert.equal @route.defaultModelShowPath(@chair.constructor), "chair.index"
     visit "/chairs/new"
 
   andThen =>

@@ -8,8 +8,9 @@ ActionMulticastMixin = Ember.Mixin.create
     description: "Indictate to the system you want this object in your current action"
     priority: 0
     display: ["show"]
-    useHack: "just-fucking-do-it-i-dont-care"
-    when: apply "actionState", "model", (state, model) -> state?.stillNeeds?model
+    useCurrent: true
+    when: apply "fsm.currentAction", "model", (currentAction, model) -> currentAction?.stillNeeds(model)
+    setup: (actionState) -> actionState.get("fsm.currentAction")
     (actionState) -> actionState.fulfillNextNeed(@)
 
 `export default ActionMulticastMixin`

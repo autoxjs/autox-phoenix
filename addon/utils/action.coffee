@@ -1,15 +1,15 @@
 `import Ember from 'ember'`
 `import _ from 'lodash/lodash'`
-`import ActionState from '../models/action-state'`
-{merge, tap, isNaN, isFunction} = _
+
+{tap, isNaN, isFunction} = _
 {K, isBlank, A} = Ember
 
 action = (type, options={}, f) ->
-  [f, actionState] = switch
-    when isFunction(f) then [f, ActionState.create(needCores: [])]
-    when isBlank(f) then [K, ActionState.create(needCores: [])]
-    else [f.f, f.actionState]
-  options.actionState ?= actionState
+  [f, needCores] = switch
+    when isFunction(f) then [f, []]
+    when isBlank(f) then [K, []]
+    else [f.f, f.needCores]
+  options.needCores ?= needCores
   Ember
   .computed -> f
   .meta({type, options, isAction: true})
@@ -17,8 +17,7 @@ action = (type, options={}, f) ->
 
 action.needs = (requirements..., f) ->
   tap {f}, (reqs) ->
-    reqs.actionState = ActionState.create 
-      needCores: A(requirements).map parse
+    reqs.needCores = A(requirements).map parse
 
 parse = (req) ->
   [modelName, amount] = req.split(":")

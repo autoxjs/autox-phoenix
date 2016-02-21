@@ -1,7 +1,7 @@
 `import DS from 'ember-data'`
 `import Ember from 'ember'`
 `import _ from 'lodash/lodash'`
-{isEqual, partial, isFunction} = _
+{isFunction} = _
 {get, RSVP, getWithDefault, isPresent, isBlank, isArray, A} = Ember
 HistoricalMixin = Ember.Mixin.create
   histories: DS.hasMany "history", async: true
@@ -10,7 +10,9 @@ HistoricalMixin = Ember.Mixin.create
       when isBlank tester then isPresent
       when isFunction tester then tester
       when isArray tester then (x) -> A(tester).contains x
-      else partial(isEqual, tester)
+      else 
+        (x) -> 
+          x is tester
     @latestHistory()
     .then (history) ->
       isFunction(history?.get) and f(history.get attr)
@@ -18,7 +20,7 @@ HistoricalMixin = Ember.Mixin.create
   latestHistory: ->
     @get "histories"
     .then (histories) ->
-      get(histories, "lastObject")
+      get(histories, "firstObject")
   latestMentioned: ->
     @latestHistory()
     .then (history) ->

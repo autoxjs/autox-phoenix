@@ -1,7 +1,8 @@
 `import Ember from 'ember'`
 `import _x from '../utils/xdash'`
+`import FieldState from '../states/field-state'`
 
-{A, K, computed: {map, alias, or: ifAny}} = Ember
+{A, K, inject, RSVP, computed: {map, alias, or: ifAny, not: none}} = Ember
 {computed: {apply, match}} = _x
 formalize = (x) ->
   switch x
@@ -9,10 +10,10 @@ formalize = (x) ->
     when "edit" then "model#edit"
     when "new", "index" then "collection##{x}"
     else x
-FieldCoreMixin = Ember.Mixin.create
-  lookup: alias "ctx.lookup"
-  action: alias "ctx.action"
-  
+FieldFoundationMixin = Ember.Mixin.create
+  lookup: inject.service "lookup"
+  fsm: inject.service "finite-state-machine"
+
   accessName: ifAny "aliasKey", "name"
   aliasKey: alias "meta.options.aliasKey"
   type: alias "meta.type"
@@ -23,13 +24,24 @@ FieldCoreMixin = Ember.Mixin.create
   
   displayers: map "meta.options.display", formalize
   modifiers: map "meta.options.modify", formalize
-  canOnlyDisplay: apply "displayers", "action", (xs, x) -> A(xs).contains x
-  canModify: apply "modifiers", "action", (xs, x) -> A(xs).contains x
+
   isRelationship: alias "meta.isRelationship"
   isAttribute: alias "meta.isAttribute"
   isVirtual: alias "meta.isVirtual"
   isAction: alias "meta.isAction"
-  preload: K
+  isBasic: none "among"
+  among: alias "meta.options.among"
+  defaultValue: alias "meta.options.defaultValue"
+
   presenter: alias "meta.options.presenter"
   isCustomized: apply "presenter", (presenter) -> typeof presenter is "string"
-`export default FieldCoreMixin`
+  
+  getWhen: -> @get("meta.options")?.when ? true
+  initState: (ctx) ->
+    FieldState
+    .extend
+      when: @getWhen()
+    .create {ctx, content: @}
+    .preload()
+
+`export default FieldFoundationMixin`

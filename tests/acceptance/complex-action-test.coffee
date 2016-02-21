@@ -9,6 +9,7 @@ moduleForAcceptance 'Acceptance: ComplexAction'
 
 test 'Multiaction shop and salsa', (assert) ->
   fsm = @application.__container__.lookup("service:finite-state-machine")
+  currentAction = null
   SalsasIndex.visit()
   andThen ->
     assert.notOk fsm.get("currentAction"), "no action should be selected"
@@ -23,6 +24,7 @@ test 'Multiaction shop and salsa', (assert) ->
     SalsaShow.mateWithShop()
 
   andThen ->
+    assert.ok (currentAction = fsm.get "currentAction")
     assert.equal fsm.get("currentAction.activeModelname"), "shop", "we should have an action that requires a shop"
     assert.equal fsm.get("currentAction.modelName"), "salsa", "the action should have the proper model"
     assert.equal fsm.get("currentAction.name"), "mateWithShop", "the action should also have the proper method name"
@@ -37,10 +39,17 @@ test 'Multiaction shop and salsa', (assert) ->
     ShopShow.selectForCurrentAction()
 
   andThen ->
-    assert.equal currentPath(), "salsas.salsa.index", "we should now be back at the salsa page"
+    assert.equal currentAction, fsm.get("currentAction"), "the current action should not have changed"
+    assert.equal fsm.get("currentAction.modelName"), "salsa", "the action model should not have changed"
+    assert.equal fsm.get("currentAction.name"), "mateWithShop", "the action name should not change"
     assert.ok fsm.get("currentAction.allFulfilled"), "the current action should be ready for fulfillment"
-    assert.ok SalsaShow.canMateWithShop()
+    assert.equal currentPath(), "salsas.salsa.index", "we should now be back at the salsa page"
+    assert.ok SalsaShow.canMateWithShop(), "mating with the shop should now be possible"
     SalsaShow.mateWithShop()
 
   andThen ->
+    assert.equal currentAction, fsm.get("currentAction"), "after completion the current action should still be the same"
+    assert.ok fsm.get("currentAction"), "the current action should still be present"
     assert.ok fsm.get("currentAction.isComplete"), "the action should be complete"
+    assert.equal fsm.get("currentAction.modelName"), "salsa", "even after completion we should have the same action"
+    assert.equal fsm.get("currentAction.name"), "mateWithShop", "yeah same"

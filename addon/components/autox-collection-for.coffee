@@ -10,11 +10,9 @@ AutoxCollectionForComponent = Ember.Component.extend
   layout: layout
   classNames: ["autox-collection-for"]
   classNameBindings: ["userHasDefinedComponent::list-group"]
-  workflow: inject.service "workflow"
   lookup: inject.service "lookup"
-  ctx: apply "workflow", "collection", (wf, collection) -> wf.fetchCtx(collection)
-  fields: alias "ctx.fields"
-  modelPath: alias "ctx.modelPath"
+  fields: alias "meta.fields"
+  modelPath: alias "meta.modelPath"
   userHasDefinedComponent: apply "userDefinedComponent", "lookup", (c, lookup) ->
     c? and isPresent lookup.component c
   userDefinedComponent: apply "collection.firstObject.constructor.modelName", (name) ->

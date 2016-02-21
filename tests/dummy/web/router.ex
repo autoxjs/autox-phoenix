@@ -21,6 +21,7 @@ defmodule Dummy.Router do
     plug :fetch_session
     plug Autox.RepoContextPlug
     plug Autox.UnderscoreParamsPlug, "data"
+    plug Autox.AutoPaginatePlug
   end
 
   pipeline :realtime do

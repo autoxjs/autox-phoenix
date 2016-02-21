@@ -1,6 +1,5 @@
 `import Ember from 'ember'`
-`import FieldCore from '../mixins/field-core'`
-`import FieldSelect from '../mixins/field-select'`
+`import FieldFoundation from '../mixins/field-foundation'`
 `import _x from 'autox/utils/xdash'`
 `import _ from 'lodash/lodash'`
 `import {RouteData} from 'autox/utils/router-dsl'`
@@ -8,7 +7,7 @@
 {computed: {apply}} = _x
 {RSVP, Object, computed: {oneWay, alias}} = Ember
 
-RelationField = Object.extend FieldCore, FieldSelect,
+RelationField = Object.extend FieldFoundation,
   proxyKey: apply "meta.options.proxyKey", (key) -> key ? "id"
 
 `export default RelationField`

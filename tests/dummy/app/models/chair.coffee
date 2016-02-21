@@ -54,8 +54,8 @@ Model = DS.Model.extend RelateableMixin,
     display: ["show"]
     modify: ["new"]
     description: "The shop which owns this chair"
-    defaultValue: (_, store) -> store.findRecord "shop", 1
-    among: (_, store) -> store.findAll "shop"
+    defaultValue: -> @store.findRecord "shop", 1
+    among: -> @store.findAll "shop"
     async: true
     proxyKey: "name"
     priority: 5

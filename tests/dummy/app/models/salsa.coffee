@@ -24,8 +24,8 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     display: ["show"]
     label: "Couple With Shop"
     description: "Couples this salsa to a shop"
-    setup: (state) -> state.destruct()
-    needs "shop", ({shop}) -> 
+    (actionState) ->
+      shop = yield needs "shop"
       relation = @relate("shops").associate(shop)
       relation.set "authorizationKey", "xxx"
       relation.save()

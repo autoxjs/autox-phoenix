@@ -10,10 +10,8 @@
 AutoxShowForComponent = Ember.Component.extend UserCustomize,
   customPrefix: "show-for-model"
   layout: layout
-  workflow: inject.service "workflow"
   classNames: ["autox-show-for"]
   classNameBindings: ["userHasDefinedComponent::list-group"]
-  ctx: apply "workflow", "model", (wf, model) -> wf.fetchCtx(model)
-  fields: alias "ctx.fields"
+  fields: alias "meta.fields"
 
 `export default AutoxShowForComponent`

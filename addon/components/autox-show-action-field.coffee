@@ -16,17 +16,12 @@ AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize,
   classNameBindings: ["userHasDefinedComponent::list-group-item", "isBusy:disabled:", "canDisplay::hidden"]
   canDisplay: ifAll "field.canOnlyDisplay", "isPermissible"
   disabled: cant "canDisplay"
-  isPermissible: true
-  actionState: alias "field.actionState"
+  isPermissible: alias "actionState.when"
+  actionState: alias "field"
+
   didInitAttrs: ->
-    @attachPermissible()
     @registerInteraction()
 
-  attachPermissible: ->
-    w = @get("field")?.getWhen()
-    if isComputed(w)
-      @isPermissible = w
-      @notifyPropertyChange "isPermissible"
   willDestroyElement: ->
     throw "No Field Type" if isBlank @get("field.type")
     @off @get("field.type"), @, @invokeAction

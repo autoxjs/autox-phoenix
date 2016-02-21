@@ -8,9 +8,7 @@
 AutoxFormForComponent = Ember.Component.extend
   layout: layout
   classNames: ["autox-form-for"]
-  workflow: inject.service "workflow"
-  ctx: apply "workflow", "model", (wf, model) -> wf.fetchCtx(model)
-  formFields: alias "ctx.fields"
+  formFields: alias "meta.fields"
 
   actions:
     submit: (model) ->

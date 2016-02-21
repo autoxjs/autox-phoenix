@@ -12,6 +12,8 @@ test 'checking correct auto rendering', (assert) ->
 
   andThen =>
     assert.equal currentPath(), "shops.shop.index"
+    wait 10
+  andThen =>
     assert.ok shopsShopIndex.canApproveInspection(), "the approve action should be available"
     assert.ok shopsShopIndex.canDenyInspection(), "the deny action should be available"
     assert.notOk shopsShopIndex.canOpenForBusiness(), "this open action should not be available"

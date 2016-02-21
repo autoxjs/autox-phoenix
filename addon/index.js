@@ -16,7 +16,7 @@ import QueryUtils from './utils/query';
 import virtual from './utils/virtual';
 import action from './utils/action';
 import about from './utils/about';
-import Schema from './utils/schema';
+import FSE from './utils/field-schema-engine';
 import _x from './utils/xdash';
 import {RouteData, DSL} from './utils/router-dsl';
 const Mixins = {
@@ -47,7 +47,7 @@ export {
   SessionStateMixin,
   CookieCredentialsMixin,
   QueryUtils,
-  Schema,
+  FSE,
   about,
   action,
   virtual,

@@ -1,6 +1,6 @@
 `import _ from 'lodash/lodash'`
 `import Ember from 'ember'`
-`import computedPromise from './computed-promise'`
+`import {computedTask, computedPromise} from './computed-promise'`
 {isBlank, isPresent, isArray, computed, A} = Ember
 {trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map, every, partial, partialRight, curry, flow, negate} = _
 
@@ -27,6 +27,7 @@ matchEqual = (matcher, value) ->
     return [isPresent(results), results]
   return [isEqual(matcher, value), value]
 
+isGenerator = (x) -> typeof x is "function" and x.constructor.name is "i"
 isPromise = (x) -> isFunction(x?.then)
 isObject = (x) -> x? and typeof x is "object"
 hasFunctions = (x, fs...) -> x? and every map(fs, (f) -> x[f]), isFunction
@@ -36,6 +37,7 @@ isModel = flow into, partial(every, modelChecks)
 isntModel = negate(isModel)
   
 _computed =
+  computedTask: computedTask
   computedPromise: computedPromise
   access: (objKey, memKey) ->
     computed objKey, memKey,
@@ -53,7 +55,7 @@ _computed =
         boundMatchers = A(matchers).map ([matcher, action]) => [matcher, action.bind(@)] 
         match @get(key), boundMatchers...
 
-_x = {match, isPromise, consumeEnd, isntModel, isModel, isObject, hasFunctions, computed: _computed}
+_x = {match, isGenerator, isPromise, consumeEnd, isntModel, isModel, isObject, hasFunctions, computed: _computed}
 
 `export {_computed, _x}`
 `export default _x`
