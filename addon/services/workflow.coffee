@@ -2,7 +2,7 @@
 `import _ from 'lodash/lodash'`
 `import _x from '../utils/xdash'`
 {hasFunctions, computed: {apply}} = _x
-{RSVP, Service, isBlank, isArray, isEmpty, Object, Map, inject, assert} = Ember
+{RSVP, Service, isBlank, isArray, isEmpty, Object, Map, inject} = Ember
 {isFunction: isF, merge, chain, partialRight, invoke} = _
 isFactory = (x) ->
   isF(x?.eachAttribute) and isF(x?.eachRelationship)
@@ -16,7 +16,7 @@ WorkflowService = Service.extend
     return if isBlank(collection) 
     return if isEmpty(fields = collection.get "sortedFields")
     chain(fields)
-    .tap (fields) -> assert "is a proper array", isArray(fields)
+    .tap (fields) -> Ember.assert "is a proper array", isArray(fields)
     .map (field) -> field.initState {routeAction, model}
     .thru RSVP.all
     .value()

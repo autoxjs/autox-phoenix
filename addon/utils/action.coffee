@@ -1,23 +1,33 @@
 `import Ember from 'ember'`
 `import _ from 'lodash/lodash'`
+`import ActionNeed from '../models/action-need'`
 
-{tap, isNaN, isFunction} = _
+{tap, isNaN, isFunction, merge} = _
 {K, isBlank, A} = Ember
 
 action = (type, options={}, f) ->
-  [f, needCores] = switch
-    when isFunction(f) then [f, []]
-    when isBlank(f) then [K, []]
-    else [f.f, f.needCores]
-  options.needCores ?= needCores
+  options.generator ?= f
   Ember
   .computed -> f
   .meta({type, options, isAction: true})
   .readOnly()
 
-action.needs = (requirements..., f) ->
-  tap {f}, (reqs) ->
-    reqs.needCores = A(requirements).map parse
+makeYielder = ({modelName, amount}) ->
+  need = ActionNeed.create {modelName, amount}
+  until need.get("isFulfilled")
+    need.fulfill yield need
+  need
+
+action.need = (needName) ->
+  need = yield from makeYielder parse needName 
+  need.destruct()
+
+action.needs = (requirements...) ->
+  output = {}
+  for req in requirements
+    good = yield from action.need req
+    merge output, good
+  output
 
 parse = (req) ->
   [modelName, amount] = req.split(":")

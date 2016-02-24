@@ -3,7 +3,7 @@
 `import ActionField from '../foundations/action-field'`
 `import RelationField from '../foundations/relation-field'`
 `import _ from 'lodash/lodash'`
-{A, Object, computed, isPresent, isArray, inject, String, assert} = Ember
+{A, Object, computed, isPresent, isArray, inject, String} = Ember
 {chain, tap, partial, merge, partialRight, invoke} = _
 
 reEx = (baseClass, core) ->
@@ -52,24 +52,25 @@ getFields = (factory) ->
 getFieldCollection = (factory) ->
   FieldCollection = Object.extend
     lookup: inject.service "lookup"
-    sortedFields: computed.sort "fields", "priority"
+    priorityAsc: ["priority:asc"]
+    sortedFields: computed.sort "fields", "priorityAsc"
     fields: computed "constructor.modelName", "constructor.fieldClasses", "lookup", ->
       lookup = @get "lookup"
-      assert "has lookup service", isPresent lookup
+      Ember.assert "has lookup service", isPresent lookup
       modelName = @constructor.modelName
-      assert "has model name", isPresent(modelName)
+      Ember.assert "has model name", isPresent(modelName)
       nameBase = "field:#{modelName}"
       chain @constructor.fieldClasses
-      .tap (classes) -> assert "has field classes", isArray(classes)
-      .tap (classes) -> assert "no shitty blank fields", classes.every isPresent
+      .tap (classes) -> Ember.assert "has field classes", isArray(classes)
+      .tap (classes) -> Ember.assert "no shitty blank fields", classes.every isPresent
       .map (field) -> 
         chain(field.fieldName)
-        .tap (name) -> assert "name should be present", isPresent name
+        .tap (name) -> Ember.assert "name should be present", isPresent name
         .value()
       .map (fieldName) -> nameBase + "/" + fieldName
       .map lookup.other.bind(lookup)
-      .tap (fields) -> assert "should be a proper array", isArray(fields)
-      .tap (fields) -> assert "all fields are registered", fields.every(isPresent)
+      .tap (fields) -> Ember.assert "should be a proper array", isArray(fields)
+      .tap (fields) -> Ember.assert "all fields are registered", fields.every(isPresent)
       .value()
 
   FieldCollection.reopenClass

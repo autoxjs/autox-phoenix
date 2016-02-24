@@ -24,11 +24,13 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     display: ["show"]
     label: "Couple With Shop"
     description: "Couples this salsa to a shop"
+    bubbles: "transitionTo"
     (actionState) ->
-      shop = yield needs "shop"
+      {shop} = yield from needs "shop"
       relation = @relate("shops").associate(shop)
       relation.set "authorizationKey", "xxx"
       relation.save()
+      .then => routeName: "salsas.salsa.index", model: @
       
 
 about Model,

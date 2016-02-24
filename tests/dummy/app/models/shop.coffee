@@ -87,23 +87,7 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     description: "Give this shop the seal of approval"
     display: ["show"]
     priority: 0
-    -> persistHistory(Histories.approve, {shop: @})
-
-  denyInspection: action "click",
-    label: "Deny Shop"
-    description: "Deny approval to this shop"
-    display: ["show"]
-    priority: 0
-    -> persistHistory(Histories.deny, {shop: @})
-
-  serveAlcohol: action "click",
-    label: "Serve Alcohol"
-    description: "Provide alcoholic beverages to minors"
-    display: ["show"]
-    priority: 0
-    when: sync "model.histories.firstObject", -> 
-      @get("model").latestHistoryHas "name", "approve-inspection"
-    -> @incrementProperty "beersServed"
+    -> yield return persistHistory(Histories.approve, {shop: @})
 
   openForBusiness: action "click",
     label: "Open For Business"
@@ -111,7 +95,23 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     display: ["show"]
     priority: 0
     presenter: "shop-open-for-business-action-field"
-    -> persistHistory(Histories.open, {shop: @})
+    -> yield return persistHistory(Histories.open, {shop: @})
+  
+  denyInspection: action "click",
+    label: "Deny Shop"
+    description: "Deny approval to this shop"
+    display: ["show"]
+    priority: 0
+    -> yield return persistHistory(Histories.deny, {shop: @})
+
+  serveAlcohol: action "click",
+    label: "Serve Alcohol"
+    description: "Provide alcoholic beverages to minors"
+    display: ["show"]
+    priority: 0
+    when: sync "model.histories.firstObject", ->
+      @get("model").latestHistoryHas "name", "approve-inspection"
+    -> yield return @incrementProperty "beersServed"
 
   chairs: DS.hasMany "chair", async: true
   salsas: DS.hasMany "salsa", async: true

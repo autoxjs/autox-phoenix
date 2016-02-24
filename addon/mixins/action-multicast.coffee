@@ -9,8 +9,8 @@ ActionMulticastMixin = Ember.Mixin.create
     priority: 0
     display: ["show"]
     useCurrent: true
-    when: apply "fsm.currentAction", "model", (currentAction, model) -> currentAction?.stillNeeds(model)
-    setup: (actionState) -> actionState.get("fsm.currentAction")
-    (actionState) -> actionState.fulfillNextNeed(@)
+    when: apply "fsm.currentAction", "model", (currentAction, model) -> currentAction?.stillNeeds?(model)
+    -> yield return @
+      
 
 `export default ActionMulticastMixin`

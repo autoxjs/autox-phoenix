@@ -9,6 +9,8 @@ ApplicationRoute = Route.extend
     .get "self"
 
   actions:
+    transitionTo: ({routeName, model}) ->
+      @transitionTo routeName, model
     shopBubble: ->
       console.log "shop bubble in the application"
 

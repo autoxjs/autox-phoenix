@@ -4,7 +4,7 @@
 `import {Macros} from 'ember-cpm'`
 {conditional} = Macros
 {apply} = _computed
-{isEqual} = _
+{isEqual, tap} = _
 {A, computed: {alias, gt, equal}} = Ember
 ActionNeed = Ember.Object.extend
   init: ->
@@ -15,6 +15,9 @@ ActionNeed = Ember.Object.extend
   isSingle: equal "amount", 1
   preparedGoods: conditional "isPlural", "goods", "good"
   good: alias "goods.firstObject"
+  destruct: ->
+    tap {}, (output) =>
+      output[@get "modelName"] = if @get("isSingle") then @get("good") else @get("goods")
   fulfill: (good) ->
     @get("goods").pushObject good
     @

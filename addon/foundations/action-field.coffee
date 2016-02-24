@@ -5,7 +5,7 @@
 `import _x from 'autox/utils/xdash'`
 `import {Macros} from 'ember-cpm'`
 
-{computed: {apply}} = _x
+{genLift, computed: {access, apply}} = _x
 {conditional} = Macros
 {identity, chain, partialRight, tap, isFunction} = _
 {RSVP, inject, set, String, Object, computed: {oneWay, alias, equal}} = Ember
@@ -21,6 +21,8 @@ ActionField = Object.extend FieldFoundation,
   setup: alias "meta.options.setup"
   needCores: alias "meta.options.needCores"
   useCurrent: alias "meta.options.useCurrent"
+  rawGen: alias "meta.options.generator"
+  generator: alias "rawGen"
   initState: (ctx) ->
     ActionState
     .extend

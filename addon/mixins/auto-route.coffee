@@ -42,7 +42,7 @@ Core =
     @modelFor route if (route = @parentNodeRoute())?
 
   model: (params) ->
-    data = switch @get("routeAction")
+    switch @get("routeAction")
       when "collection#new"
         @store.createRecord @get "defaultModelName"
       when "model#collection"
@@ -55,6 +55,7 @@ Core =
         @_super arguments...
 
   afterModel: (model) ->
+    return unless model?
     meta = @workflow?.setupMeta
       model: model
       modelPath: @defaultModelShowPath()
@@ -62,11 +63,10 @@ Core =
       routeAction: @get("routeAction")
     RSVP.resolve meta
     .then (meta) => 
-      @dirtyMetaTempStore = meta
+      model.dirtyMetaTempStore = meta
 
   setupController: (controller, model) ->
-    controller.set "meta", @dirtyMetaTempStore
-    @dirtyMetaTempStore = null
+    controller.set("meta", model.dirtyMetaTempStore) if model?.dirtyMetaTempStore?
     @_super controller, model
 
   modelCreated: (model) ->
@@ -80,7 +80,7 @@ Core =
     @modelCreated(model)
 
   cleanup: Ember.on "deactivate", ->
-    model = @get "controller.model"
+    model = @get("controller.model")
     return if isntModel(model)
     model.rollbackAttributes() if model?.get "hasDirtyAttributes"
 

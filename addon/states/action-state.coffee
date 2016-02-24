@@ -5,75 +5,69 @@
 `import _ from 'lodash/lodash'`
 `import {Macros} from 'ember-cpm'`
 {join} = Macros
-{RSVP, set, computed} = Ember
-{alias, map, not: none} = computed
+{A, RSVP, isBlank, set, computed} = Ember
+{alias, equal, map, not: none} = computed
 {computed: {apply}} = _x
-{isEqual, tap, identity, partialRight} = _
-
-fetchGoods = (hash, need) ->
-  tap hash, partialRight(set, need.get("modelName"), need.get("preparedGoods"))
+{isEqual, tap, identity, partialRight, chain} = _
 
 ActionState = Ember.ObjectProxy.extend StateCore,
   debugName: join "modelName", "name", "status", "#"
-  status: computed "allFulfilled", "isComplete", "activeModelname", ->
-    switch
-      when @get "isComplete" then "complete"
-      when @get "allFulfilled" then "fulfilled"
-      else "needs-#{@get "activeModelname"}"
-  needs: map "needCores", (core) -> ActionNeed.create core
-  activeNeed: apply "needs", "activeIndex", (needs, i) -> needs.objectAt i
-  allFulfilled: apply "activeIndex", "needs.length", isEqual
-  needsDeps: none "allFulfilled"
+  status: "virgin"
   activeModelname: alias "activeNeed.modelName"
-  results: null
-  isComplete: false
-  activeIndex: 0
-  destruct: ->
-    @get "needs"
-    .reduce fetchGoods, {}
+  activeNeed: null
+  payload: null
+  isComplete: equal "status", "complete"
+  isFulfilled: equal "status", "fulfilled"
+  isVirgin: equal "status", "virgin"
+  isNeedy: equal "status", "needy"
+  iterator: null
+  init: ->
+    @_super arguments...
+    @reset()
 
-  complete: (results) ->
+  complete: (payload) ->
     tap @, =>
-      @set "isComplete", true
-      @set "results", results
+      @set "status", "complete"
+      @set "payload", payload
+
   stillNeeds: (good) ->
-    @get("needsDeps") and @get("activeNeed").stillNeeds good
+    @get("isNeedy") and @get("activeNeed").stillNeeds good
+
   fulfillNextNeed: (good) ->
-    tap @, =>
-      isFulfilled = @get "activeNeed"
-      .fulfill(good)
-      .get "isFulfilled"
-      @incrementProperty "activeIndex" if isFulfilled
+    @promiseInvokation @iterator.next good
+    .then => @
 
   reset: ->
     tap @, =>
-      @set "isComplete", false
-      @set "activeIndex", 0
-      @get "needs"
-      .map (need) -> need.reset()
+      @iterator = @get("generator").call @get("model"), @
+      @set "status", "virgin"
+      @set "activeNeed", null
 
-  setupArgs: ->
-    @getWithDefault "setup", identity
-    .call @get("model"), @
-  performAction: (args) ->
-    model = @get("model")
-    model
-    .get @get "name"
-    .call model, args
+  nextDeps: (need) ->
+    tap @, =>
+      @set "status", "needy"
+      @set "activeNeed", need
+
+  requireConfirmation: ->
+    tap @, => @set "status", "fulfilled"
+
   invokeAction: ->
-    switch
-      when @get("allFulfilled")
-        RSVP.resolve @setupArgs()
-        .then (args) =>
-          @performAction(args)
-        .then (results) =>
-          state: @complete(results)
-      when @stillNeeds @get "model"
-        RSVP.resolve @setupArgs()
-        .then (args) =>
-          @performAction(args)
-        .then (state) -> {state}
+    @reset() if @get("isComplete")
+    chain @iterator.next()
+    .thru @promiseInvokation.bind(@)
+    .value()
+
+  promiseInvokation: ({value, done}) ->
+    state = RSVP.resolve switch
+      when done is true
+        RSVP.resolve(value)
+        .then (result) => @complete(result)
+      when value instanceof ActionNeed 
+        @nextDeps(value)
+      when isBlank(value) 
+        @requireConfirmation()
       else
-        RSVP.resolve state: @reset()
+        throw new Error "Unsure wtf you're trying to do"
+    RSVP.hash {state}
 
 `export default ActionState`

@@ -15,4 +15,8 @@ FiniteStateMachineService = Service.extend
         @states.shiftObject()
       @states.pushObject value
 
+  reset: ->
+    @states.clear()
+    @
+
 `export default FiniteStateMachineService`

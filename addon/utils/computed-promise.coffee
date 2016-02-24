@@ -29,20 +29,17 @@ computedPromise = (depKeys..., fn) ->
   .readOnly()
 
 computedTask = (depKeys..., fn) ->
-  missingTask = true
-  result = null
   computed (key) ->
-    if missingTask
+    unless @[key + "Task"]?
       @[key + "Task"] = task =>
-        result = yield fn.call @
+        @[key + "TaskCurrentResult"] = yield fn.call @
         @notifyPropertyChange key
       .restartable()
       for depKey in depKeys
         @addObserver depKey, @, -> 
           @get(key + "Task").perform()
       @get(key + "Task").perform()
-      missingTask = false
-    result
+    @[key + "TaskCurrentResult"]
 
 `export {computedPromise, computedTask}`
 `export default computedPromise`
