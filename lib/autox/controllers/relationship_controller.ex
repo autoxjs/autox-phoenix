@@ -36,7 +36,7 @@ defmodule Autox.RelationshipController do
         |> assoc(association_key)
         |> Qu.construct(p)
         |> repo(conn).all
-        meta = conn |> Mu.from_conn
+        meta = conn |> Mu.from_conn(models)
         conn
         |> render("index.json", data: models, meta: meta)
       end

@@ -32,7 +32,7 @@ defmodule Autox.ResourceController do
         models = conn
         |> index_query(params)
         |> repo(conn).all
-        meta = conn |> MetaUtils.from_conn
+        meta = conn |> MetaUtils.from_conn(models)
         render(conn, "index.json", data: models, meta: meta)
       end
 

@@ -126,6 +126,7 @@ defmodule Autox.ResourceView do
       alias Autox.ResourceView
       alias Autox.NamespaceUtils
       alias Autox.ChangesetView, as: Cv
+      alias Autox.MetaUtils, as: Mu
 
       @attributes Module.get_attribute(__MODULE__, :attributes)
       def attributes do 
@@ -157,7 +158,7 @@ defmodule Autox.ResourceView do
       end
 
       def render("links.json", %{meta: meta}) do
-        %{self: meta.resource_path}
+        meta |> Mu.links_hash
       end
 
       defoverridable [attributes: 0, relationships: 0]

@@ -1,10 +1,12 @@
 defmodule Autox.AutoPaginatePlug do
+  alias Fox.MapExt
   @default_opts [offset: 0, limit: 25, max_limit: 100, sort: "-id"]
   def init([]), do: @default_opts
   def init(opts) when is_list(opts), do: @default_opts |> Keyword.merge(opts)
 
   def call(conn, [offset: offset, limit: limit, max_limit: ulimit, sort: sort]) do
     params = conn.params
+    |> numerify_pages
     |> consider_offset(offset)
     |> consider_limit(limit, ulimit)
     |> consider_sort(sort)
@@ -30,10 +32,17 @@ defmodule Autox.AutoPaginatePlug do
     params |> Map.put_new("sort", sort)
   end
 
+  defp parse_int(int) when is_integer(int), do: int
   defp parse_int(str) do
     case Integer.parse(str) do
       {i, _} -> i
       :error -> 0
     end
   end
+
+  defp numerify_pages(%{"page" => page}=params) when is_map(page) do
+    f = &parse_int/1
+    params |> Map.update!("page", &MapExt.value_map(&1, f))
+  end
+  defp numerify_pages(params), do: params
 end

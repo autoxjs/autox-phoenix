@@ -3,6 +3,7 @@ defmodule Autox.RelationshipView do
     quote location: :keep do
       alias Autox.NamespaceUtils
       alias Autox.ChangesetView, as: Cv
+      alias Autox.MetaUtils, as: Mu
       alias Fox.RecordExt
       def render("show.json", %{data: model, meta: meta}) do
         %{meta: meta}
@@ -26,7 +27,7 @@ defmodule Autox.RelationshipView do
         |> apply(:render, ["data.json", %{model: model}])
       end
       def render("links.json", %{meta: meta}) do
-        %{self: meta.resource_path}
+        meta |> Mu.links_hash
       end
     end
   end

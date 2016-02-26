@@ -18,5 +18,9 @@ defmodule Autox.NamespaceUtils do
     links 
     |> MapExt.present_update(:self, &Path.join(ns, &1))
     |> MapExt.present_update(:related, &Path.join(ns, &1))
+    |> MapExt.present_update(:next, &Path.join(ns, &1))
+    |> MapExt.present_update(:prev, &Path.join(ns, &1))
+    |> MapExt.present_update(:first, &Path.join(ns, &1))
+    |> MapExt.present_update(:last, &Path.join(ns, &1))
   end
 end

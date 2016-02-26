@@ -26,7 +26,8 @@ defmodule Dummy.SalsaRelationshipControllerTest do
       "relationships" => _
     }] = data
     assert %{
-      "self" => "/api/shops/#{shop.id}/salsas"
+      "self" => "/api/shops/#{shop.id}/salsas?page%5Blimit%5D=25&page%5Boffset%5D=0&sort=-id",
+      "next" => "/api/shops/#{shop.id}/salsas?page%5Blimit%5D=25&page%5Boffset%5D=25&sort=-id"
     } == links
   end
 

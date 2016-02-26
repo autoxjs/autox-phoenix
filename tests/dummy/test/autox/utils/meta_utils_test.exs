@@ -17,4 +17,32 @@ defmodule Dummy.MetaUtilsTest do
 
     assert meta.valid?
   end
+
+  test "it should properly handle next and prev paths" do
+    page = %{
+      "offset" => 0,
+      "limit" => 25
+    }
+    models = ["dog"]
+    expected = [
+      other_queries: "", 
+      this_path: "page%5Blimit%5D=25&page%5Boffset%5D=0",
+      next_path: "page%5Blimit%5D=25&page%5Boffset%5D=25"
+    ]
+    assert Mu.link_paths(%{"page" => page}, models) == expected
+      
+
+    page = %{
+      "offset" => 25,
+      "limit" => 25
+    }
+    models = ["dog"]
+    expected = [
+      other_queries: "", 
+      this_path: "page%5Blimit%5D=25&page%5Boffset%5D=25",
+      next_path: "page%5Blimit%5D=25&page%5Boffset%5D=50",
+      prev_path: "page%5Blimit%5D=25&page%5Boffset%5D=0"
+    ]
+    assert Mu.link_paths(%{"page" => page}, models) == expected
+  end
 end
