@@ -1,31 +1,29 @@
 `import Ember from 'ember'`
-`import { module, test } from 'qunit'`
-`import startApp from '../../tests/helpers/start-app'`
-`import {QueryUtils} from 'autox'`
+`import { test } from 'qunit'`
+`import moduleForAcceptance from '../../tests/helpers/module-for-acceptance'`
+`import Query from 'autox/utils/query'`
+`import ShopsIndex from 'dummy/tests/pages/shops/index'`
+`import moment from 'moment'`
+`import _ from 'lodash/lodash'`
 
-module 'Acceptance: Query',
-  beforeEach: ->
-    @application = startApp()
-    ###
-    Don't return anything, because QUnit looks for a .then
-    that is present on Ember.Application, but is deprecated.
-    ###
-    @store = @application.__container__.lookup("service:store")
-    return
-
-  afterEach: ->
-    Ember.run @application, 'destroy'
+moduleForAcceptance 'Acceptance: Query'
 
 test 'visiting /', (assert) ->
-  visit '/'
+  @store = @application.__container__.lookup("service:store")
+  
+  visit '/shops'
 
   andThen =>
-    query = new QueryUtils()
-    query.orderBy "name", "desc"
-    query.filterBy "insertedAt", ">=", moment()
-    query.filterBy "insertedAt", "!<", moment()
-    query.pageBy offset: 1, limit: 3
-    @store
-    .query "shop", query.toParams()
-    .then (shops) =>
-      assert.ok shops
+    assert.equal currentPath(), "shops.index"
+    assert.equal ShopsIndex.shopCount(), 25, "we should have 25 shops due to the page params"
+
+    ShopsIndex.changeLimit 5
+
+  andThen =>
+    assert.equal ShopsIndex.shopCount(), 5, "changing the page limit should reduce the amount of stuff shown"
+    @firstId = parseInt ShopsIndex.firstShopId()
+    ShopsIndex.nextPage()
+
+  andThen =>
+    currentId = parseInt ShopsIndex.firstShopId()
+    assert.equal currentId + 5, @firstId, "we should change page by the right offset amount"

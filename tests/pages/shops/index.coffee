@@ -9,5 +9,17 @@ Page = PageObject.create
   hasShops: -> @shopCount() > 0
   shopCount: -> $("a.list-group-item[href*=shops]").length
   clickShop: clickable("a.list-group-item[href*=shops]:last-child")
+  nextPage: clickable("#next-page")
+  prevPage: clickable("#prev-page")
+  changeLimit: fillable("#page-limit")
+  firstShop: ->
+    $("a.list-group-item[href*=shops]:first-child")
+  firstShopId: ->
+    @firstShop()
+    .find(".autox-collection-for__block:first-child > .autox-show-for__content")
+    .text()
+    .trim()
+  lastShopContent: ->
+    $("a.list-group-item[href*=shops]:last-child").text()
 
 `export default Page`

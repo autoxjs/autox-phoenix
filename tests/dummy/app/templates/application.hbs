@@ -13,14 +13,34 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-xs-12">
-      <div class="btn-group">
-        {{#link-to "chairs.index" class="btn btn-default"}}chairs index{{/link-to}}
-        {{#link-to "chairs.new" class="btn btn-default"}}new chair{{/link-to}}
-        {{#link-to "chair.index" 1 class="btn btn-default"}}chair 1{{/link-to}}
-        {{#link-to "chair.edit" 1 class="btn btn-default"}}edit chair 1{{/link-to}}
-      </div>
+    <div class="col-xs-4">
+      <dl>
+        <dt>page offset</dt>
+        <dd>{{paginate.ctrl.pageOffset}}</dd>
+        <dt>page limit</dt>
+        <dd>{{paginate.ctrl.pageLimit}}</dd>
+      </dl>
     </div>
+    <div class="col-xs-4">
+      <dl>
+        <dt>sort field</dt>
+        <dd>{{paginate.ctrl.sortField}}</dd>
+        <dt>sort direction</dt>
+        <dd>{{paginate.ctrl.sortDir}}</dd>
+      </dl>
+    </div>
+    <div class="col-xs-4">
+      <dl>
+        <dt>filter field</dt>
+        <dd>{{paginate.ctrl.filterField}}</dd>
+        <dt>filter op</dt>
+        <dd>{{paginate.ctrl.filterOp}}</dd>
+        <dt>filter value</dt>
+        <dd>{{paginate.ctrl.filterValue}}</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="row">
     <div class="col-xs-12">
       <h4 id="fsm-current-action">Current Action: {{fsm.currentAction.modelName}}#{{fsm.currentAction.name}}</h4>
     </div>

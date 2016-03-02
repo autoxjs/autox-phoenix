@@ -2,4 +2,21 @@
   {{#link-to "shops.index" class="btn btn-default"}}shops index{{/link-to}}
   {{#link-to "shops.new" class="btn btn-default"}}new shop{{/link-to}}
 </div>
+<div class="load-more">
+  <button id="prev-page" 
+    class="btn btn-large btn-default" 
+    {{action paginate.prevPage paginate}}>
+    Prev
+  </button>
+  {{input id="page-limit"
+    value=paginate.ctrl.pageLimit 
+    type="number" 
+    enter=(action (mut paginate.ctrl.pageLimit))}}
+  <button id="next-page" 
+    class="btn btn-large btn-default" 
+    {{action paginate.nextPage paginate}}>
+    Next
+  </button>
+
+</div>
 {{outlet}}

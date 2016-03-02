@@ -2,8 +2,8 @@
 `import Ember from 'ember'`
 `import {computedTask, computedPromise} from './computed-promise'`
 
-{isBlank, isPresent, isArray, computed, A} = Ember
-{trimRight, endsWith, isEqual, isFunction, isRegExp, isString, map, every, partial, partialRight, curry, flow, negate} = _
+{isBlank, isPresent, isArray, computed, A, get, set, getWithDefault} = Ember
+{trimRight, tap, endsWith, isEqual, isFunction, isRegExp, has, isString, map, every, partial, partialRight, curry, flow, negate} = _
 
 consumeEnd = (string, substr) ->
   if (isOk = endsWith(string, substr))
@@ -28,6 +28,10 @@ matchEqual = (matcher, value) ->
     return [isPresent(results), results]
   return [isEqual(matcher, value), value]
 
+update = (obj, field, x, f) ->
+  tap obj, (obj) ->
+    set obj, field, if has(obj, field) then f(get obj, field) else x
+
 isGenerator = (x) -> typeof x is "function" and x.constructor.name is "GeneratorFunction"
 isPromise = (x) -> isFunction(x?.then)
 isObject = (x) -> x? and typeof x is "object"
@@ -36,7 +40,9 @@ modelChecks = [isPresent, negate(isArray), isObject, partialRight(hasFunctions, 
 into = (x) -> (f) -> f x
 isModel = flow into, partial(every, modelChecks)
 isntModel = negate(isModel)
-  
+tapLog = (x) ->
+  console.log x
+  x
 _computed =
   computedTask: computedTask
   computedPromise: computedPromise
@@ -44,7 +50,9 @@ _computed =
     computed objKey, memKey,
       get: ->
         if (key = @get memKey)?
-          @get "#{objKey}.#{key}"
+          if (obj = @get objKey)?
+            obj.get?(key) ? get(obj, key)
+
   apply: (keys..., f) ->
     computed keys...,
       get: -> 
@@ -58,6 +66,8 @@ _computed =
 
 _x = {
   match,
+  update,
+  tapLog,
   isGenerator,
   isPromise,
   consumeEnd,
