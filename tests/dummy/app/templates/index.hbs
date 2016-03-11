@@ -1,7 +1,8 @@
-{{#if session.loggedIn}}
+{{#if session.isAuthenticated}}
   {{#link-to "user"}}Already Logged in{{/link-to}}
+  <button id="logout" {{action "attemptLogout"}}>Log Out</button>
 {{else}}
-  <button {{action "attemptLogin"}}>Login</button>
+  <button id="login" {{action "attemptLogin"}}>Login</button>
 {{/if}}
 
 {{#link-to "shops" class="btn btn-lg btn-success"}}

@@ -1,28 +1,16 @@
 `import Ember from 'ember'`
-`import { module, test } from 'qunit'`
-`import startApp from '../../tests/helpers/start-app'`
+`import { test } from 'qunit'`
+`import moduleForAcceptance from '../../tests/helpers/module-for-acceptance'`
 {RSVP} = Ember
-module 'Acceptance: SessionChan',
-  beforeEach: ->
-    @application = startApp()
-    ###
-    Don't return anything, because QUnit looks for a .then
-    that is present on Ember.Application, but is deprecated.
-    ###
-    @store = @application.__container__.lookup("service:store")
-    @session = @application.__container__.lookup("service:session")
-    @socket = @application.__container__.lookup("service:socket")
-    @userParams =
-      email: "acceptance-session-#{Math.random()}@test.co"
-      password: "password123"
-    Cookies.remove "remember-token"
-    Cookies.remove "_dummy_key"
-    return
-
-  afterEach: ->
-    Ember.run @application, 'destroy'
+moduleForAcceptance 'Acceptance: SessionChan'
 
 test 'visiting /', (assert) ->
+  @store = @application.__container__.lookup("service:store")
+  @session = @application.__container__.lookup("service:autox-session-context")
+  @socket = @application.__container__.lookup("service:socket")
+  @userParams =
+    email: "acceptance-session-#{Math.random()}@test.co"
+    password: "password123"
   visit '/'
 
   andThen =>
@@ -38,18 +26,21 @@ test 'visiting /', (assert) ->
     assert.ok @user.get("id"), "user id should be present"
     @session.on "login", ->
       @set "testLoginFlag", true
-    @session.on "change", ->
-      @set "testChangeFlag", true
     @session.login @userParams
   
   andThen =>
-    assert.ok @session.get("model.isValid"), "should not have errors"
     assert.ok @session.get("loggedIn"), "we should be logged in"
     assert.ok @session.get("model.rememberToken"), "session token should be present"
-    assert.equal Cookies.get("remember-token"), @session.get("model.rememberToken"), "session token should match"
     assert.equal @session.get("testLoginFlag"), true, "login event should have been called"
-    assert.notEqual @session.get("testChangeFlag"), true, "change event should not be fired"
 
+    @store.findRecord "session", @session.get("model.id")
+    .then (session) =>
+      assert.ok session
+      assert.equal session.get("id"), @session.get("model.id")
+  andThen =>
+    @socket.connect()
+
+  andThen =>
     @chan = @session.channelFor "user"
     assert.ok @chan, "we should find the channel"
     assert.ok @chan instanceof Ember.Service, "the channel should be what we expected"
@@ -70,7 +61,7 @@ test 'visiting /', (assert) ->
     @owner.save()
 
   andThen =>
-    @session.update owner: @owner
+    @session.update {@owner}
 
   andThen =>
     @taco = @store.createRecord "taco",

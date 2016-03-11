@@ -1,5 +1,6 @@
 `import { test } from 'qunit'`
 `import moduleForAcceptance from '../../tests/helpers/module-for-acceptance'`
+`import Index from 'dummy/tests/pages/index'`
 
 moduleForAcceptance 'Acceptance: DeathRoute'
 
@@ -7,7 +8,11 @@ test 'visiting /', (assert) ->
   @lookup = @application.__container__.lookup("service:lookup")
   @route = @application.__container__.lookup("route:application")
   @store = @application.__container__.lookup("service:store")
-  visit '/chairs'
+
+  Index.login()
+
+  andThen =>
+    visit '/chairs'
 
   andThen =>
     assert.equal currentPath(), "chairs.index"

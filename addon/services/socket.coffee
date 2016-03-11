@@ -2,7 +2,7 @@
 
 {isBlank, Service, Evented, inject, RSVP} = Ember
 
-BadUserError = """
+BadUserError = new Error """
 You attempt to establish socket connection failed,
 I expected an non-null user, but got a null user.
 """
@@ -14,7 +14,7 @@ This is likely because you called the `channelSync`
 method before the user has successfully logged in his account.
 """
 SocketService = Service.extend Evented,
-  session: inject.service("session")
+  xession: inject.service("autox-session-context")
   state: "disconnected"
   init: ->
     @_super arguments...
@@ -41,22 +41,21 @@ SocketService = Service.extend Evented,
       @get("deferredSocket").reject(socket)
     else
       @set "state", "error"
-    
-  instanceInit: (Socket, socketNamespace) ->
-    session = @get "session"
-    session.on "logout", =>
+
+  connect: ->
+    user_id = @get "xession.authData.data.relationships.user.data.id"
+    throw BadUserError if isBlank(user_id)
+    @socket = new @socketFactory @socketNamespace, params: {user_id}
+    @socket.connect()
+    @socket.onOpen => @trigger "connect"
+    @socket.onClose => @trigger "disconnect"
+    @socket.onError => @trigger "error"
+    @get "xession"
+    .on "logout", =>
       @socket?.disconnect => @trigger "disconnect"
-    session.on "login", =>
-      session
-      .get("model")
-      .get("user")
-      .then (user) =>
-        id = user.get "id"
-        throw BadUserError if isBlank id
-        @socket = new Socket socketNamespace, params: user_id: id
-        @socket.connect()
-        @socket.onOpen => @trigger "connect"
-        @socket.onClose => @trigger "disconnect"
-        @socket.onError => @trigger "error"
+    @get "deferredSocket.promise"
+  instanceInit: (Socket, socketNamespace) ->
+    @socketFactory = Socket
+    @socketNamespace = socketNamespace
 
 `export default SocketService`

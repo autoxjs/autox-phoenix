@@ -46,16 +46,23 @@ Core =
   parentNodeRoute: ->
     RouteData.parentNodeRoute @routeName
   parentNodeModel: ->
-    @modelFor route if (route = @parentNodeRoute())?
+    @modelFor route if isPresent(route = @parentNodeRoute())
 
   beforeModel: ->
     @_super arguments...
     @get("paginateParams").pushRoute @
 
+  defaultNewParams: ->
+    params = {}
+    model = @parentNodeModel()
+    if (modelName = model?.constructor?.modelName)?
+      params[modelName] = model
+    params
   model: (params) ->
     switch @get("routeAction")
       when "collection#new"
-        @store.createRecord @get "defaultModelName"
+        @store.createRecord @get("defaultModelName"),
+          @defaultNewParams(params)
       when "model#collection"
         modelName = @get "defaultModelName"
         collectionName = last @routeName.split(".")

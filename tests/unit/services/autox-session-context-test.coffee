@@ -1,6 +1,6 @@
 `import { moduleFor, test } from 'ember-qunit'`
 
-moduleFor 'service:session', 'Unit | Service | session', {
+moduleFor 'service:autox-session-context', 'Unit | Service | session', {
   # Specify the other units that are required for this test.
   needs: ['service:socket', 'model:session', 'model:owner', 'model:user']
 }

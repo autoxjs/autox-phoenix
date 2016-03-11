@@ -1,8 +1,9 @@
 `import Ember from 'ember'`
 `import DS from 'ember-data'`
-`import CookieCred from '../mixins/cookie-credentials'`
+`import DataAdapterMixin from 'ember-simple-auth/mixins/data-adapter-mixin'`
 
-RelationshipAdapter = DS.JSONAPIAdapter.extend CookieCred,
+RelationshipAdapter = DS.JSONAPIAdapter.extend DataAdapterMixin,
+  authorizer: 'authorizer:autox'
   deleteRecord: (store, type, snapshot) ->
     data = {}
     serializer = store.serializerFor(type.modelName)

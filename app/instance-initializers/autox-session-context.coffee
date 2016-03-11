@@ -2,10 +2,10 @@
 
 # Takes two parameters: container and application
 initialize = (instance) ->
-  instance.lookup("service:session").instanceInit(ENV.cookieKey)
+  instance.lookup("service:autox-session-context").instanceInit(ENV.cookieKey)
 
 SessionInitializer =
-  name: 'session'
+  name: 'autox-session-context'
   initialize: initialize
 
 `export {initialize}`

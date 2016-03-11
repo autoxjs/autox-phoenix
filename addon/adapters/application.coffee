@@ -1,12 +1,13 @@
 `import DS from 'ember-data'`
-`import CookieCred from '../mixins/cookie-credentials'`
+`import DataAdapterMixin from 'ember-simple-auth/mixins/data-adapter-mixin'`
 
 isModel = (x) ->
   typeof x is "object" and
   typeof x.get is "function" and
   typeof x.constructor.modelName is "string"
 
-ApplicationAdapter = DS.JSONAPIAdapter.extend CookieCred,
+ApplicationAdapter = DS.JSONAPIAdapter.extend DataAdapterMixin,
+  authorizer: 'authorizer:autox'
   urlForQuery: (query, modelName) ->
     {belongsTo} = query
     if isModel(belongsTo)

@@ -5,5 +5,6 @@ RelationshipAdapter = Adapter.extend
   host: ENV.host
   namespace: ENV.namespace
   cookieKey: ENV.cookieKey
+  authorizer: 'authorizer:autox'
 
 `export default RelationshipAdapter`

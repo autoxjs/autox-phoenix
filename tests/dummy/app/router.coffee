@@ -27,4 +27,22 @@ Router.map ->
   @route "finite-state-machine"
   @route "autox-show-for"
 
+  namespace "setup", ->
+    @route "requirements"
+    @route "install"
+  namespace "server", ->
+    @route "router"
+    @route "models"
+    @route "plugs"
+    @route "scaffold"
+  namespace "client", ->
+    @route "router"
+    @route "models"
+    @route "mixins"
+  namespace "release", ->
+    @route "backend"
+    @route "web"
+    @route "mobile"
+    @route "desktop"
+
 `export default Router`

@@ -8,7 +8,7 @@
 
 moduleFor 'service:socket', 'Unit | Service | socket', {
   # Specify the other units that are required for this test.
-  needs: ['service:session', 'model:user', 'model:session', 'model:owner']
+  needs: ['service:autox-session-context', 'service:session', 'model:user', 'model:session', 'model:owner']
 }
 
 # Replace this with your real tests.
@@ -17,4 +17,4 @@ test 'it exists', (assert) ->
   assert.ok service
   Ember.run =>
     service.instanceInit(Socket, socketNamespace)
-    assert.ok service.get("session")
+    assert.ok service.get("xession")

@@ -6,6 +6,7 @@
 `import ShopShow from '../../tests/pages/shops/shop/index'`
 `import SalsasIndex from '../../tests/pages/salsas/index'`
 `import SalsaShow from '../../tests/pages/salsas/salsa/index'`
+`import Index from 'dummy/tests/pages/index'`
 
 moduleForAcceptance 'Acceptance: ActionComplexShowShopTest'
 
@@ -14,7 +15,10 @@ test "salsa -> shop", (assert) ->
   fsm = @application.__container__.lookup("service:finite-state-machine").reset()
   currentAction = null
   shopId = null
-  SalsasIndex.visit()
+  Index.login()
+
+  andThen ->
+    SalsasIndex.visit()
 
   andThen ->
     assert.notOk fsm.get("currentAction"), "no action should be selected"

@@ -1,5 +1,33 @@
 # Autox
 
+JS dependencies
+
+*Optional:
+ember-data-filter
+liquid-fire
+ember-cli-sass
+ember-cli-font-awesome
+
+*Required
+torii
+ember-bootstrap
+ember-simple-auth
+ember-cpm
+ember-cli-coffeescript
+ember-moment
+ember-lodash
+ember-truth-helpers
+ember-notify
+ember-concurrency
+ember-cli-page-object
+ember-power-select
+ember-bootstrap-datetimepicker
+ember-cli-format-number
+ember-form-tool
+ember-phoenix-chan
+ember-modal-dialog
+ember-timezone-input
+
 Phoenix Ember addon for rapidly building jsonapi backends
 
 >Note: This is super alpha software! Use at your own peril

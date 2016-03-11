@@ -4,7 +4,10 @@
 
 moduleForModel 'shop', 'Unit | Adapter | relationship', {
   # Specify the other units that are required for this test.
-  needs: ['adapter:relationship', 
+  needs: [
+    'service:session',
+    'service:autox-session-context',
+    'adapter:relationship', 
     'serializer:relationship', 
     'model:owner', 
     'model:salsa', 
