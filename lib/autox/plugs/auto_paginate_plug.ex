@@ -1,10 +1,11 @@
 defmodule Autox.AutoPaginatePlug do
   alias Fox.MapExt
-  @default_opts [offset: 0, limit: 25, max_limit: 100, sort: "-id"]
+  @default_opts %{offset: 0, limit: 25, max_limit: 100, sort: "-id"}
   def init([]), do: @default_opts
-  def init(opts) when is_list(opts), do: @default_opts |> Keyword.merge(opts)
+  def init(opts) when is_map(opts), do: @default_opts |> Map.merge(opts)
+  def init(opts) when is_list(opts), do: opts |> Map.new |> init
 
-  def call(conn, [offset: offset, limit: limit, max_limit: ulimit, sort: sort]) do
+  def call(conn, %{offset: offset, limit: limit, max_limit: ulimit, sort: sort}) do
     params = conn.params
     |> numerify_pages
     |> consider_offset(offset)
