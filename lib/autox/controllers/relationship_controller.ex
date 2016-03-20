@@ -1,10 +1,12 @@
 defmodule Autox.RelationshipController do
+  alias Fox.StringExt
   @doc """
   Infers the association field from the path
   """
   def infer_relationship_field(%{path_info: paths}) when is_list(paths) do
     paths
     |> List.last
+    |> StringExt.underscore
     |> String.to_existing_atom
   end
 
