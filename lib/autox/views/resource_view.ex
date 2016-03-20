@@ -40,6 +40,7 @@ defmodule Autox.ResourceView do
   end
 
   defp post_modify_links(links, field) do
+    field = field |> to_string |> StringExt.dasherize
     links
     |> MapExt.present_update(:self, &Path.join(&1, "relationships/#{field}"))
     |> MapExt.present_update(:related, &Path.join(&1, "#{field}"))
