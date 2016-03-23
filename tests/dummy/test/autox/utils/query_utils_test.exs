@@ -20,6 +20,12 @@ defmodule Autox.QueryUtilsTest do
       "email" => ">=eummy@test.co"
     }
     assert [] == User |> Qu.consider_filtering(%{"filter" => filters}) |> Repo.all
+
+    filters = %{
+      "email" => "dummy@test.co,dumbass@test.com,dipshit@quiz.org"
+    }
+    assert [u] = User |> Qu.consider_filtering(%{"filter" => filters}) |> Repo.all
+    assert u.id == user.id
   end
 
   test "consider_sorting" do

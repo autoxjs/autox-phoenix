@@ -37,6 +37,8 @@ defmodule Autox.QueryUtils do
       ">"<>val   -> class |> where([x], field(x, ^key) > ^val)
       "~"<>val   -> class |> where([x], like(field(x, ^key), ^val))
       "i~"<>val  -> class |> where([x], ilike(field(x, ^key), ^val))
+      val when is_binary(val) ->
+        class |> where([x], field(x, ^key) in ^String.split(val, ","))
     end
   end
   def consider_filtering(class, key, [opval|opvals]) do
