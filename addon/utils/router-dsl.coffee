@@ -9,6 +9,13 @@ drop1 = flow split("."), partialRight(dropRight, 1), join(".")
 
 compare = (f) -> (a,b) -> f(a) - f(b)
 specificity = (str) -> str.split(".").length
+distanceTo = (destination) -> 
+  destinations = destination?.split(".") ? []
+  (origin) ->
+    origins = origin?.split(".") ? []
+    i = 0
+    i++ while i < destinations.length and origins[i] is destinations[i]
+    destinations.length - i
 
 ModelData = Object.extend
   modelRoute: alias "modelRoutes.firstObject"
@@ -19,7 +26,14 @@ ModelData = Object.extend
     @_super arguments...
     @set "collectionRoutesRaw", A []
     @set "modelRoutesRaw", A []
-  
+  modelRouteClosestTo: (routeName) ->
+    @get "modelRoutesRaw"
+    .sort compare distanceTo routeName
+    .get "firstObject"
+  collectionRouteClosestTo: (routeName) ->
+    @get "collectionRoutesRaw"
+    .sort compare distanceTo routeName
+    .get "firstObject"
   merge: ({collectionRoute, modelRoute}) ->
     if modelRoute?
       @get("modelRoutesRaw").pushObject modelRoute
@@ -58,10 +72,16 @@ class RouteData
       else noop
     f routeName
 
-  @modelRoute = (modelName) ->
-    instance.models[modelName]?.get("modelRoute")
-  @collectionRoute = (modelName) ->
-    instance.models[modelName]?.get("collectionRoute")
+  @modelRoute = (modelName, currentRouteName) ->
+    if currentRouteName?
+      instance.models[modelName]?.modelRouteClosestTo(currentRouteName)
+    else  
+      instance.models[modelName]?.get("modelRoute")
+  @collectionRoute = (modelName, currentRouteName) ->
+    if currentRouteName?
+      instance.models[modelName]?.collectionRouteClosestTo(currentRouteName)
+    else
+      instance.models[modelName]?.get("collectionRoute")
   @modelRoutes = (modelName) ->
     instance.models[modelName]?.get("modelRoutes")
   @collectionRoutes = (modelName) ->

@@ -41,7 +41,7 @@ Core =
     return assertRoute(@get("routing"), routeName(@, model)) if isFunction(routeName)
     return assertRoute(@get("routing"), routeName) if isPresent routeName
     return if routeName is false
-    RouteData.modelRoute factory?.modelName
+    RouteData.modelRoute factory?.modelName, @routeName
 
   parentNodeRoute: ->
     RouteData.parentNodeRoute @routeName

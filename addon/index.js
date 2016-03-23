@@ -27,7 +27,7 @@ const Mixins = {
   Relateable: RelateableMixin,
   Historical: HistoricalMixin
 };
-const VERSION = "0.1.46";
+const VERSION = "0.1.47";
 const computed = _x.computed;
 if (Ember.libraries) {
   Ember.libraries.register("AutoX", VERSION);

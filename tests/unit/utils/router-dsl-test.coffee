@@ -33,15 +33,30 @@ module 'Unit | Utility | router dsl',
         collection "juicers"
         model "cherimoya"
 
+      namespace "supermarket", ->
+        collection "apples", ->
+          model "apple", ->
+            form "buy"
+        collection "oranges", ->
+          model "orange", ->
+            form "buy"
 
 test 'modelRoute', (assert) ->
   assert.equal RouteData.modelRoute("apple"),
     "orchard.apples.apple"
 
+  assert.equal RouteData.modelRoute("apple", "supermarket.oranges.orange.buy"),
+    "supermarket.apples.apple",
+    "passing in a second argument should properly handle distance"
+
   assert.notOk RouteData.modelRoute("banana")
 
   assert.equal RouteData.modelRoute("orange"),
     "orchard.oranges.orange"
+
+  assert.equal RouteData.modelRoute("orange", "supermarket.apples.apple.index"),
+    "supermarket.oranges.orange",
+    "distances should be properly handled"
 
   assert.equal RouteData.modelRoute("cherimoya"),
     "orchard.cherimoya"
@@ -49,6 +64,9 @@ test 'modelRoute', (assert) ->
 test "collectionRoute", (assert) ->
   assert.equal RouteData.collectionRoute("apple"),
     "orchard.apples"
+
+  assert.equal RouteData.collectionRoute("apple", "supermarket.oranges"),
+    "supermarket.apples"
 
   assert.notOk RouteData.collectionRoute("banana")
 
