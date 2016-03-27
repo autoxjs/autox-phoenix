@@ -1,12 +1,27 @@
 `import Ember from 'ember'`
 `import _x from '../utils/xdash'`
 `import _ from 'lodash/lodash'`
-`import {Macros} from 'ember-cpm'`
-{difference, sum} = Macros
-{A, isBlank, isPresent, Service, Evented, inject, computed, Map} = Ember
-{alias, lte} = computed
-{computed: {access, apply}} = _x
-{tap} = _
+
+{A, isBlank, isPresent, Service, Evented, inject, computed, Map, getWithDefault} = Ember
+{alias, filter, lte} = computed
+{tapLog, computed: {access, apply}} = _x
+{tap, partialRight, flow, endsWith} = _
+
+sum = (a, b) ->
+  computed a, b, ->
+    x = parseFloat @getWithDefault(a, 0)
+    y = parseFloat @getWithDefault(b, 0)
+    x + y
+
+difference = (a, b) ->
+  computed a, b, ->
+    x = parseFloat @getWithDefault(a, 0)
+    y = parseFloat @getWithDefault(b, 0)
+    if (z = x - y) <= 0 then 0 else z
+
+isCollection = (route) ->
+  action = route.getWithDefault("routeAction", "")
+  endsWith action, "collection"
 
 PaginateParamsService = Service.extend Evented,
   lookup: inject.service("lookup")
@@ -19,6 +34,8 @@ PaginateParamsService = Service.extend Evented,
   activeQueryFunc: apply "activeQuery", (q) -> q?.toFunction()
   prevPage: difference "ctrl.pageOffset", "ctrl.pageLimit"
   nextPage: sum "ctrl.pageOffset", "ctrl.pageLimit"
+  collectionRoutes: filter "routes", isCollection
+  deepestCollectionRoute: alias "collectionRoutes.lastObject"
   isFirstPage: lte "prevPage", 0
   clear: -> tap @, =>
     @routes.clear()
@@ -31,16 +48,14 @@ PaginateParamsService = Service.extend Evented,
   pushRoute: (route) -> tap @, =>
     @routes.pushObject route unless @routes.contains(route)
 
-  prevPage: (self) ->
+  go2PrevPage: (self) ->
     self.get('ctrl').prevPage()
 
-  nextPage: (self) ->
+  go2NextPage: (self) ->
     self.get('ctrl').nextPage()
 
-  update: ->
-    if (route = @get "activeRoute")?
-      @trigger "update", route
-    else
-      throw new Error "No routes are active, wtf are you doing try to push in params"
+  manualUpdate: (params) ->
+    @get "ctrl"
+    .cast params
 
 `export default PaginateParamsService`

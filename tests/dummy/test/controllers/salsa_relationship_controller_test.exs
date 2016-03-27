@@ -18,7 +18,7 @@ defmodule Dummy.SalsaRelationshipControllerTest do
     |> get(path, %{})
     |> json_response(200)
 
-    assert %{"data" => data, "links" => links} = response
+    assert %{"meta" => meta, "data" => data, "links" => links} = response
     assert [%{
       "id" => ^salsa_id,
       "type" => "salsas",
@@ -26,9 +26,9 @@ defmodule Dummy.SalsaRelationshipControllerTest do
       "relationships" => _
     }] = data
     assert %{
-      "self" => "/api/shops/#{shop.id}/salsas?page%5Blimit%5D=25&page%5Boffset%5D=0&sort=-id",
-      "next" => "/api/shops/#{shop.id}/salsas?page%5Blimit%5D=25&page%5Boffset%5D=25&sort=-id"
+      "self" => "/api/shops/#{shop.id}/salsas?page%5Blimit%5D=25&page%5Boffset%5D=0&sort=-id"
     } == links
+    assert %{"count" => 1 } = meta
   end
 
   test "it should relate the shop with the salsa", %{conn: conn, shop: shop, salsa: salsa} do

@@ -11,7 +11,11 @@ Page = PageObject.create
   clickShop: clickable("a.list-group-item[href*=shops]:last-child")
   nextPage: clickable("#next-page")
   prevPage: clickable("#prev-page")
-  changeLimit: fillable("#page-limit")
+  editLimit: fillable("#page-limit")
+  submitLimit: clickable("#page-limit-change")
+  changeLimit: (n) -> 
+    @editLimit(n)
+    @submitLimit()
   firstShop: ->
     $("a.list-group-item[href*=shops]:first-child")
   firstShopId: ->

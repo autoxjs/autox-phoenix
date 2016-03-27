@@ -10,16 +10,17 @@ defmodule Autox.MetaUtils do
     next_path: nil,
     prev_path: nil,
     this_path: nil,
+    count: 0,
     other_queries: %{}
 
-  def from_conn(conn), do: from_conn(conn, [])
-  def from_conn(conn, models) do
+  def from_conn(conn), do: from_conn(0, conn)
+  def from_conn(count, conn) do
     vs = conn.path_info
     |> Enum.reverse
     |> Enum.take(5)
     |> destruct_path
-    |> Kernel.++([path: conn.request_path, host: conn.host])
-    |> Kernel.++(link_paths(conn.params, models))
+    |> Kernel.++([path: conn.request_path, host: conn.host, count: count])
+    |> Kernel.++(link_paths(conn.params, count))
     struct(__MODULE__, vs)
   end
 
@@ -50,19 +51,17 @@ defmodule Autox.MetaUtils do
     }
   end
 
-  def link_paths(params, models) do
-    raw_link_paths(params, models)
+  def link_paths(params, count) do
+    raw_link_paths(params, count)
     |> Keyword.put(:this_path, params["page"])
     |> DictExt.reject_blank_keys
     |> DictExt.value_map(fn page -> %{"page" => page} end)
     |> Keyword.put(:other_queries, Map.take(params, ["sort", "filter"]))
     |> DictExt.value_map(&UriExt.encode_query/1)
   end
-  defp raw_link_paths(%{"page" => page}, []) do
-    [prev_path: prev_path(page)]
-  end
-  defp raw_link_paths(%{"page" => page}, _) do
-    [next_path: next_path(page), prev_path: prev_path(page)]
+  defp raw_link_paths(_, 0), do: []
+  defp raw_link_paths(%{"page" => page}, count) when count > 0 do
+    [next_path: next_path(page, count), prev_path: prev_path(page)]
   end
   defp raw_link_paths(_, _), do: []
 
@@ -71,7 +70,8 @@ defmodule Autox.MetaUtils do
     params |> Map.update!("offset", &(&1 - limit))
   end
 
-  defp next_path(%{"limit" => limit}=params) do
+  defp next_path(%{"offset" => offset, "limit" => limit}, count) when offset + limit >= count, do: nil
+  defp next_path(%{"limit" => limit}=params, _) do
     params |> Map.update!("offset", &(&1 + limit))
   end
 

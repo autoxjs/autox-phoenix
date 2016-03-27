@@ -1,7 +1,7 @@
 `import Ember from 'ember'`
 `import _ from 'lodash/lodash'`
 `import Query from '../utils/query'`
-{chain, tap} = _
+{chain, tap, pick} = _
 {Mixin, inject, observer, get, set} = Ember
 
 objectify = (obj, keys) ->
@@ -20,18 +20,19 @@ PaginateControlsCore =
   sortDir: "desc"
   sortField: "id"
 
+  cast: (params) ->
+    for key, value of params when value? and key in PaginateFields
+      @set key, value 
+
   activeQuery: Ember.computed PaginateFields..., ->
     Query.parse objectify @, PaginateFields
 
-  queryParamsHasChanged: observer PaginateFields..., ->
-    @get("paginateParams").update()
-
   nextPage: ->
-    @incrementProperty "pageOffset", @get("pageLimit")
+    @incrementProperty "pageOffset", parseInt @getWithDefault("pageLimit", 0)
 
   prevPage: ->
     return if @getWithDefault("pageOffset", 0) <= 0
-    @decrementProperty "pageOffset", @get("pageLimit")
+    @decrementProperty "pageOffset", parseInt @getWithDefault("pageLimit", 0)
 
 PaginationController = Ember.Controller.extend PaginateControlsCore
 

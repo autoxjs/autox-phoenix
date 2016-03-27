@@ -3,7 +3,8 @@
 `import _ from 'lodash/lodash'`
 `import {routeSplit, routeJoin} from '../utils/route-split'`
 `import {RouteData} from '../utils/router-dsl'`
-{isFunction, last, flow, trimRight, partialRight, invoke, chain, merge} = _
+
+{isFunction, last, flow, trimRight, partialRight, invoke, chain, merge, tap, set} = _
 {isntModel, tapLog, computed: {apply}} = _x
 {Mixin, isPresent, computed, inject, isArray, isBlank, String, A, RSVP} = Ember
 
@@ -21,7 +22,6 @@ collectionParentName = flow partialRight(trimRight, ".index"),
 
 firstRouteable = (router, routeNames...) ->
   A(routeNames).find router.hasRoute.bind(router)
-
 
 Core =
   paginateParams: inject.service("paginate-params")
@@ -59,6 +59,7 @@ Core =
       params[modelName] = model
     params
   model: (params) ->
+    @get("paginateParams").manualUpdate params
     switch @get("routeAction")
       when "collection#new"
         @store.createRecord @get("defaultModelName"),
@@ -71,13 +72,11 @@ Core =
           belongsTo: @parentNodeModel()
         @store
         .query(modelName, params)
-        .then query.toFunction()
       when "namespace#collection", "collection"
         modelName = @get "defaultModelName"
         query = @get("paginateParams.activeQuery")
         @store
         .query(modelName, query.toParams())
-        .then query.toFunction()
       else 
         @_super arguments...
 
@@ -96,17 +95,6 @@ Core =
     controller.set("meta", model.dirtyMetaTempStore) if model?.dirtyMetaTempStore?
     @_super controller, model
 
-  afterQueryParamsChange: (route, query) ->
-    switch
-      when route is @ and @get("routeAction") is "collection#index"
-        lookup = @get "lookup"
-        chain(@routeName)
-        .thru collectionParentName
-        .thru lookup.route.bind(lookup)
-        .thru (route) -> route.refresh()
-        .value()
-      when route is @ then @refresh()
-
   modelCreated: (model) ->
     path = @defaultModelShowPath(model.constructor)
     @transitionTo path, model if isPresent path
@@ -116,19 +104,14 @@ Core =
 
   modelDestroyed: (model) ->
     @modelCreated(model)
-  
-  activate: ->
-    @get("paginateParams")
-    .on "update", @, @afterQueryParamsChange
-    @_super arguments...
+
   deactive: ->
-    @get("paginateParams")
-    .popRoute @
-    .off "update", @, @afterQueryParamsChange
     model = @get("controller.model")
     return if isntModel(model)
     model.rollbackAttributes() if model?.get "hasDirtyAttributes"
     @_super arguments...
+    @get("paginateParams")
+    .popRoute @
 
   renderTemplate: (controller, model) ->
     return @_super(arguments...) if @get("userHasDefinedTemplate")

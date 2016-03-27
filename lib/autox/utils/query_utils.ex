@@ -13,6 +13,11 @@ defmodule Autox.QueryUtils do
     |> consider_pagination(params)
   end
 
+  def meta(class, params) do
+    from(x in class, select: count(x.id, :distinct))
+    |> consider_filtering(params)
+  end
+
   @doc """
   Looks for a "filter" key in your params
   filter[golive_at]===today

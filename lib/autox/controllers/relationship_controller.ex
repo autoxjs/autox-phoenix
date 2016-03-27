@@ -32,13 +32,24 @@ defmodule Autox.RelationshipController do
         |> render("show.json", data: model, meta: meta)
       end
 
-      def index(conn, %{"parent" => parent}=p) do
-        association_key = Rc.infer_relationship_field(conn)
-        models = parent
-        |> assoc(association_key)
-        |> Qu.construct(p)
+      def index_query(conn, %{"parent" => parent}=params) do
+        parent
+        |> assoc(Rc.infer_relationship_field(conn))
+        |> Qu.construct(params)
+      end
+      def index_meta(conn, %{"parent" => parent}=params) do
+        parent
+        |> assoc(Rc.infer_relationship_field(conn))
+        |> Qu.meta(params)
+      end
+      def index(conn, params) do
+        models = conn
+        |> index_query(params)
         |> repo(conn).all
-        meta = conn |> Mu.from_conn(models)
+        meta = conn
+        |> index_meta(params)
+        |> repo(conn).one
+        |> Mu.from_conn(conn)
         conn
         |> render("index.json", data: models, meta: meta)
       end
@@ -85,7 +96,7 @@ defmodule Autox.RelationshipController do
         end
       end
 
-      defoverridable [show: 2, index: 2, create: 2, delete: 2]
+      defoverridable [show: 2, index: 2, index_meta: 2, index_query: 2, create: 2, delete: 2]
     end
   end
 end

@@ -55,7 +55,7 @@ defmodule Autox.Mixfile do
     [{:phoenix, "~> 1.1"},
      {:fox, "~> 0.1"},
      {:pipe, "~> 0.0.2"},
-     {:comeonin, "~> 1.1"},
+     {:comeonin, "~> 2.0"},
      {:phoenix_ecto, "~> 2.0"},
      {:cors_plug, "~> 0.1"},
      {:phoenix_html, "~> 2.3", optional: true},

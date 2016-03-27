@@ -11,7 +11,7 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
   price: DS.attr "number",
     label: "R&D Cost"
     description: "The amount money it took to develop this salsa"
-    display: ["show"]
+    display: ["show", "index"]
     modify: ["new", "edit"]
   secretSauce: DS.attr "string",
     label: "Secret Sauce"
@@ -36,7 +36,6 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
 about Model,
   label: "Salsa Identification"
   description: "Salsas are dressings put on top of tacos to enhance the flavor"
-  aliasKey: "name"
   display: ["show", "index"]
 
 `export default Model`

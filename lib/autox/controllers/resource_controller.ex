@@ -28,11 +28,15 @@ defmodule Autox.ResourceController do
       def preload_fields, do: []
 
       def index_query(_conn, params), do: @model_key |> QueryUtils.construct(params)
+      def index_meta(_conn, params), do: @model_key |> QueryUtils.meta(params)
       def index(conn, params) do
         models = conn
         |> index_query(params)
         |> repo(conn).all
-        meta = conn |> MetaUtils.from_conn(models)
+        meta = conn 
+        |> index_meta(params)
+        |> repo(conn).one
+        |> MetaUtils.from_conn(conn)
         render(conn, "index.json", data: models, meta: meta)
       end
 
@@ -113,6 +117,7 @@ defmodule Autox.ResourceController do
         update: 2,
         index: 2,
         index_query: 2,
+        index_meta: 2,
         preload_fields: 0]
     end    
   end
