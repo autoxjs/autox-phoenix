@@ -27,8 +27,20 @@ defmodule Autox.ResourceController do
       def repo(conn), do: @repo || ContextUtils.get!(conn, :repo)
       def preload_fields, do: []
 
-      def index_query(_conn, params), do: @model_key |> QueryUtils.construct(params)
-      def index_meta(_conn, params), do: @model_key |> QueryUtils.meta(params)
+      def model_class(conn) do
+        conn 
+        |> ContextUtils.get(:parent)
+        |> case do
+          nil -> @model_key
+          parent -> parent |> Ecto.assoc(@collection_key)
+        end
+      end
+      def index_query(conn, params) do
+        conn |> model_class |> QueryUtils.construct(params)
+      end
+      def index_meta(conn, params) do
+        conn |> model_class |> QueryUtils.meta(params)
+      end
       def index(conn, params) do
         models = conn
         |> index_query(params)

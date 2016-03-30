@@ -39,6 +39,15 @@ defmodule Dummy.Router do
     plug Autox.AuthHeaderPlug
   end
 
+  pipeline :owner do
+    plug Autox.SessionContextPlug, session: :owner, context: :parent
+  end
+
+  scope "/ctx", Dummy do
+    pipe_through [:api, :auth, :owner]
+    the Shop
+  end
+
   scope "/api", Dummy do
     pipe_through :api
 
