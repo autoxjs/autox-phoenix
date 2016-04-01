@@ -1,5 +1,5 @@
 `import DS from 'ember-data'`
-`import {virtual, action, about, Mixins, _x} from 'autox'`
+`import {virtual, action, about, Mixins, _x, QueryUtils} from 'autox'`
 `import {Macros} from 'ember-cpm'`
 `import moment from 'moment'`
 `import {persistHistory} from 'autox/utils/create-history'`
@@ -65,6 +65,14 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     display: ["show"]
     modify: ["new", "edit"]
     among: -> @store.findAll "owner"
+    search: (term) -> 
+      q = new QueryUtils()
+      .orderBy "name", "desc"
+      .filterBy "name", "i~", term
+      .pageBy 
+        offset: 0
+        limit: 25
+      @store.query "owner", q.toParams()
     proxyKey: "name"
     priority: 5
     async: true

@@ -1,4 +1,5 @@
 import PageObject from 'dummy/tests/page-object';
+
 import Ember from 'ember';
 const {isPresent} = Ember;
 const {
@@ -25,6 +26,8 @@ const Core = {
   },
   submit: clickable("button[type=submit]"),
   createShop() {
+    /* global selectChoose */
+    selectChoose('.form-input[attr-name=owner] .ember-power-select', 'test');
     return this.name(Shop.name).theme(Shop.theme).submit();
   },
   formPresent() {

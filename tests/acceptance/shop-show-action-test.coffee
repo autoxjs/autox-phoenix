@@ -12,6 +12,7 @@ test 'checking correct auto rendering', (assert) ->
 
   andThen =>
     assert.equal currentPath(), "shops.shop.index"
+    assert.ok shopsShopIndex.shopOwner(), "we should have a shop owner"
     wait 10
   andThen =>
     assert.ok shopsShopIndex.canApproveInspection(), "the approve action should be available"

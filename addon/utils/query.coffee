@@ -42,8 +42,8 @@ standarization = (op) ->
     when "!<", "nlt" then "!<"
     when ">=", "gte" then ">="
     when "<=", "lte" then "<="
-    when "~", "like" then "like"
-    when "i~", "ilike" then "ilike"
+    when "~", "like" then "~"
+    when "i~", "ilike" then "i~"
     else throw new Error "unrecognized operator '#{op}'"
 
 push2 = (obj, field, value) ->

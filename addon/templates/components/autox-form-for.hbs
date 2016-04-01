@@ -1,7 +1,9 @@
 {{#em-form-for model action="submit" as |f|}}
   {{#each formFields as |field|}}
     {{#if field.canDisplay}}
-      {{#if field.isBasic}}
+      {{#if field.isCustomForm}}
+        {{component field.accessor field=field model=model}}
+      {{else if field.isBasic}}
         {{#component field.componentName f 
           name=field.accessName
           label=field.label
@@ -14,6 +16,8 @@
           name=field.accessName
           label=field.label
           options=field.choices
+          search=(if field.search (perform field.searchTask))
+          searchField=field.proxyKey
           prefix=field.prefix
           disabled=(not field.canModify) 
           as |choice|}}

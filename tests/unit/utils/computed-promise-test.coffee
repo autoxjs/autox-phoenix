@@ -31,16 +31,16 @@ Shop = Ember.Object.extend
 
 # Replace this with your real tests.
 test 'it works', (assert) ->
-  shop = Shop.create()
-  assert.notOk shop.canOpenTask, "we should not have the task on here yet"
-  assert.notOk shop.get("canOpen"), "we should not be able to open"
-  assert.ok shop.canOpenTask, "we should have created a task on this object"
-
-  shop.addHistory("approved")
-  .then ->
-    wait 1
-  .then ->
-    assert.ok shop.get("canOpen"), "after receiving approval, we should be able to open"
-    wait 100
-  .then ->
-    assert.ok true, "ends"
+  Ember.run ->
+    shop = Shop.create()
+    assert.notOk shop.canOpenTask, "we should not have the task on here yet"
+    assert.notOk shop.get("canOpen"), "we should not be able to open"
+    assert.ok shop.canOpenTask, "we should have created a task on this object"
+    shop.addHistory("approved")
+    .then ->
+      wait 1
+    .then ->
+      assert.ok shop.get("canOpen"), "after receiving approval, we should be able to open"
+      wait 100
+    .then ->
+      assert.ok true, "ends"

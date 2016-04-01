@@ -15,14 +15,5 @@ SessionStateMixin = Mixin.create
     else
       cookieKill key
 
-  # didCreate: ->
-  #   @_super arguments...
-  #   @cookieSet "rememberToken"
-  # didDelete: ->
-  #   @_super arguments...
-  #   cookieKill "rememberToken"
-  # ready: ->
-  #   @_super arguments...
-  #   @cookieGet "rememberToken"
 
 `export default SessionStateMixin`

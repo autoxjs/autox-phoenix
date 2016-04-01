@@ -20,6 +20,8 @@ Page = PageObject.create
   canSelectForCurrentAction: isVisible "button[aria-label=selectedForAction]"
   selectForCurrentAction: clickable "button[aria-label=selectedForAction]"
 
+  shopOwner: ->
+    $(".autox-show-for__content[aria-label=owner]").text().trim()
   shopId: ->
     $(".autox-show-for__content[aria-label=id]").text().trim()
   beersServed: -> 
