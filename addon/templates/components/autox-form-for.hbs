@@ -2,7 +2,7 @@
   {{#each formFields as |field|}}
     {{#if field.canDisplay}}
       {{#if field.isCustomForm}}
-        {{component field.accessor field=field model=model}}
+        {{component field.accessor f field=field model=model}}
       {{else if field.isBasic}}
         {{#component field.componentName f 
           name=field.accessName
