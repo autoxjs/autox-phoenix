@@ -2,7 +2,11 @@
   {{component userDefinedComponent collection=collection}}
 {{else}}
   {{#each collection as |model|}}
-    {{#if modelPath}}
+    {{#if (and userHasDefinedSummaryComponent modelPath)}}
+      {{component userDefinedSummaryComponent modelPath model fields=fields}}
+    {{else if userDefinedSummaryComponent}}
+      {{component userHasDefinedSummaryComponent fields=fields}}
+    {{else if modelPath}}
       {{#link-to modelPath model class="list-group-item"}}
         {{autox-summarize-for model=model fields=fields}}
       {{/link-to}}
