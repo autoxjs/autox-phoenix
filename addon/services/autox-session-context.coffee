@@ -36,10 +36,6 @@ AutoxSessionContextService = Service.extend Evented,
 
   fetchChannelable: (key) ->
     return @get("model")?.get key
-    # id = @get("model.relationships.#{key}.data.id")
-    # type = @get("model.relationships.#{key}.data.type")
-    # return RSVP.resolve() if isBlank(id) or isBlank(type)
-    # @get("store").findRecord singularize(type), id
 
   connect: (key) ->
     @fetchChannelable(key)
