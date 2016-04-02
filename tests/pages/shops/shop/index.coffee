@@ -27,5 +27,7 @@ Page = PageObject.create
   beersServed: -> 
     x = $(".autox-show-for__content[aria-label=beersServed]").text()
     parseInt x
+  historyStatus: ->
+    $(".autox-show-for__content[aria-label=historyStatus]").text().trim()
 
 `export default Page`

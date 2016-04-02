@@ -1,10 +1,19 @@
 `import DS from 'ember-data'`
 `import Ember from 'ember'`
 `import _ from 'lodash/lodash'`
+`import virtual from 'autox/utils/virtual'`
+`import {computedTask} from 'autox/utils/computed-promise'`
 {isFunction} = _
 {get, RSVP, getWithDefault, isPresent, isBlank, isArray, A} = Ember
 HistoricalMixin = Ember.Mixin.create
   histories: DS.hasMany "history", async: true
+  historyStatus: virtual "string",
+    label: "Status Message"
+    description: "The latest status event that has occured to this"
+    display: ["show"]
+    computedTask "histories.firstObject", ->
+      @latestHistory().then (history) ->
+        history?.get("name")
   latestHistoryHas: (attr, tester) ->
     f = switch
       when isBlank tester then isPresent

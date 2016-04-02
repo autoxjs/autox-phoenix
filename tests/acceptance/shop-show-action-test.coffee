@@ -15,6 +15,7 @@ test 'checking correct auto rendering', (assert) ->
     assert.ok shopsShopIndex.shopOwner(), "we should have a shop owner"
     wait 10
   andThen =>
+    assert.equal shopsShopIndex.historyStatus(), "Not Available!", "we should not have a history status yet"
     assert.ok shopsShopIndex.canApproveInspection(), "the approve action should be available"
     assert.ok shopsShopIndex.canDenyInspection(), "the deny action should be available"
     assert.notOk shopsShopIndex.canOpenForBusiness(), "this open action should not be available"
@@ -25,6 +26,7 @@ test 'checking correct auto rendering', (assert) ->
     Ember.Test.registerWaiter shopsShopIndex, shopsShopIndex.canOpenForBusiness
 
   andThen =>
+    assert.equal shopsShopIndex.historyStatus(), "approve-inspection", "history status should be properly updated"
     assert.ok shopsShopIndex.canOpenForBusiness(), "this action should now become available"
     assert.ok shopsShopIndex.canServeAlcohol(), "this action should now become available"
 
