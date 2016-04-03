@@ -1,13 +1,9 @@
 {{#if userHasDefinedComponent}}
-  {{component userDefinedComponent collection=collection}}
+  {{component userDefinedComponent collection=collection meta=meta}}
 {{else}}
   {{#each collection as |model|}}
     {{#if userHasDefinedSummaryComponent}}
-      {{#if modelPath}}
-        {{component userDefinedSummaryComponent modelPath model fields=fields}}
-      {{else}}
-        {{component userDefinedSummaryComponent fields=fields}}
-      {{/if}}
+      {{component userDefinedSummaryComponent model=model meta=meta}}
     {{else if modelPath}}
       {{#link-to modelPath model class="list-group-item"}}
         {{autox-summarize-for model=model fields=fields}}
