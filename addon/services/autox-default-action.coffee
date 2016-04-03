@@ -1,9 +1,14 @@
 `import Ember from 'ember'`
 `import {RouteData} from 'autox/utils/router-dsl'`
 
-inferRoute = (state) -> RouteData.collectionRoute state.get "activeModelname"
-gohome = (state) -> 
-  route = RouteData.modelRoute state.get "modelName"
+inferRoute = (state) -> 
+  anchorRoute = state.get "modelPath"
+  modelName = state.get "activeModelname"
+  RouteData.collectionRoute modelName, anchorRoute
+gohome = (state) ->
+  anchorRoute = state.get "modelPath"
+  modelName = state.get "modelName"
+  route = RouteData.modelRoute modelName, anchorRoute
   model = state.get("model")
   return [route, model] if route? and model?
 

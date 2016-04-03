@@ -7,6 +7,7 @@
 {get, RSVP, getWithDefault, isPresent, isBlank, isArray, A} = Ember
 HistoricalMixin = Ember.Mixin.create
   histories: DS.hasMany "history", async: true
+  historyMentionedObject: computedTask "histories.firstObject", -> @latestMentioned()
   historyStatus: virtual "string",
     label: "Status Message"
     description: "The latest status event that has occured to this"

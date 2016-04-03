@@ -9,6 +9,7 @@ restartableTask = (f) -> task(f).restartable()
 
 StateCoreMixin = Ember.Mixin.create
   routeAction: alias "ctx.routeAction"
+  modelPath: alias "ctx.modelPath"
   model: alias "ctx.model"
   modelName: alias "model.constructor.modelName"
   choices: null
