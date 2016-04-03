@@ -14,10 +14,11 @@ FieldFoundationMixin = Ember.Mixin.create
   lookup: inject.service "lookup"
   fsm: inject.service "finite-state-machine"
 
-  accessName: ifAny "aliasdey", "name"
-  aliasdey: alias "meta.options.aliasdey"
+  accessName: ifAny "aliasKey", "name"
+  aliasKey: alias "meta.options.aliasKey"
   type: alias "meta.type"
   label: ifAny "meta.options.label", "name"
+  step: alias "meta.options.step"
   priority: ifAny "meta.options.priority", "defaultPriority"
   defaultPriority: 1
   description: alias "meta.options.description"

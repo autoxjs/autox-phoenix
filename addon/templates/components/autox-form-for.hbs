@@ -5,6 +5,7 @@
         {{component field.accessor f field=field model=model}}
       {{else if field.isBasic}}
         {{#component field.componentName f 
+          step=field.step
           name=field.accessName
           label=field.label
           prefix=field.prefix
