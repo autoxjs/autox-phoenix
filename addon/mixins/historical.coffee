@@ -3,12 +3,14 @@
 `import _ from 'lodash/lodash'`
 `import virtual from 'autox/utils/virtual'`
 `import {computedTask} from 'autox/utils/computed-promise'`
+`import Importance from 'autox/utils/importance'`
 {isFunction} = _
 {get, RSVP, getWithDefault, isPresent, isBlank, isArray, A} = Ember
 HistoricalMixin = Ember.Mixin.create
   histories: DS.hasMany "history", async: true
   historyMentionedObject: computedTask "histories.firstObject", -> @latestMentioned()
   historyStatus: virtual "string",
+    priority: Importance.Important
     label: "Status Message"
     description: "The latest status event that has occured to this"
     display: ["show"]

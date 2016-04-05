@@ -19,6 +19,7 @@ import about from './utils/about';
 import FSE from './utils/field-schema-engine';
 import _x from './utils/xdash';
 import {RouteData, DSL} from './utils/router-dsl';
+import Importance from './utils/importance';
 const Mixins = {
   Paranoia,
   Timestamps,
@@ -44,6 +45,7 @@ export {
   RelationshipModel,
   RelationshipSerializer,
   Payload,
+  Importance,
   SessionStateMixin,
   CookieCredentialsMixin,
   QueryUtils,
