@@ -2,7 +2,7 @@
 Importance =
   DivineMandate: -25
   LifeOrDeath: -20
-  MissionCritial: -15
+  MissionCritical: -15
   HeavyConsequences: -10
   VeryImportant: -5
   Important: 0
