@@ -8,6 +8,7 @@ moduleForAcceptance 'Acceptance: ShopShowAction'
 
 test 'checking correct auto rendering', (assert) ->
   @store = @application.__container__.lookup("service:store")
+  @application.__container__.lookup("service:finite-state-machine").reset()
   shopsNew.visit().createShop()
 
   andThen =>
@@ -23,11 +24,7 @@ test 'checking correct auto rendering', (assert) ->
 
     shopsShopIndex.approveInspection()
 
-    Ember.Test.registerWaiter shopsShopIndex, shopsShopIndex.canOpenForBusiness
-
   andThen =>
     assert.equal shopsShopIndex.historyStatus(), "approve-inspection", "history status should be properly updated"
     assert.ok shopsShopIndex.canOpenForBusiness(), "this action should now become available"
     assert.ok shopsShopIndex.canServeAlcohol(), "this action should now become available"
-
-    Ember.Test.unregisterWaiter shopsShopIndex, shopsShopIndex.canOpenForBusiness

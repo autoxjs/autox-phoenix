@@ -14,9 +14,10 @@ AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize,
   classNames: ["autox-show-action-field"]
   attributeBindings: ["field.name:aria-label", "disabled"]
   classNameBindings: ["userHasDefinedComponent::list-group-item", "isBusy:disabled:", "canDisplay::hidden"]
-  canDisplay: ifAll "field.canOnlyDisplay", "isPermissible"
+  canDisplay: ifAll "field.canOnlyDisplay", "isPermissible", "notInAnotherAction"
   disabled: cant "canDisplay"
   isPermissible: alias "actionState.when"
+  notInAnotherAction: cant "actionState.inAnotherAction"
   actionState: alias "field"
 
   didInitAttrs: ->

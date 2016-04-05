@@ -2,10 +2,11 @@
 `import PageObject from 'dummy/tests/page-object'`
 
 {$, isPresent} = Ember
-{visitable, clickable, fillable, text, isVisible} = PageObject
+{visitable, clickable, clickOnText, collection, fillable, text, isVisible} = PageObject
 
 Page = PageObject.create
-  canMateWithShop: isVisible "button[aria-label=mateWithShop]"
+  canMateWithShopV: isVisible "button[aria-label=mateWithShop]"
+  canMateWithShop: -> @canMateWithShopV
   mateWithShop: clickable("button[aria-label=mateWithShop]")
 
 `export default Page`

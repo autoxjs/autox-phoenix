@@ -32,7 +32,12 @@ update = (obj, field, x, f) ->
   tap obj, (obj) ->
     set obj, field, if has(obj, field) then f(get obj, field) else x
 
-isGenerator = (x) -> typeof x is "function" and x.constructor.name is "GeneratorFunction"
+genFun = -> yield return "autox"
+isGenerator = (fn) ->
+  if Function::isGenerator?
+    fn?.isGenerator
+  else
+    fn?.constructor is genFun.constructor
 isPromise = (x) -> isFunction(x?.then)
 isObject = (x) -> x? and typeof x is "object"
 hasFunctions = (x, fs...) -> x? and every map(fs, (f) -> x[f]), isFunction

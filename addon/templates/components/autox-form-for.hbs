@@ -18,6 +18,7 @@
           label=field.label
           options=field.choices
           search=(if field.search (perform field.searchTask))
+          selectClass=(concat "autox-form-for__select-" field.accessName)
           searchField=field.proxyKey
           prefix=field.prefix
           disabled=(not field.canModify) 

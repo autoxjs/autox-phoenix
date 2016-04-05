@@ -17,6 +17,8 @@ test "salsa -> shop", (assert) ->
   shopId = null
   Index.login()
 
+  andThen =>
+    @store.createRecord("owner", name: "test").save()
   andThen ->
     SalsasIndex.visit()
 
@@ -56,7 +58,9 @@ test "salsa -> shop", (assert) ->
     assert.equal currentPath(), "salsas.salsa.index", "we should now be back at the salsa page"
 
   andThen ->
-    ShopsNew.visit().createShop()
+    ShopsNew.visit()
+  andThen ->
+    ShopsNew.createShop()
 
   andThen =>
     assert.notEqual shopId, ShopShow.shopId(), "we should be redirected to the correct show page"

@@ -7,7 +7,30 @@ Router = Ember.Router.extend
 Router.map ->
   {namespace, model,  collection, form, view} = DSL.import @
 
+  namespace "alpha", ->
+    collection "docks", ->
+      form "new"
+      model "dock", ->
+        collection "trucks", ->
+          form "new"
+
+    collection "trucks", ->
+      form "new"
+      model "truck"
+
+  namespace "omega", ->
+    collection "docks", ->
+      form "new"
+      model "dock", ->
+        collection "trucks", ->
+          form "new"
+
+    collection "trucks", ->
+      form "new"
+      model "truck"
+
   model "user"
+  collection "owners"
   collection "chairs", ->
     form "new"
   model "chair", ->

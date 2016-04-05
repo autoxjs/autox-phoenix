@@ -2,32 +2,36 @@
 `import PageObject from 'dummy/tests/page-object'`
 
 {$, isPresent} = Ember
-{visitable, clickable, fillable, text, isVisible} = PageObject
+{visitable, clickable, clickOnText, collection, fillable, text, isVisible} = PageObject
 
 Page = PageObject.create
-  canApproveInspection: isVisible "button[aria-label=approveInspection]"
+  canApproveInspectionV: isVisible "button[aria-label=approveInspection]"
+  canApproveInspection: -> @canApproveInspectionV
   approveInspection: clickable("button[aria-label=approveInspection]")
 
-  canDenyInspection: isVisible "button[aria-label=denyInspection]"
+  canDenyInspectionV: isVisible "button[aria-label=denyInspection]"
+  canDenyInspection: -> @canDenyInspectionV
   denyInspection: clickable("button[aria-label=denyInspection]")
 
-  canServeAlcohol: isVisible "button[aria-label=serveAlcohol]"
+  canServeAlcoholV: isVisible "button[aria-label=serveAlcohol]"
+  canServeAlcohol: -> @canServeAlcoholV
   serveAlcohol: clickable "button[aria-label=serveAlcohol]"
 
-  canOpenForBusiness: isVisible "button[aria-label=openForBusiness]"
+  canOpenForBusinessV: isVisible "button[aria-label=openForBusiness]"
+  canOpenForBusiness: -> @canOpenForBusinessV
   openForBusiness: clickable("button[aria-label=openForBusiness]")
 
-  canSelectForCurrentAction: isVisible "button[aria-label=selectedForAction]"
+  canSelectForCurrentActionV: isVisible "button[aria-label=selectedForAction]"
+  canSelectForCurrentAction: -> @canSelectForCurrentActionV
   selectForCurrentAction: clickable "button[aria-label=selectedForAction]"
 
-  shopOwner: ->
-    $(".autox-show-for__content[aria-label=owner]").text().trim()
-  shopId: ->
-    $(".autox-show-for__content[aria-label=id]").text().trim()
-  beersServed: -> 
-    x = $(".autox-show-for__content[aria-label=beersServed]").text()
-    parseInt x
-  historyStatus: ->
-    $(".autox-show-for__content[aria-label=historyStatus]").text().trim()
+  shopOwnerV: text ".autox-show-for__content[aria-label=owner]"
+  shopOwner: -> @shopOwnerV
+  shopIdV: text ".autox-show-for__content[aria-label=id]"
+  shopId: -> @shopIdV
+  historyStatusV: text ".autox-show-for__content[aria-label=historyStatus]"
+  historyStatus: -> @historyStatusV
+  beersServedStr: text ".autox-show-for__content[aria-label=beersServed]"
+  beersServed: -> parseInt @beersServedStr
 
 `export default Page`

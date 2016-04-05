@@ -17,7 +17,7 @@ WorkflowService = Service.extend
     return if isEmpty(fields = collection.get "sortedFields")
     chain(fields)
     .tap (fields) -> Ember.assert "is a proper array", isArray(fields)
-    .map (field) -> field.initState {routeAction, model}
+    .map (field) -> field.initState {routeAction, modelPath, model}
     .thru RSVP.all
     .value()
     .then (fields) ->

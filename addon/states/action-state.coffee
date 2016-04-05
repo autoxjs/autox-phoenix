@@ -6,8 +6,8 @@
 `import {Macros} from 'ember-cpm'`
 {join} = Macros
 {A, RSVP, isBlank, set, computed} = Ember
-{alias, equal, map, not: none} = computed
-{computed: {apply}} = _x
+{alias, equal, map, or: firstPresent, not: none} = computed
+{tapLog, computed: {apply}} = _x
 {isEqual, tap, identity, partialRight, chain} = _
 
 ActionState = Ember.ObjectProxy.extend StateCore,
@@ -16,11 +16,13 @@ ActionState = Ember.ObjectProxy.extend StateCore,
   activeModelname: alias "activeNeed.modelName"
   activeNeed: null
   payload: null
+  fulfillmentPath: alias "activeNeed.fulfillmentPath"
   isComplete: equal "status", "complete"
   isFulfilled: equal "status", "fulfilled"
   isVirgin: equal "status", "virgin"
   isNeedy: equal "status", "needy"
   iterator: null
+
   init: ->
     @_super arguments...
     @reset()

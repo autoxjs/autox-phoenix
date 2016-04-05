@@ -8,7 +8,8 @@
 {genLift, computed: {access, apply}} = _x
 {conditional} = Macros
 {identity, chain, partialRight, tap, isFunction} = _
-{RSVP, inject, set, String, Object, computed: {oneWay, alias, equal}} = Ember
+{RSVP, inject, isPresent, set, String, Object, computed} = Ember
+{oneWay, alias, equal} = computed
 
 ActionField = Object.extend FieldFoundation,
   bubbles: alias "meta.options.bubbles"
@@ -23,6 +24,10 @@ ActionField = Object.extend FieldFoundation,
   useCurrent: alias "meta.options.useCurrent"
   rawGen: alias "meta.options.generator"
   generator: alias "rawGen"
+  inAnotherAction: computed "fsm.currentAction.isComplete", "useCurrent", ->
+    @get("useCurrent") isnt true and
+    isPresent(@get "fsm.currentAction") and
+    not @get("fsm.currentAction.isComplete")
   initState: (ctx) ->
     ActionState
     .extend

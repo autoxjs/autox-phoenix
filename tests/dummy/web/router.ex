@@ -64,6 +64,11 @@ defmodule Dummy.Router do
       many Shop 
     end
 
+    the Dock do
+      many Truck
+    end
+    the Truck
+
     can_login!
   end
 

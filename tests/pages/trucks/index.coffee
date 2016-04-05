@@ -5,14 +5,14 @@
 {visitable, clickable, clickOnText, collection, fillable, text, isVisible} = PageObject
 
 Page = PageObject.create
-  visit: visitable("/salsas")
-  salsas: collection
+  visit: visitable("/:namespace/trucks")
+  trucks: collection
     itemScope: ".autox-collection-for a.list-group-item"
     item:
       id: text(".autox-collection-for__block", at: 0)
       goto: clickable()
-  hasSalsas: -> @salsas().count > 0
-  salsaCount: -> @salsas().count
-  clickSalsa: -> @salsas(0).goto()
+
+  hasTrucks: -> @trucks().count > 0
+  clickFirst: -> @trucks(0).goto()
 
 `export default Page`

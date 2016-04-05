@@ -2,13 +2,18 @@
 `import PageObject from 'dummy/tests/page-object'`
 
 {$, isPresent} = Ember
-{visitable, clickable, fillable, text, isVisible} = PageObject
+{visitable, clickable, clickOnText, collection, fillable, text, isVisible} = PageObject
 
 Page = PageObject.create
   visit: visitable("/shops")
-  hasShops: -> @shopCount() > 0
-  shopCount: -> $("a.list-group-item[href*=shops]").length
-  clickShop: clickable("a.list-group-item[href*=shops]:last-child")
+  shops: collection
+    itemScope: ".autox-collection-for a.list-group-item"
+    item:
+      id: text(".autox-collection-for__block .autox-show-for__content", at: 0)
+      goto: clickable()
+  hasShops: -> @shops().count > 0
+  shopCount: -> @shops().count
+  clickShop: -> @shops(0).goto()
   nextPage: clickable("#next-page")
   prevPage: clickable("#prev-page")
   editLimit: fillable("#page-limit")
@@ -16,14 +21,9 @@ Page = PageObject.create
   changeLimit: (n) -> 
     @editLimit(n)
     @submitLimit()
-  firstShop: ->
-    $("a.list-group-item[href*=shops]:first-child")
-  firstShopId: ->
-    @firstShop()
-    .find(".autox-collection-for__block:first-child > .autox-show-for__content")
-    .text()
-    .trim()
-  lastShopContent: ->
-    $("a.list-group-item[href*=shops]:last-child").text()
+  firstShop: -> @shops(0)
+  firstShopId: -> 
+    @firstShop().id
+  lastShopContent: -> @shops(@shopCount() - 1).id
 
 `export default Page`

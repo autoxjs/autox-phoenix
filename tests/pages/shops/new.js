@@ -25,10 +25,13 @@ const Core = {
     return isPresent($("input[name=theme]"));
   },
   submit: clickable("button[type=submit]"),
-  createShop() {
+  selectOwner(name) {
     /* global selectChoose */
-    selectChoose('.form-input[attr-name=owner] .ember-power-select', 'test');
-    return this.name(Shop.name).theme(Shop.theme).submit();
+    selectChoose(".autox-form-for__select-owner", name);
+    return this;
+  },
+  createShop() {
+    return this.name(Shop.name).theme(Shop.theme).selectOwner("test").submit();
   },
   formPresent() {
     return this.hasNameField() && this.hasThemeField();
