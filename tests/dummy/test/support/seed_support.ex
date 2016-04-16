@@ -8,6 +8,8 @@ defmodule Dummy.SeedSupport do
   alias Dummy.Chair
   alias Dummy.Kitchen
   alias Dummy.Session
+  alias Dummy.Appointment
+  alias Dummy.Batch
   alias Autox.RelationUtils, as: Ru
   import Ecto
   def owner_attributes do
@@ -39,6 +41,36 @@ defmodule Dummy.SeedSupport do
 
   def session_attributes do
     user_attributes |> Map.put("remember_me", true)
+  end
+
+  def appointment_attributes do
+    %{"name" => "Test appointment",
+      "material" => "failure"}
+  end
+
+  def batch_attributes do
+    %{"material" => "disappointment",
+      "weight" => 666}
+  end
+
+  def build_appointment do
+    %Appointment{} 
+    |> Appointment.create_changeset(appointment_attributes) 
+    |> Repo.insert!
+  end
+
+  def build_import_batch(appointment) do
+    appointment
+    |> build_assoc(:import_batches)
+    |> Batch.create_changeset(batch_attributes) 
+    |> Repo.insert!
+  end
+
+  def build_export_batch(appointment) do
+    appointment
+    |> build_assoc(:export_batches)
+    |> Batch.create_changeset(batch_attributes) 
+    |> Repo.insert!
   end
 
   def build_session do

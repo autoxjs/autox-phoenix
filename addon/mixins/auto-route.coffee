@@ -52,18 +52,23 @@ Core =
     @_super arguments...
     @get("paginateParams").pushRoute @
 
-  defaultNewParams: ->
-    params = {}
+  defaultNewParams: (relationName, params={}) ->
     model = @parentNodeModel()
-    if (modelName = model?.constructor?.modelName)?
-      params[modelName] = model
+    factory = model?.constructor
+    modelName = factory?.inverseFor(String.camelize relationName)?.name
+    modelName ?= factory?.modelName
+    params[modelName] = model if modelName?
     params
   model: (params) ->
     @get("paginateParams").manualUpdate params
     switch @get("routeAction")
-      when "collection#new"
+      when "collection#new", "children#new"
+        [..., relationName, _new] = @routeName.split(".")
         @store.createRecord @get("defaultModelName"),
-          @defaultNewParams(params)
+          @defaultNewParams(relationName, params)
+      when "model#children", "model#child"
+        relationName = last @routeName.split(".")
+        @parentNodeModel()?.get relationName
       when "model#collection"
         modelName = @get "defaultModelName"
         collectionName = last @routeName.split(".")
@@ -105,24 +110,22 @@ Core =
   modelDestroyed: (model) ->
     @modelCreated(model)
 
-  deactive: ->
+  deactivate: ->
     model = @get("controller.model")
     return if isntModel(model)
     model.rollbackAttributes() if model?.get "hasDirtyAttributes"
     @_super arguments...
-    @get("paginateParams")
-    .popRoute @
 
   renderTemplate: (controller, model) ->
     return @_super(arguments...) if @get("userHasDefinedTemplate")
     switch @get "routeAction"
-      when "model#index" 
+      when "model#index", "model#child"
         @render "autox/show", {controller, model}
       when "model#edit" 
         @render "autox/edit", {controller, model}
-      when "collection#index" 
+      when "collection#index", "children#index"
         @render "autox/index", {controller, model}
-      when "collection#new" 
+      when "collection#new", "children#new"
         @render "autox/new", {controller, model}
       else 
         @_super arguments...

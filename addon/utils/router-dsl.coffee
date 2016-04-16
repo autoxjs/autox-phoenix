@@ -1,7 +1,7 @@
 `import Ember from 'ember'`
 `import _ from 'lodash/lodash'`
 {A, isPresent, Object, String, computed: {alias, sort}} = Ember
-{flow, dropRight, partialRight, noop, last} = _
+{flow, dropRight, partialRight, noop, last, isFunction} = _
 split = (sep) -> (str) -> str.split(sep)
 join = (sep) -> (arr) -> arr.join(sep)
 drop2 = flow split("."), partialRight(dropRight, 2), join(".")
@@ -52,7 +52,7 @@ class RouteData
   @addModel = (name, routeData) ->
     instance.models[name] ?= ModelData.create {name}
     instance.models[name].merge routeData
-  @types = ["namespace", "collection", "model", "form", "view"]
+  @types = ["namespace", "child", "children", "collection", "model", "form", "view"]
   @routeModel = (routeName) ->
     instance.routes[routeName]?.model
   @routeType = (routeName) ->
@@ -68,7 +68,7 @@ class RouteData
   @parentNodeRoute = (routeName) ->
     f = switch RouteData.routeType(routeName)
       when "form", "view" then drop2
-      when "namespace", "collection", "model" then drop1
+      when "namespace", "collection", "model", "child", "children" then drop1
       else noop
     f routeName
 
@@ -94,7 +94,25 @@ class RouteAST
     currentNamespace.pushObject name
     RouteData.addRoute currentNamespace.join("."),
       type: "namespace"
-
+  @startChild = (childName, modelName) ->
+    currentNamespace.pushObject childName
+    routeName = currentNamespace.join "."
+    RouteData.addModel modelName,
+      childRoute: routeName
+    RouteData.addRoute routeName,
+      type: "child"
+      model: modelName
+  @startChildren = (childrenName, modelName) ->
+    currentNamespace.pushObject childrenName
+    routeName = currentNamespace.join "."
+    RouteData.addModel modelName,
+      childrenRoute: routeName
+    RouteData.addRoute routeName,
+      type: "children"
+      model: modelName
+    RouteData.addRoute routeName + ".index",
+      type: "view"
+      model: modelName
   @startCollection = (colName) ->
     currentNamespace.pushObject colName
     modelName = String.singularize colName
@@ -140,16 +158,43 @@ class RouteAST
 
 class DSL
   ctxStack = A []
+  normalize = (name, opts, f) ->
+    switch arguments.length
+      when 0 then throw new Error "You must pass in at least a name to declare a route"
+      when 1 then [name, {}, noop]
+      when 2 
+        if isFunction(opts) 
+          [name, {}, opts] 
+        else 
+          [name, opts, noop]
+      else [name, opts, f]
+
   @import = (c) ->
     ctxStack.pushObject c
     new DSL()
   @ctx = -> ctxStack.get("lastObject")
-  @run = (f) -> if f? then ->
-    ctxStack.pushObject(@)
-    f.call @
-    ctxStack.popObject()
+  @run = (f) -> 
+    if isFunction(f) then ->
+      ctxStack.pushObject(@)
+      f.call @
+      ctxStack.popObject()
+
   namespace: (name, f=noop) ->
     RouteAST.startNamespace name
+    DSL.ctx().route name, path: "/#{name}", DSL.run f
+    RouteAST.end name
+
+  child: (name, opts..., f=noop) ->
+    [name, {as: modelName}, f] = normalize arguments...
+    modelName ?= name
+    RouteAST.startChild name, modelName
+    DSL.ctx().route name, path: "/#{name}", DSL.run f
+    RouteAST.end name
+
+  children: (name, opts..., f=noop) ->
+    [name, {as: modelName}, f] = normalize arguments...
+    modelName ?= String.singularize name
+    RouteAST.startChildren name, modelName
     DSL.ctx().route name, path: "/#{name}", DSL.run f
     RouteAST.end name
 

@@ -5,8 +5,13 @@ Router = Ember.Router.extend
   location: config.locationType
 
 Router.map ->
-  {namespace, model,  collection, form, view} = DSL.import @
-
+  {namespace, model,  collection, form, view, child, children} = DSL.import @
+  model "appointment", ->
+    children "import-batches", as: "batch", -> form "new"
+    children "export-batches", as: "batch"
+  collection "appointments"
+  model "batch"
+  
   namespace "alpha", ->
     collection "docks", ->
       form "new"

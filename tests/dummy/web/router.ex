@@ -69,6 +69,13 @@ defmodule Dummy.Router do
     end
     the Truck
 
+    the Appointment do
+      many [ImportBatch, ExportBatch]
+    end
+
+    the Batch do
+      one [ImportAppointment, ExportAppointment]
+    end
     can_login!
   end
 

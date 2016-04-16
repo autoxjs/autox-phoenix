@@ -13,7 +13,13 @@ module 'Unit | Utility | router dsl',
     RouteData.reset()
   beforeEach: ->
     FauxRouter.map ->
-      {namespace, model,  collection, form, view} = DSL.import(@)
+      {namespace, model,  collection, form, view, child, children} = DSL.import(@)
+      namespace "relational", ->
+        model "thread", ->
+          children "shit-posts", as: "post", -> form "new"
+          children "posts", -> form "new"
+        model "post", ->
+          child "thread"
       namespace "orchard", ->
         collection "histories"
         collection "apples", ->
@@ -40,6 +46,29 @@ module 'Unit | Utility | router dsl',
         collection "oranges", ->
           model "orange", ->
             form "buy"
+
+test "children", (assert) ->
+  assert.equal RouteData.routeModel("relational.thread.shit-posts"), "post",
+    "Children route should have the proper model"
+
+  assert.equal RouteData.routeModel("relational.thread.shit-posts.index"), "post",
+    "children index should be correct"
+
+  assert.equal RouteData.routeModel("relational.thread.shit-posts.new"), "post",
+    "children new should also be right"
+
+  assert.equal RouteData.routeModel("relational.thread.posts"), "post",
+    "Children route should have the proper model"
+
+  assert.equal RouteData.routeModel("relational.thread.posts.index"), "post",
+    "children index should be correct"
+
+  assert.equal RouteData.routeModel("relational.thread.posts.new"), "post",
+    "children new should also be right"
+
+  assert.equal RouteData.routeModel("relational.post.thread"), "thread",
+    "Children route should have the proper model"
+
 
 test 'modelRoute', (assert) ->
   assert.equal RouteData.modelRoute("apple"),
