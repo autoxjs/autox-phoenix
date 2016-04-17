@@ -6,11 +6,11 @@
       {{component userDefinedSummaryComponent model=model meta=meta}}
     {{else if modelPath}}
       {{#link-to modelPath model class="list-group-item"}}
-        {{autox-summarize-for model=model fields=fields}}
+        {{component autoxEnv.summarizeComp model=model fields=fields}}
       {{/link-to}}
     {{else}}
       <div class="list-group-item">
-        {{autox-summarize-for model=model fields=fields}}
+        {{component autoxEnv.summarizeComp model=model fields=fields}}
       </div>
     {{/if}}
   {{else}}

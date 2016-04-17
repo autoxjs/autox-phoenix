@@ -23,7 +23,7 @@
           prefix=field.prefix
           disabled=(not field.canModify) 
           as |choice|}}
-          {{autox-select-choice model=choice field=field}}
+          {{component autoxEnv.choiceComp model=choice field=field}}
         {{/em-select-field}}
         <small class="autox-form-for__help-block">{{field.description}}</small>
       {{/if}}

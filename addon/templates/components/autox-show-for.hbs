@@ -9,17 +9,17 @@
           model=model
           invoke=invoke}}
       {{else if field.isAction}}
-        {{autox-show-action-field 
+        {{component autoxEnv.actionComp
           field=field
           model=model
           invoke=invoke}}
       {{else if field.isLink}}
-        {{autox-show-link-field
+        {{component autoxEnv.linkComp
           field=field
           model=model
           invokeAction=invoke}}
       {{else}}
-        {{autox-show-field field=field model=model}}
+        {{component autoxEnv.fieldComp field=field model=model}}
       {{/if}}
     {{/if}}
   {{else}}
