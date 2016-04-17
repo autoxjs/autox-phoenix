@@ -92,6 +92,7 @@ Core =
       modelPath: @defaultModelShowPath()
       modelName: @get "defaultModelName"
       routeAction: @get("routeAction")
+      routeName: @routeName
     RSVP.resolve meta
     .then (meta) => 
       model.dirtyMetaTempStore = meta

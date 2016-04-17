@@ -13,10 +13,14 @@ Appointment = DS.Model.extend
     display: ["show", "index"]
 
   importBatches: DS.hasMany "batch",
-    async: true
+    label: "Import Batches"
+    description: "These batches are imported from this appointment"
+    display: ["show"]
     inverse: "importAppointment"
-  exportBatches: DS.hasMany "batch",
     async: true
+    link: true
+  exportBatches: DS.hasMany "batch",
     inverse: "exportAppointment"
+    async: true
 
 `export default Appointment`

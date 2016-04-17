@@ -18,14 +18,29 @@ distanceTo = (destination) ->
     destinations.length - i
 
 ModelData = Object.extend
+  childRoute: alias "childRoutes.firstObject"
+  childrenRoute: alias "childrenRoutes.firstObject"
   modelRoute: alias "modelRoutes.firstObject"
   collectionRoute: alias "collectionRoutes.firstObject"
+
+  childRoutes: sort "childRoutesRaw", compare specificity
+  childrenRoutes: sort "childrenRoutesRaw", compare specificity
   modelRoutes: sort "modelRoutesRaw", compare specificity
   collectionRoutes: sort "collectionRoutesRaw", compare specificity
   init: ->
     @_super arguments...
-    @set "collectionRoutesRaw", A []
     @set "modelRoutesRaw", A []
+    @set "childRoutesRaw", A []
+    @set "childrenRoutesRaw", A []
+    @set "collectionRoutesRaw", A []
+  childRouteClosestTo: (routeName) ->
+    @get "childRoutesRaw"
+    .sort compare distanceTo routeName
+    .get "firstObject"
+  childrenRouteClosestTo: (routeName) ->
+    @get "childrenRoutesRaw"
+    .sort compare distanceTo routeName
+    .get "firstObject"
   modelRouteClosestTo: (routeName) ->
     @get "modelRoutesRaw"
     .sort compare distanceTo routeName
@@ -34,11 +49,15 @@ ModelData = Object.extend
     @get "collectionRoutesRaw"
     .sort compare distanceTo routeName
     .get "firstObject"
-  merge: ({collectionRoute, modelRoute}) ->
+  merge: ({collectionRoute, modelRoute, childRoute, childrenRoute}) ->
     if modelRoute?
       @get("modelRoutesRaw").pushObject modelRoute
     if collectionRoute?
       @get("collectionRoutesRaw").pushObject collectionRoute
+    if childRoute?
+      @get("childRoutesRaw").pushObject childRoute
+    if childrenRoute?
+      @get("childrenRoutesRaw").pushObject childrenRoute
 
 class RouteData
   constructor: ->
@@ -82,10 +101,24 @@ class RouteData
       instance.models[modelName]?.collectionRouteClosestTo(currentRouteName)
     else
       instance.models[modelName]?.get("collectionRoute")
+  @childRoute = (modelName, currentRouteName) ->
+    if currentRouteName?
+      instance.models[modelName]?.childRouteClosestTo(currentRouteName)
+    else  
+      instance.models[modelName]?.get("childRoute")
+  @childrenRoute = (modelName, currentRouteName) ->
+    if currentRouteName?
+      instance.models[modelName]?.childrenRouteClosestTo(currentRouteName)
+    else
+      instance.models[modelName]?.get("childrenRoute")
   @modelRoutes = (modelName) ->
     instance.models[modelName]?.get("modelRoutes")
   @collectionRoutes = (modelName) ->
     instance.models[modelName]?.get("collectionRoutes")
+  @childRoutes = (modelName) ->
+    instance.models[modelName]?.get("childRoutes")
+  @childrenRoutes = (modelName) ->
+    instance.models[modelName]?.get("childrenRoutes")
 
 class RouteAST
   currentNamespace = A []

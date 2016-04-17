@@ -1,8 +1,10 @@
 `import Ember from 'ember'`
 `import StateCore from '../mixins/state-core'`
 `import _ from 'lodash/lodash'`
+
 {RSVP, isBlank} = Ember
 {isFunction} = _
+
 FieldState = Ember.ObjectProxy.extend StateCore,
   preload: ->
     RSVP.hash

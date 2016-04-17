@@ -10,14 +10,14 @@ isFactory = (x) ->
 WorkflowService = Service.extend
   lookup: inject.service("lookup")
 
-  setupMeta: ({routeAction, modelName, modelPath, model}) ->
+  setupMeta: ({routeAction, routeName, modelName, modelPath, model}) ->
     return if isBlank(modelName) or isBlank(routeAction)
     collection = @get("lookup").other "field:#{modelName}"
     return if isBlank(collection) 
     return if isEmpty(fields = collection.get "sortedFields")
     chain(fields)
     .tap (fields) -> Ember.assert "is a proper array", isArray(fields)
-    .map (field) -> field.initState {routeAction, modelPath, model}
+    .map (field) -> field.initState {routeName, routeAction, modelPath, model}
     .thru RSVP.all
     .value()
     .then (fields) ->

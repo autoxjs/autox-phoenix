@@ -6,10 +6,10 @@
 
 Page = PageObject.create
   id: text("[aria-label=id]")
+  name: text("[aria-label=name]")
   material: text("[aria-label=material]")
-  weight: text("[aria-label=weight]")
-  importAppointment: text("[aria-label=importAppointment]")
-  exportAppointment: text("[aria-label=exportAppointment]")
-  clickExportAppointment: clickable("a[href*=export-appointment]")
+  importBatches: text("[aria-label=importBatches]")
+  exportBatches: text("[aria-label=exportBatches]")
+  clickImportBatches: clickable("a[href*=import-batches]")
 
 `export default Page`

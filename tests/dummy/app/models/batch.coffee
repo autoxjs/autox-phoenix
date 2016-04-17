@@ -22,4 +22,5 @@ Batch = DS.Model.extend
     description: "The appointment that this batch will ship out in"
     display: ["show"]
     async: true
+    link: true
 `export default Batch`

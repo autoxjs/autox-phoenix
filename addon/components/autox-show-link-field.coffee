@@ -1,14 +1,18 @@
 `import Ember from 'ember'`
-`import layout from '../templates/components/autox-show-field'`
-`import UserCustomize from '../mixins/user-customize'`
-
-AutoxShowLinkFieldComponent = Ember.LinkComponent.extend UserCustomize,
-  customPrefix: "show-for-link-field"
+`import layout from '../templates/components/autox-show-link-field'`
+`import _x from '../utils/xdash'`
+{computed: {apply}} = _x
+{computed: {alias}} = Ember
+AutoxShowLinkFieldComponent = Ember.Component.extend
+  tagName: ""
   layout: layout
-  classNames: ["autox-show-link-field"]
-  classNameBindings: ["userHasDefinedComponent::list-group-item"]
+  linkClass: "list-group-item autox-show-link-field"
+  slug: alias "field.linkSlug"
 
-AutoxShowLinkFieldComponent.reopenClass
-  positionalParams: 'params'
+  linkModel: apply "slug.type", "field.name", "model", (type, name, model) ->
+    switch type
+      when "belongsToChild", "hasManyChildren" then model
+      when "belongsTo" then model.get("#{name}.id")
+  hasLinkModel: apply "slug.type", (type) -> type in ["hasManyChildren", "belongsToChild", "belongsTo"]
 
 `export default AutoxShowLinkFieldComponent`

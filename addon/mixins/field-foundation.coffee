@@ -2,7 +2,7 @@
 `import _x from '../utils/xdash'`
 `import FieldState from '../states/field-state'`
 
-{A, isPresent, inject, RSVP, computed: {map, alias, or: ifAny, not: none}} = Ember
+{A, isPresent, inject, RSVP, computed: {map, alias, and: ifAll, or: ifAny, not: none}} = Ember
 {computed: {apply, match}} = _x
 formalize = (x) ->
   switch x
@@ -19,6 +19,8 @@ FieldFoundationMixin = Ember.Mixin.create
   type: alias "meta.type"
   label: ifAny "meta.options.label", "name"
   step: alias "meta.options.step"
+  relationKind: alias "meta.kind"
+
   priority: ifAny "meta.options.priority", "defaultPriority"
   defaultPriority: 1
   description: alias "meta.options.description"
@@ -30,6 +32,7 @@ FieldFoundationMixin = Ember.Mixin.create
   isAttribute: alias "meta.isAttribute"
   isVirtual: alias "meta.isVirtual"
   isAction: alias "meta.isAction"
+  isLink: ifAll "isRelationship", "meta.options.link"
   isBasic: none "among"
   among: alias "meta.options.among"
   defaultValue: alias "meta.options.defaultValue"
