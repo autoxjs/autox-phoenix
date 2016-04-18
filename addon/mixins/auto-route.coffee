@@ -62,7 +62,9 @@ Core =
   model: (params) ->
     @get("paginateParams").manualUpdate params
     switch @get("routeAction")
-      when "collection#new", "children#new"
+      when "collection#new"
+        @store.createRecord @get("defaultModelName"), params
+      when "children#new"
         [..., relationName, _new] = @routeName.split(".")
         @store.createRecord @get("defaultModelName"),
           @defaultNewParams(relationName, params)
