@@ -7,13 +7,8 @@
 {partialRight} = _
 {isBlank, computed: {alias, and: ifAll, not: cant}} = Ember
 isComputed = partialRight hasFunctions, "get", "meta", "readOnly", "property", "volatile"
-AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize,
-  tagName: "button"
-  customPrefix: "show-for-action-field"
-  layout: layout
-  classNames: ["autox-show-action-field"]
-  attributeBindings: ["field.name:aria-label", "disabled"]
-  classNameBindings: ["userHasDefinedComponent::list-group-item", "isBusy:disabled:", "canDisplay::hidden"]
+
+AutoxActionFieldCore = Ember.Mixin.create
   canDisplay: ifAll "field.canOnlyDisplay", "isPermissible", "notInAnotherAction"
   disabled: cant "canDisplay"
   isPermissible: alias "actionState.when"
@@ -40,4 +35,13 @@ AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize,
     .finally =>
       @set "isBusy", false
 
+AutoxShowActionFieldComponent = Ember.Component.extend UserCustomize, AutoxActionFieldCore,
+  tagName: "button"
+  customPrefix: "show-for-action-field"
+  layout: layout
+  classNames: ["autox-show-action-field"]
+  attributeBindings: ["field.name:aria-label", "disabled"]
+  classNameBindings: ["userHasDefinedComponent::list-group-item", "isBusy:disabled:", "canDisplay::hidden"]
+
+`export {AutoxActionFieldCore, AutoxShowActionFieldComponent}`
 `export default AutoxShowActionFieldComponent`
