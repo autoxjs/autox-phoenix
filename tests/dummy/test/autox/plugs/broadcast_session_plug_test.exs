@@ -3,7 +3,7 @@ defmodule Dummy.BroadcastSessionPlugTest do
   alias Autox.SessionUtils
   alias Dummy.UserSocket
   import Dummy.SeedSupport
-  
+
   setup do
     user = build_user
     owner = build_owner
@@ -15,11 +15,11 @@ defmodule Dummy.BroadcastSessionPlugTest do
         }
       }
     }
-    conn = conn()
+    conn = build_conn()
     |> post("/api/sessions", %{
       "data" => %{
-        "type" => "sessions", 
-        "attributes" => session_attributes, 
+        "type" => "sessions",
+        "attributes" => session_attributes,
         "relationships" => relationships
       }
     })
@@ -32,7 +32,7 @@ defmodule Dummy.BroadcastSessionPlugTest do
   test "creating tacos should trigger broadcast", %{conn: conn, topic: topic} do
     assert conn |> SessionUtils.logged_in?
 
-    @endpoint.subscribe(self(), topic)
+    @endpoint.subscribe(topic)
     path = conn |> taco_path(:create)
     data = %{"type" => "tacos", "attributes" => taco_attributes}
     conn
@@ -41,7 +41,7 @@ defmodule Dummy.BroadcastSessionPlugTest do
     |> assert
 
     assert_broadcast "update", %{data: data, meta: _, links: _}
-    assert %{id: _, links: _, type: :tacos, attributes: attributes, relationships: relationships} = data    
+    assert %{id: _, links: _, type: :tacos, attributes: attributes, relationships: relationships} = data
     assert %{
       name: "al pastor",
       calories: 9000
@@ -56,7 +56,7 @@ defmodule Dummy.BroadcastSessionPlugTest do
   test "deleting tacos should trigger broadcast", %{conn: conn, topic: topic} do
     assert conn |> SessionUtils.logged_in?
 
-    @endpoint.subscribe(self(), topic)
+    @endpoint.subscribe(topic)
     taco = build_taco
     path = conn |> taco_path(:delete, taco.id)
     conn
@@ -65,7 +65,7 @@ defmodule Dummy.BroadcastSessionPlugTest do
     |> assert
 
     assert_broadcast "destroy", %{data: data, meta: _, links: _}
-    assert %{id: _, links: _, type: :tacos, attributes: attributes, relationships: relationships} = data    
+    assert %{id: _, links: _, type: :tacos, attributes: attributes, relationships: relationships} = data
     assert %{
       name: "al pastor",
       calories: 9000
@@ -78,7 +78,7 @@ defmodule Dummy.BroadcastSessionPlugTest do
   end
 
   test "creating taco relationships should not fuck it all up", %{conn: conn, topic: topic} do
-    @endpoint.subscribe self, topic
+    @endpoint.subscribe topic
     shop = build_shop
     taco = build_taco
     path = conn |> taco_shop_relationship_path(:create, taco.id)

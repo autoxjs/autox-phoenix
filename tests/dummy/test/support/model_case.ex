@@ -17,15 +17,17 @@ defmodule Dummy.ModelCase do
   using do
     quote do
       alias Dummy.Repo
-      import Ecto.Model
+      import Ecto
       import Ecto.Query, only: [from: 2]
       import Dummy.ModelCase
     end
   end
 
   setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Dummy.Repo)
+
     unless tags[:async] do
-      Ecto.Adapters.SQL.restart_test_transaction(Dummy.Repo, [])
+      Ecto.Adapters.SQL.Sandbox.mode(Dummy.Repo, {:shared, self()})
     end
 
     :ok

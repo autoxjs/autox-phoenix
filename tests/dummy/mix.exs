@@ -18,8 +18,8 @@ defmodule Dummy.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Dummy, []},
-     applications: [:phoenix, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :autox]]
+     applications: [:phoenix, :cowboy, :logger, :gettext, :phoenix_pubsub,
+                    :phoenix_ecto, :postgrex]]
   end
 
   # Specifies which paths to compile per environment.
@@ -30,12 +30,13 @@ defmodule Dummy.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    autox = File.cwd! |> Path.join("../..")
+    autox = File.cwd! |> Path.join("../..") |> Path.expand
 
-    [{:phoenix, "~> 1.1.1"},
+    [{:phoenix, "~> 1.2.0-rc"},
+     {:phoenix_pubsub, "~> 1.0.0-rc"},
+     {:phoenix_ecto, "~> 3.0-rc"},
      {:autox, path: autox},
      {:cors_plug, "~> 0.1"},
-     {:phoenix_ecto, "~> 2.0"},
      {:postgrex, ">= 0.0.0"},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"}]
@@ -50,6 +51,7 @@ defmodule Dummy.Mixfile do
   defp aliases do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
-     "autox.reset": ["autox.destroy.migrations", "autox.infer.migrations", "ecto.reset"]]
+     "autox.reset": ["autox.destroy.migrations", "autox.infer.migrations", "ecto.reset"],
+     "test": ["ecto.create --quiet", "ecto.migrate", "test"]]
   end
 end

@@ -4,14 +4,13 @@ defmodule Dummy.MetaUtilsTest do
   import Dummy.SeedSupport
 
   setup do
-    conn = conn()
     %{salsa: salsa, shop: shop} = salsa_to_shop(build_salsa, build_shop)
-    {:ok, conn: conn, salsa: salsa, shop: shop}
+    {:ok, salsa: salsa, shop: shop}
   end
 
   test "it should infer the namespace and collection", %{conn: conn} do
     path = "/api/shops"
-    meta = conn 
+    meta = conn
     |> get(path, %{})
     |> Mu.from_conn
 
@@ -25,12 +24,12 @@ defmodule Dummy.MetaUtilsTest do
     }
     models = ["dog"]
     expected = [
-      other_queries: "", 
+      other_queries: "",
       this_path: "page%5Blimit%5D=25&page%5Boffset%5D=0",
       next_path: "page%5Blimit%5D=25&page%5Boffset%5D=25"
     ]
     assert Mu.link_paths(%{"page" => page}, models) == expected
-      
+
 
     page = %{
       "offset" => 25,
@@ -38,7 +37,7 @@ defmodule Dummy.MetaUtilsTest do
     }
     models = ["dog"]
     expected = [
-      other_queries: "", 
+      other_queries: "",
       this_path: "page%5Blimit%5D=25&page%5Boffset%5D=25",
       next_path: "page%5Blimit%5D=25&page%5Boffset%5D=50",
       prev_path: "page%5Blimit%5D=25&page%5Boffset%5D=0"

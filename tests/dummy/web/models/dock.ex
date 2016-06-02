@@ -13,12 +13,12 @@ defmodule Dummy.Dock do
   @update_fields @create_fields
   @optional_fields ~w(name status)
 
-  def create_changeset(model, params\\:empty) do
+  def create_changeset(model, params\\%{}) do
     model
     |> cast(params, @create_fields, @optional_fields)
   end
 
-  def update_changeset(model, params\\:empty) do 
+  def update_changeset(model, params\\%{}) do 
     create_changeset(model, params)
   end
 

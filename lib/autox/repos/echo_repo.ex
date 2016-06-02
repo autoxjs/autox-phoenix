@@ -12,7 +12,7 @@ defmodule Autox.EchoRepo do
   def preload(model, _), do: model
 
   def insert(%{valid?: false}=changeset), do: {:error, changeset}
-  def insert(%{model: model, changes: changes}) do
+  def insert(%{data: model, changes: changes}) do
     x = model |> Map.merge(changes)
     fields = Autox.ModelUtils.fields(model.__struct__)
     model = x
@@ -25,9 +25,9 @@ defmodule Autox.EchoRepo do
   end
 
   def update(%{valid?: false}=cs), do: {:error, cs}
-  def update(%{model: model, changes: changes}) do
-    model = model 
-    |> Map.merge(changes) 
+  def update(%{data: model, changes: changes}) do
+    model = model
+    |> Map.merge(changes)
 
     {:ok, model}
   end
@@ -44,7 +44,7 @@ defmodule Autox.EchoRepo do
 
   def calculate_params(id) do
     use Pipe
-    pipe_with &ok?/2, 
+    pipe_with &ok?/2,
       Base.decode64(id) |> Poison.decode
   end
 
@@ -76,9 +76,9 @@ defmodule Autox.EchoRepo do
 
   def all(_), do: []
 
-  defp find(params, class, id) do 
+  defp find(params, class, id) do
     class |> struct(id: id) |> class.create_changeset(params) |> update
   end
 
-  def delete(model), do: {:ok, model}  
+  def delete(model), do: {:ok, model}
 end

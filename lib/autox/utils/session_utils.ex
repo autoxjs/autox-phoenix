@@ -4,7 +4,7 @@ defmodule Autox.SessionUtils do
 
   def logged_in?(conn) do
     conn
-    |> current_session
+    |> get_session(:current_session)
     |> case do
       nil -> false
       _ -> true
@@ -15,7 +15,7 @@ defmodule Autox.SessionUtils do
     conn |> put_session(:current_session, session |> serialize)
   end
 
-  def login(conn, session) do 
+  def login(conn, session) do
     conn |> put_session(:current_session, session |> serialize)
   end
 

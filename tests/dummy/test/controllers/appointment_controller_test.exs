@@ -1,21 +1,19 @@
 defmodule Dummy.AppointmentControllerTest do
   use Dummy.ConnCase
   import Dummy.SeedSupport
-  alias Dummy.Repo
 
   setup do
-    conn = conn()
     appointment = build_appointment
     import_batch = build_import_batch(appointment)
     export_batch = build_export_batch(appointment)
-    {:ok, conn: conn, appointment: appointment, import_batch: import_batch, export_batch: export_batch}
+    {:ok, appointment: appointment, import_batch: import_batch, export_batch: export_batch}
   end
 
   test "it should show appointment", %{conn: conn, appointment: appointment} do
     path = conn |> appointment_path(:show, appointment.id)
     assert path == "/api/appointments/#{appointment.id}"
-    
-    assert %{"data" => data, "meta" => meta} = conn
+
+    assert %{"data" => data, "meta" => _meta} = conn
     |> get(path, %{})
     |> json_response(200)
 

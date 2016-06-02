@@ -8,7 +8,7 @@ defmodule Dummy.ConnChanCase do
       alias Dummy.Repo
       import Plug.Conn
       import Phoenix.ConnTest, except: [connect: 2]
-      import Ecto.Model
+      import Ecto
       import Ecto.Query, only: [from: 2]
 
       import Dummy.Router.Helpers
@@ -18,10 +18,11 @@ defmodule Dummy.ConnChanCase do
   end
 
   setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Dummy.Repo)
     unless tags[:async] do
-      Ecto.Adapters.SQL.restart_test_transaction(Dummy.Repo, [])
+      Ecto.Adapters.SQL.Sandbox.mode(Dummy.Repo, {:shared, self()})
     end
 
-    {:ok, conn: Phoenix.ConnTest.conn()}
+    {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

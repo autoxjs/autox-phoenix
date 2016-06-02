@@ -4,10 +4,9 @@ defmodule Dummy.SalsaRelationshipControllerTest do
   alias Dummy.Repo
 
   setup do
-    conn = conn()
     shop = build_shop
     salsa = build_salsa
-    {:ok, conn: conn, shop: shop, salsa: salsa}
+    {:ok, shop: shop, salsa: salsa}
   end
 
   test "it should properly show", %{conn: conn, shop: shop, salsa: salsa} do

@@ -3,9 +3,9 @@ defmodule Autox.Session do
 
   def cache_user_fields(%{valid?: false}=x), do: x
   def cache_user_fields(changeset) do
-    %{remember_token: token, email: email, id: user_id} = changeset 
-    |> get_field(:user) 
-    changeset 
+    %{remember_token: token, email: email, id: user_id} = changeset
+    |> get_field(:user)
+    changeset
     |> put_change(:remember_token, token)
     |> put_change(:email, email)
     |> put_change(:user_id, user_id)
@@ -14,10 +14,11 @@ defmodule Autox.Session do
 
   def validate_authenticity(changeset, nil), do: changeset |> add_error(:email, "no such user")
   def validate_authenticity(changeset, user) do
-    password = changeset |> get_field(:password, "")
-    case Comeonin.Bcrypt.checkpw(password, user.password_hash) do
-      true -> changeset |> put_change(:user, user)
-      _ -> changeset |> add_error(:password, "wrong password")
+    with  password <- changeset |> get_field(:password, ""),
+          true <- Comeonin.Bcrypt.checkpw(password, user.password_hash) do
+        changeset |> put_assoc(:user, user)
+    else
+      changeset |> add_error(:password, "wrong password")
     end
   end
 
@@ -25,15 +26,15 @@ defmodule Autox.Session do
     changeset |> add_error(:remember_token, "invalid token")
   end
   def validate_existence(changeset, user) do
-    changeset |> put_change(:user, user)
+    changeset |> put_assoc(:user, user)
   end
 
   def validate_at_least_one(changeset, fields), do: validate_at_least_one(changeset, fields, [])
-  defp validate_at_least_one(changeset, [], missing_fields) do 
+  defp validate_at_least_one(changeset, [], missing_fields) do
     changeset |> cast(%{}, missing_fields)
   end
   defp validate_at_least_one(changeset, [field|fields], missing_fields) do
-    changeset 
+    changeset
     |> get_field(field |> String.to_existing_atom)
     |> case do
       nil -> validate_at_least_one(changeset, fields, [field|missing_fields])
@@ -54,7 +55,7 @@ defmodule Autox.Session do
           {nil, nil} ->
             changeset
             |> add_error(:email, "cannot be blank without a remember token")
-          {email, _} when is_binary(email) -> 
+          {email, _} when is_binary(email) ->
             user = unquote(repo).get_by(unquote(user), email: email)
             changeset |> validate_authenticity(user)
           {_, token} when is_binary(token) ->

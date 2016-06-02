@@ -3,7 +3,6 @@ defmodule Autox.QueryUtilsTest do
   use Dummy.ConnCase
   import Dummy.SeedSupport
   alias Dummy.User
-  alias Ecto.DateTime
   setup do
     user = build_user
     {:ok, user: user}

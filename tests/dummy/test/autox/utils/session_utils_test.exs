@@ -4,10 +4,9 @@ defmodule Autox.SessionUtilsTest do
   import Dummy.SeedSupport
 
   setup do
-    conn = conn()
     user = build_user
     owner = build_owner
-    {:ok, conn: conn, user: user, owner: owner}
+    {:ok, user: user, owner: owner}
   end
 
   test "serialize" do

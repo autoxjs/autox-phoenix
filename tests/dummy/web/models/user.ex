@@ -17,7 +17,7 @@ defmodule Dummy.User do
   @optional_fields ~w()
   @password_hash_opts [min_length: 1, extra_chars: false, common: false]
 
-  def create_changeset(model, params\\:empty) do
+  def create_changeset(model, params\\%{}) do
     model
     |> cast(params, @creation_fields, @optional_fields)
     |> validate_format(:email, ~r/@/)
@@ -28,7 +28,7 @@ defmodule Dummy.User do
     |> prepare_changes(&setup_remember_token/1)
   end
 
-  def update_changeset(model, params\\:empty) do
+  def update_changeset(model, params\\%{}) do
     model
     |> cast(params, @updative_fields, @optional_fields)
   end

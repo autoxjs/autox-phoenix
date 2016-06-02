@@ -3,9 +3,8 @@ defmodule Dummy.KitchenControllerTest do
   import Dummy.SeedSupport
 
   setup do
-    conn = conn()
     key = Application.get_env(:autox, Autox.Defaults)[:autox_master_key]
-    {:ok, conn: conn, kitchen: build_kitchen, key: key}
+    {:ok, kitchen: build_kitchen, key: key}
   end
 
   test "it should properly show", %{conn: conn, key: key, kitchen: %{id: id}} do

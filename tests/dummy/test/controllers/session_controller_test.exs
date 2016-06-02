@@ -2,17 +2,16 @@ defmodule Dummy.SessionControllerTest do
   use Dummy.ConnCase
   alias Autox.SessionUtils, as: Su
   import Dummy.SeedSupport
-  
+
   setup do
-    conn = conn()
-    {:ok, conn: conn, user: build_user}
+    {:ok, user: build_user}
   end
 
   test "create session", %{conn: conn, user: user} do
     %{email: email, remember_token: token, id: user_id} = user
     path = conn |> session_path(:create)
     assert path == "/api/sessions"
-    data = %{ 
+    data = %{
       "type" => "sessions",
       "attributes" => %{"email" => email, "password" => "password123"} }
     conn = conn |> post(path, %{"data" => data})
@@ -72,7 +71,7 @@ defmodule Dummy.SessionControllerTest do
     path = conn |> session_path(:update)
     data = %{
       "type" => "sessions",
-      "relationships" => %{"owner" => %{"data" => %{"id" => owner.id, "type" => "owners"}}} 
+      "relationships" => %{"owner" => %{"data" => %{"id" => owner.id, "type" => "owners"}}}
     }
     conn = conn
     |> ensure_recycled
@@ -92,7 +91,7 @@ defmodule Dummy.SessionControllerTest do
     owner = build_owner
     path = conn |> session_path(:create)
     data = %{ "type" => "sessions", "attributes" => %{"email" => email, "password" => "password123"} }
-    conn = conn 
+    conn = conn
     |> post(path, %{"data" => data})
     |> ensure_recycled
     |> delete(path, %{})
@@ -100,7 +99,7 @@ defmodule Dummy.SessionControllerTest do
     data = %{
       "type" => "sessions",
       "attributes" => %{"remember_token" => token},
-      "relationships" => %{"owner" => %{"data" => %{"id" => owner.id, "type" => "owners"}}} 
+      "relationships" => %{"owner" => %{"data" => %{"id" => owner.id, "type" => "owners"}}}
     }
     conn = conn
     |> ensure_recycled

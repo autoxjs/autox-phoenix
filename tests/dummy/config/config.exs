@@ -14,6 +14,9 @@ config :dummy, Dummy.Endpoint,
   pubsub: [name: Dummy.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+config :dummy,
+  ecto_repos: [Dummy.Repo]
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -22,7 +25,6 @@ config :logger, :console,
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
-
 # Configure phoenix generators
 config :phoenix, :generators,
   migration: true,
@@ -39,4 +41,3 @@ config :autox, Autox.Defaults,
   error_view: Dummy.ErrorView,
   user_class: Dummy.User,
   session_class: Dummy.Session
-

@@ -15,7 +15,7 @@ defmodule Autox.Manifest do
   def infer_relationship_controller(model) do
     model
     |> Atom.to_string
-    |> Kernel.<>("RelationshipController") 
+    |> Kernel.<>("RelationshipController")
     |> String.to_atom
   end
   def infer_collection_path(model) do
@@ -24,7 +24,7 @@ defmodule Autox.Manifest do
   def infer_controller(model) do
     model
     |> Atom.to_string
-    |> Kernel.<>("Controller") 
+    |> Kernel.<>("Controller")
     |> String.to_atom
   end
 
@@ -39,16 +39,16 @@ defmodule Autox.Manifest do
   end
   defp can_login_core(_) do
     quote do
-      resources "sessions", SessionController, only: [:show, :create], singleton: true
-      resources "users", UserController, only: [:create]
+      resources "/sessions", SessionController, only: [:show, :create], singleton: true
+      resources "/users", UserController, only: [:create]
     end
   end
   defmacro can_logout! do
     quote do
-      resources "sessions", SessionController, only: [:update, :delete], singleton: true
-      post "/sessions/:id", SessionController, :update 
-      resources "sessions", SessionController, only: [:show, :update, :delete]
-      resources "users", UserController, only: [:update, :show]
+      resources "/sessions", SessionController, only: [:update, :delete], singleton: true
+      post "/sessions/:id", SessionController, :update
+      resources "/sessions", SessionController, only: [:show, :update, :delete]
+      resources "/users", UserController, only: [:update, :show]
     end
   end
 
@@ -78,10 +78,10 @@ defmodule Autox.Manifest do
   defmacro the(model) do
     an_core model, @an_actions, do: nil
   end
-  
+
   defp an_core(model, actions, do: context) do
     quote do
-      path = Autox.Manifest.infer_collection_path(unquote(model))
+      path = "/" <> Autox.Manifest.infer_collection_path(unquote(model))
       controller = Autox.Manifest.infer_controller(unquote(model))
 
       resources path, controller, [only: unquote(actions)], do: unquote(context)
@@ -102,8 +102,8 @@ defmodule Autox.Manifest do
     create? = :create in actions
     quote do
       for model <- unquote(models) do
-        path = Autox.Manifest.infer_collection_path(model)
-        relation_path = "relationships/" <> path
+        path = "/" <> Autox.Manifest.infer_collection_path(model)
+        relation_path = "/relationships" <> path
         controller = Autox.Manifest.infer_relationship_controller(model)
         if unquote(index?) do
           resources path, controller, only: [:index]
@@ -130,14 +130,14 @@ defmodule Autox.Manifest do
   defp one_core(models, actions) when is_list(models) do
     show? = :show in actions
     actions = actions |> Enum.reject(&(&1 == :show))
-    
+
     quote do
       for model <- unquote(models) do
-        path = Autox.Manifest.pathify(model)
-        relation_path = "relationships/" <> path
+        path = "/" <> Autox.Manifest.pathify(model)
+        relation_path = "/relationships" <> path
         controller = Autox.Manifest.infer_relationship_controller(model)
         if unquote(show?) do
-          resources path, controller, only: [:show], singleton: true  
+          resources path, controller, only: [:show], singleton: true
         end
         resources relation_path, controller, only: unquote(actions), singleton: true
       end

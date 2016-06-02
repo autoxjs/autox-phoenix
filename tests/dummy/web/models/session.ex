@@ -23,7 +23,7 @@ defmodule Dummy.Session do
   @preload_fields ~w(owner user)a
 
   def preload_fields, do: @preload_fields
-  def create_changeset(model, params\\:empty) do
+  def create_changeset(model, params\\%{}) do
     model
     |> cast(params, [], @create_fields ++ @optional_fields)
     |> validate_at_least_one(["email", "remember_token"])
@@ -31,7 +31,7 @@ defmodule Dummy.Session do
     |> cache_user_fields
   end
 
-  def update_changeset(model, params\\:empty) do 
+  def update_changeset(model, params\\%{}) do 
     model
     |> cast(params, [], @optional_fields)
   end

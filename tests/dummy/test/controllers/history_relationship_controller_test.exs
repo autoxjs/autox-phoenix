@@ -4,9 +4,8 @@ defmodule Dummy.HistoryRelationshipControllerTest do
   alias Dummy.Repo
 
   setup do
-    conn = conn()
     salsa = build_salsa
-    {:ok, conn: conn, salsa: salsa}
+    {:ok, salsa: salsa}
   end
 
   test "it should create history", %{conn: conn, salsa: salsa} do
@@ -22,7 +21,7 @@ defmodule Dummy.HistoryRelationshipControllerTest do
     assert conn
     |> post(path, %{"data" => data})
     |> response(204)
-    
+
     assert [history] = salsa
     |> assoc(:histories)
     |> Repo.all
