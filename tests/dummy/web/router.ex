@@ -1,8 +1,13 @@
 defmodule Dummy.Router do
   use Dummy.Web, :router
-
-  def has_owner?(%{owner: %{id: _}}), do: true
-  def has_owner?(_), do: false
+  alias Autox.SessionUtils
+  def has_owner?(conn) do
+    with %{owner_id: id} when is_binary(id) <- SessionUtils.current_session(conn) do
+      true
+    else
+      false
+    end
+  end
   @moduledoc """
   Upcoming:
   ## Characteristics
@@ -61,7 +66,7 @@ defmodule Dummy.Router do
     end
 
     the Owner do
-      many Shop 
+      many Shop
     end
 
     the Dock do
@@ -90,7 +95,7 @@ defmodule Dummy.Router do
   scope "/api", Dummy do
     pipe_through [:api, :auth]
     can_logout!
-    
+
     the Chair do
       one Shop
     end

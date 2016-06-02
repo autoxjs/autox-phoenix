@@ -4,7 +4,7 @@ defmodule Dummy.BroadcastSessionPlugTest do
   alias Dummy.UserSocket
   import Dummy.SeedSupport
 
-  setup do
+  setup %{conn: conn} do
     user = build_user
     owner = build_owner
     relationships = %{
@@ -15,7 +15,7 @@ defmodule Dummy.BroadcastSessionPlugTest do
         }
       }
     }
-    conn = build_conn()
+    conn = conn
     |> post("/api/sessions", %{
       "data" => %{
         "type" => "sessions",
