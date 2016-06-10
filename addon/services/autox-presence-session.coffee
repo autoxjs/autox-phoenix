@@ -1,33 +1,29 @@
 `import Ember from 'ember'`
-
-{isBlank, Service, Evented, inject, RSVP} = Ember
-
+`import Phoenix from 'ember-phoenix-chan'`
+`import getOwner from 'ember-getowner-polyfill'`
+{isBlank, Service, Evented, RSVP, computed: {alias}, inject: {service}} = Ember
+{Socket} = Phoenix
 BadUserError = new Error """
 You attempt to establish socket connection failed,
 I expected an non-null user, but got a null user.
 """
 errMsg = """
-You tried to create a channel synchronously, 
+You tried to create a channel synchronously,
 but the socket hasn't connected yet.
 
 This is likely because you called the `channelSync`
 method before the user has successfully logged in his account.
 """
-SocketService = Service.extend Evented,
-  xession: inject.service("autox-session-context")
+AutoxPresenceSessionService = Ember.Service.extend
+  config: service "config"
+  session: service "session"
   state: "disconnected"
-  init: ->
-    @_super arguments...
-    @set "deferredSocket", RSVP.defer()
-  channelSync: (topic) ->
-    if @socket?
-      @socket.channel topic
-    else
-      throw new Error errMsg
-  channel: (topic) ->
-    @get "deferredSocket.promise"
-    .then (socket) ->
-      socket.channel topic
+  namespace: alias "config.autox.socketNamespace"
+  userId: alias "session.data.authenticated.user.data.id"
+  deferredSocket: RSVP.defer()
+  socketPromise: alias "deferredSocket.promise"
+  channelFor: (name) ->
+    getOwner(@).lookup "service:#{name}-chan"
 
   onConnect: Ember.on "connect", ->
     @set "state", "connected"
@@ -43,19 +39,13 @@ SocketService = Service.extend Evented,
       @set "state", "error"
 
   connect: ->
-    user_id = @get "xession.authData.data.relationships.user.data.id"
-    throw BadUserError if isBlank(user_id)
-    @socket = new @socketFactory @socketNamespace, params: {user_id}
+    userId = @get "userId"
+    throw BadUserError if isBlank(userId)
+    @socket = new Socket @get("namespace"), params: user_id: userId
     @socket.connect()
     @socket.onOpen => @trigger "connect"
     @socket.onClose => @trigger "disconnect"
     @socket.onError => @trigger "error"
-    @get "xession"
-    .on "logout", =>
-      @socket?.disconnect => @trigger "disconnect"
     @get "deferredSocket.promise"
-  instanceInit: (Socket, socketNamespace) ->
-    @socketFactory = Socket
-    @socketNamespace = socketNamespace
 
-`export default SocketService`
+`export default AutoxPresenceSessionService`

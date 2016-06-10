@@ -1,0 +1,16 @@
+<h1 class="page-title">
+  New {{dataview.metadata.modelName}}
+</h1>
+<form {{action (route-action "persistModel") model on="submit"}}>
+  {{#each (filter-by "canDisplay" dataview.fields) as |field|}}
+    <label for={{field.name}}>
+      {{field.label}}
+      {{one-way-input
+        value=(get model field.name)
+        id=field.name
+        class="form-control"
+        update=(action (mut (get model field.name)))}}
+    </label>
+  {{/each}}
+  <button type="submit">Submit</button>
+</form>

@@ -38,6 +38,5 @@ module.exports = function(defaults) {
   app.import(app.bowerDirectory + "/font-awesome/fonts/fontawesome-webfont.woff2", {
     destDir: "fonts"
   });
-  app.import(app.bowerDirectory + "/js-cookie/src/js.cookie.js");
   return app.toTree();
 };

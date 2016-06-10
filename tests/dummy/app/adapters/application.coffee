@@ -1,4 +1,4 @@
-`import Adapter from 'autox/adapters/application'`
+`import Adapter from 'autox-phoenix/adapters/application'`
 `import ENV from '../config/environment'`
 
 ApplicationAdapter = Adapter.extend

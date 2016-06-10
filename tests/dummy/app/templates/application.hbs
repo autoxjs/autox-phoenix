@@ -5,7 +5,7 @@
         <h2 id="title">Welcome to Autox</h2>
         <p>A pretty spiffy rich application framework built on ember and phoenix</p>
         {{#if session.isAuthenticated}}
-          <small>You are logged in!</small>
+          <small class="has-session">You are logged in!</small>
         {{/if}}
       </div>
     </div>
@@ -16,67 +16,6 @@
   <div class="row">
     <div class="col-xs-12">
       {{outlet}}
-    </div>
-  </div>
-</div>
-
-<div class="container">
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="page-header">
-        <h1>Acceptance Test Junk Below <small>the crap below is used in the acceptance tests</small></h1>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-4">
-      <dl>
-        <dt>page offset</dt>
-        <dd>{{paginate.ctrl.pageOffset}}</dd>
-        <dt>page limit</dt>
-        <dd>{{paginate.ctrl.pageLimit}}</dd>
-      </dl>
-    </div>
-    <div class="col-xs-4">
-      <dl>
-        <dt>sort field</dt>
-        <dd>{{paginate.ctrl.sortField}}</dd>
-        <dt>sort direction</dt>
-        <dd>{{paginate.ctrl.sortDir}}</dd>
-      </dl>
-    </div>
-    <div class="col-xs-4">
-      <dl>
-        <dt>filter field</dt>
-        <dd>{{paginate.ctrl.filterField}}</dd>
-        <dt>filter op</dt>
-        <dd>{{paginate.ctrl.filterOp}}</dd>
-        <dt>filter value</dt>
-        <dd>{{paginate.ctrl.filterValue}}</dd>
-      </dl>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <h4 id="fsm-current-action">Current Action: {{fsm.currentAction.modelName}}#{{fsm.currentAction.name}}</h4>
-      {{#if session.isAuthenticated}}
-        {{#link-to "user"}}Already Logged in{{/link-to}}
-        <button id="logout" {{action "attemptLogout"}}>Log Out</button>
-      {{else}}
-        <button id="login" {{action "attemptLogin"}}>Login</button>
-      {{/if}}
-
-      {{#link-to "shops" class="btn btn-lg btn-success"}}
-        Shops
-      {{/link-to}}
-
-      {{#link-to "salsas" class="btn btn-lg btn-info"}}
-        salsas
-      {{/link-to}}
-
-      {{#link-to "appointments" class="btn btn-lg"}}
-        appointments
-      {{/link-to}}
     </div>
   </div>
 </div>

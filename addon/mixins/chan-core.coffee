@@ -1,86 +1,65 @@
 `import Ember from 'ember'`
-{inject, String, RSVP, Mixin, computed: {equal}} = Ember
+`import _ from 'lodash/lodash'`
+{bind, tap} = _
+{inject, String, RSVP, Mixin, computed: {equal, alias}, inject: {service}} = Ember
 dashingularize = (x) -> String.dasherize String.singularize x
 underpluralize = (x) -> String.underscore String.pluralize x
 
+successfulJoin = (chan) ->
+  @set "phoenixChan", chan
+  @trigger "join"
+failedToJoin = (reason) ->
+  @set "error", reason
+  RSVP.reject @
+
+Events = ["notify", "update", "destroy", "refresh"]
+
 ChanCoreMixin = Mixin.create
-  state: "disconnected"
-  isConnected: equal "state", "connected"
-  isConnecting: equal "state", "connecting"
-  isDisconnecting: equal "state", "disconnecting"
-  isDisconnected: equal "state", "disconnected"
-  socket: inject.service "socket"
-  store: inject.service "store"
-  notify: inject.service "notify"
-  makeTopic: (model) ->
-    id = model.get "id"
-    type = underpluralize model.constructor.modelName
-    "#{type}:#{id}"
+  chanParams: {}
+  state: alias "channel.state"
+  aps: service "autox-presence-session"
+  store: service "store"
+  socketPromise: alias "aps.socketPromise"
+  deferredChannel: RSVP.defer()
+  channelPromise: alias "deferredChannel.promise"
 
-  connect: (subject) ->
-    return @p if @get("isConnecting") or @get("isConnected")
-    @set "topic", (topic = @makeTopic(subject))
-    @get("socket").channel(topic)
-    .then (chan) =>
-      chan.on "notify", (payload) => @trigger "notify", payload
-      chan.on "update", (payload) => @trigger "update", payload
-      chan.on "destroy", (payload) => @trigger "destroy", payload
-      chan.on "refresh", (payload) => @trigger "refresh", payload
-      @joinChan chan
+  init: ->
+    @_super arguments...
+    @get("socketPromise").then (socket) =>
+      @channel = socket.channel @get("topic"), @get("chanParams")
+      @deferredChannel.resolve @channel
+      @channel.on event, bind(@trigger, @, event) for event in Events
 
-  onRefresh: Ember.on "refresh", ({type, id}) ->
-    type = dashingularize(type)
-    if (record = @get("store").peekRecord type, id)? and not record.get("isReloading")
-      Ember.run -> record.reload()
-
-  onNotify: Ember.on "notify", ({level, message}) ->
-    level ?= "info"
-    @get("notify")?[level]?message
-
-  onUpdate: Ember.on "update", (payload) ->
-    Ember.run => @get("store").pushPayload payload
-
-  onDestroy: Ember.on "destroy", (payload) ->
-    {data: {type, id}} = payload
-    type = dashingularize(type)
-    if (record = @get("store").peekRecord type, id)? and not record.get("isSaving")
-      @get("store").unloadRecord record
-
-  onJoin: Ember.on "join", ->
-    @set "state", "connected"
-    return if @get("alreadySetupLeave")
-    @get("socket").on "disconnect", => @disconnect()
-    @set "alreadySetupLeave", true
-
-  joinChan: (chan) ->
-    @set "chan", chan
-    @p = new RSVP.Promise (resolve, reject) =>
-      @set "state", "connecting"
+  connect: ->
+    return RSVP.resolve @ if isPresent(@channel)
+    @get("channelPromise").then (chan) =>
       chan.join()
-      .receive "ok", => 
-        @trigger "join" 
-        resolve(@)
-      .receive "error", (reason) => 
-        @set "state", "disconnected"
-        reject(reason)
-      .receive "timeout", => 
-        @set "state", "disconnected"
-        reject(@)
+      .receive "ok", tap(@, bind(successfulJoin, @, chan))
+      .receive "error", tap(@, bind(failedToJoin, @))
+      .receive "timeout", tap(@, bind(failedToJoin, @))
 
   disconnect: ->
-    return @p if @get("isDisconnecting") or @get("isDisconnected")
-    @p = new RSVP.Promise (resolve, reject) =>
-      @set "state", "disconnecting"
-      @get "chan"
-      .leave()
-      .receive "ok", =>
-        @set "state", "disconnected"
-        resolve @
-      .receive "error", =>
-        @set "state", "connected"
-        reject @
-      .receive "timeout", =>
-        @set "state", "disconnected"
-        resolve @
+    return RSVP.resolve @ if isBlank(@channel)
+    @get("channelPromise").then (chan) =>
+      chan.leave()
+      .receive "ok", => delete @channel
 
 `export default ChanCoreMixin`
+
+# onRefresh: Ember.on "refresh", ({type, id}) ->
+#   type = dashingularize(type)
+#   if (record = @get("store").peekRecord type, id)? and not record.get("isReloading")
+#     Ember.run -> record.reload()
+#
+# onNotify: Ember.on "notify", ({level, message}) ->
+#   level ?= "info"
+#   @get("notify")?[level]?message
+#
+# onUpdate: Ember.on "update", (payload) ->
+#   Ember.run => @get("store").pushPayload payload
+#
+# onDestroy: Ember.on "destroy", (payload) ->
+#   {data: {type, id}} = payload
+#   type = dashingularize(type)
+#   if (record = @get("store").peekRecord type, id)? and not record.get("isSaving")
+#     @get("store").unloadRecord record

@@ -16,12 +16,15 @@ module.exports = function(environment) {
         // e.g. 'with-controller': true
       }
     },
+    coffeeOptions: {
+      blueprints: false
+    },
 
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
     },
-    contentSecurityPolicy: { 
+    contentSecurityPolicy: {
       'connect-src': "'self' * http://localhost:4000 ws://localhost:4000",
       "img-src": "*",
       "media-src": "'self' *",

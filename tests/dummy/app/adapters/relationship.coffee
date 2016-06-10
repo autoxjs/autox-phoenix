@@ -1,4 +1,4 @@
-`import Adapter from 'autox/adapters/relationship'`
+`import Adapter from 'autox-phoenix/adapters/relationship'`
 `import ENV from '../config/environment'`
 
 RelationshipAdapter = Adapter.extend

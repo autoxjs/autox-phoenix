@@ -1,1 +1,1 @@
-`export { default } from 'autox/serializers/application'`
+`export { default } from 'autox-phoenix/serializers/application'`

@@ -1,6 +1,6 @@
 `import Ember from 'ember'`
 `import DS from 'ember-data'`
-`import Importance from 'autox/utils/importance'`
+`import Importance from 'ember-annotative-models/utils/importance'`
 TimestampsMixin = Ember.Mixin.create
   insertedAt: DS.attr "moment",
     priority: Importance.UtterTrash

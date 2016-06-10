@@ -2,17 +2,23 @@
   "name": "autox",
   "dependencies": {
     "ember": "~2.4.1",
-    "ember-cli-shims": "0.1.0",
+    "ember-cli-shims": "~0.1.1",
     "ember-cli-test-loader": "0.2.2",
     "ember-qunit-notifications": "0.1.0",
     "moment": ">= 2.8.0",
     "moment-timezone": ">= 0.1.0",
-    "phoenix": "phoenixframework/phoenix#v1.1.1",
+    "phoenix": "phoenixframework/phoenix#v1.2.0-rc.1",
     "eonasdan-bootstrap-datetimepicker": "~4.17.37",
     "bootstrap": "~3.3.6",
     "font-awesome": "~4.5.0",
     "numeral": "~1.5.3",
     "Faker": "^3.1.0",
-    "ceibo": "1.1.0"
+    "ceibo": "1.1.0",
+    "mocha": "~2.2.4",
+    "chai": "~2.3.0",
+    "ember-mocha-adapter": "~0.3.1"
+  },
+  "resolutions": {
+    "phoenix": "v1.2.0-rc.1"
   }
 }

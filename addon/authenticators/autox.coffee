@@ -1,17 +1,16 @@
 `import Devise from 'ember-simple-auth/authenticators/devise'`
 `import Ember from 'ember'`
-`import _x from 'autox/utils/xdash'`
+`import _x from 'ember-autox-core/utils/xdash'`
 `import _ from 'lodash/lodash'`
 
 {flow, partial, cloneDeep, partial, chain, set} = _
-{inject, run, $, RSVP, isBlank} = Ember
+{inject: {service}, computed, run, $, RSVP, isBlank} = Ember
 {Promise} = RSVP
 {tapLog, computed: {apply}} = _x
 splitXHR = ({responseJSON, responseText}) -> responseJSON or responseText
 
 Autox = Devise.extend
-  store: inject.service("store")
-  xession: inject.service("autox-session-context")
+  store: service("store")
   adapter: apply "store", (store) -> store.adapterFor "session"
 
   restore: (authData={}) ->
@@ -21,16 +20,29 @@ Autox = Devise.extend
     store = @get("store")
     store.push store.normalize("session", authData.data)
     RSVP.resolve(output)
-    
-  authenticate: (session) ->
-    new Promise (resolve, reject) =>      
-      session
-      .save()
-      .then (session) =>
-        chain session.serialize(includeId: true)
-        .merge cookie: @get("xession.cookie")
-        .thru partial(run, null, resolve)
-        .value()
-      .catch partial(run, null, reject)
+
+  authenticate: (params) ->
+    @castSession params
+    .save()
+    .then (session) ->
+      session.serialize(includeId: true)
+
+  castSession: (params) ->
+    {store, model} = @getProperties "store", "model"
+    sessionClass = store.modelFor "session"
+    sessionClass.eachAttribute (name) ->
+      if (value = Ember.get(params, name))?
+        model.set name, value
+    sessionClass.eachRelatedType (name) ->
+      if (value = Ember.get(params, name))?
+        model.set name, value
+    model
+
+  model: computed "isAuthenticated", ->
+    {store, isAuthenticated} = @getProperties "store", "isAuthenticated"
+    if isAuthenticated
+      store.peekRecord "session", @get("data.authenticated.data.id")
+    else
+      store.createRecord "session"
 
 `export default Autox`

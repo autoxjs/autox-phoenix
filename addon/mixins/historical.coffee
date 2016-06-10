@@ -1,9 +1,10 @@
 `import DS from 'ember-data'`
 `import Ember from 'ember'`
 `import _ from 'lodash/lodash'`
-`import virtual from 'autox/utils/virtual'`
-`import {computedTask} from 'autox/utils/computed-promise'`
-`import Importance from 'autox/utils/importance'`
+`import virtual from 'ember-annotative-models/utils/virtual'`
+`import {computedTask} from 'ember-autox-core/utils/computed-promise'`
+`import Importance from 'ember-annotative-models/utils/importance'`
+
 {isFunction} = _
 {get, RSVP, getWithDefault, isPresent, isBlank, isArray, A} = Ember
 HistoricalMixin = Ember.Mixin.create
@@ -22,8 +23,8 @@ HistoricalMixin = Ember.Mixin.create
       when isBlank tester then isPresent
       when isFunction tester then tester
       when isArray tester then (x) -> A(tester).contains x
-      else 
-        (x) -> 
+      else
+        (x) ->
           x is tester
     @latestHistory()
     .then (history) ->

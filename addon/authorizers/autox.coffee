@@ -1,16 +1,15 @@
 `import Devise from 'ember-simple-auth/authorizers/devise'`
 `import Ember from 'ember'`
-`import ENV from '../config/environment'`
 
-{inject, get, isPresent} = Ember
+{inject: {service}, get, isPresent} = Ember
 
 Authorizer = Devise.extend
-  xession: inject.service("autox-session-context")
+  config: service('config')
 
   authorize: (data, block) ->
-    xession = @get "xession"
-    if xession.get("loggedIn") and isPresent(data?.cookie)
+    if isPresent(data?.cookie)
       authStr = data.cookie
-      block(ENV.cookieKey, authStr)
+      cookieKey = @get("config.cookieKey")
+      block(cookieKey, authStr)
 
 `export default Authorizer`

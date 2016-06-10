@@ -1,4 +1,4 @@
-`import Adapter from 'autox/adapters/session'`
+`import Adapter from 'autox-phoenix/adapters/session'`
 `import ENV from '../config/environment'`
 
 SessionAdapter = Adapter.extend

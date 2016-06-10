@@ -1,12 +1,12 @@
 `import DS from 'ember-data'`
-`import {virtual, action, about, Mixins, _x, QueryUtils} from 'autox'`
-`import {Macros} from 'ember-cpm'`
+`import {virtual, action, about, Multiaction} from 'ember-annotative-models'`
+`import _x from 'ember-autox-core/utils/xdash'`
+`import Mixins from 'autox-phoenix'`
 `import moment from 'moment'`
-`import {persistHistory} from 'autox/utils/create-history'`
+`import {persistHistory} from 'autox-phoenix/utils/create-history'`
 {needs} = action
-{join} = Macros
 {computed: {computedTask: sync}} = _x
-{Relateable, Timestamps, Historical, Multiaction} = Mixins
+{Relateable, Timestamps, Historical} = Mixins
 Histories =
   deny:
     name: "deny-inspection"
@@ -25,7 +25,7 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     modify: ["new", "edit"]
     display: ["show", "index"]
     priority: 1
-  
+
   location: DS.attr "string",
     label: "City of Location"
     description: "The city and state where your shop is physically located"
@@ -34,7 +34,7 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     among: ["Los Angeles, CA", "Las Vegas, NV", "New York, NY", "Chicago, IL", "Phoenix, AZ"]
     defaultValue: "Los Angeles, CA"
     priority: 2
-  
+
   theme: DS.attr "string",
     label: "Resturaunt Theme"
     description: "The general brand decor and persona of your shop in a few words (e.g. hot and trendy, old-fashioned, etc.)"
@@ -49,7 +49,7 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     modify: ["edit"]
     defaultValue: -> moment()
     priority: 25
-  
+
   kitchen: DS.belongsTo "kitchen",
     label: "Kitchen Id"
     description: "All shops have an unique kitchen ID as required by the health inspector general"
@@ -58,18 +58,18 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     among: -> @store.findAll "kitchen"
     priority: 50
     async: true
-  
-  owner: DS.belongsTo "owner", 
+
+  owner: DS.belongsTo "owner",
     label: "Owner Name"
     description: "The name of the owner of this shop"
     display: ["show"]
     modify: ["new", "edit"]
     among: -> @store.findAll "owner"
-    search: (term) -> 
+    search: (term) ->
       q = new QueryUtils()
       .orderBy "name", "desc"
       .filterBy "name", "i~", term
-      .pageBy 
+      .pageBy
         offset: 0
         limit: 25
       @store.query "owner", q.toParams()
@@ -104,7 +104,7 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
     priority: 0
     presenter: "shop-open-for-business-action-field"
     -> yield return persistHistory(Histories.open, {shop: @})
-  
+
   denyInspection: action "click",
     label: "Deny Shop"
     description: "Deny approval to this shop"
@@ -124,7 +124,7 @@ Model = DS.Model.extend Relateable, Timestamps, Historical, Multiaction,
   chairs: DS.hasMany "chair", async: true
   salsas: DS.hasMany "salsa", async: true
   tacos: DS.hasMany "taco", async: true
-    
+
 about Model,
   label: "Shop Name"
   description: "Shops are stores and resturaunts in and around the United States"

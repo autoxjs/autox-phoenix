@@ -1,1 +1,1 @@
-`export { default } from 'autox/models/relationship'`
+`export { default } from 'autox-phoenix/models/relationship'`
