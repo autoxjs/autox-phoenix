@@ -1,7 +1,7 @@
 `import DS from 'ember-data'`
-`import {RelateableMixin} from 'autox'`
+`import {Relateable} from 'autox-phoenix'`
 
-Model = DS.Model.extend RelateableMixin,
+Model = DS.Model.extend Relateable,
   
   insertedAt: DS.attr "moment"
   

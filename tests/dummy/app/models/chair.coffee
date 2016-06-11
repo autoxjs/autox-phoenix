@@ -1,6 +1,7 @@
 `import Ember from 'ember'`
 `import DS from 'ember-data'`
-`import {RelateableMixin, virtual, action, about} from 'autox'`
+`import {Relateable} from 'autox-phoenix'`
+`import {virtual, action, about} from 'ember-annotative-models'`
 
 ### Additional Features
 Now, you can annotate display, modify, and defaultValue
@@ -11,7 +12,7 @@ If you provide values, I assume you don't want that field displayed
 Dumb shit like putting modify: ["show"] is ignored
 ###
 {computed} = Ember
-Model = DS.Model.extend RelateableMixin,
+Model = DS.Model.extend Relateable,
   name: DS.attr "string",
     display: ["show", "index"]
     modify: ["new", "edit"]
@@ -49,7 +50,7 @@ Model = DS.Model.extend RelateableMixin,
     among: ["small", "medium", "large"]
     priority: 4
 
-  
+
   shop: DS.belongsTo "shop",
     display: ["show"]
     modify: ["new"]

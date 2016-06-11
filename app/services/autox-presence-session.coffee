@@ -1,1 +1,1 @@
-`export { default } from 'autox/services/autox-presence-session'`
+`export { default } from 'autox-phoenix/services/autox-presence-session'`

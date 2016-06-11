@@ -1,5 +1,5 @@
 `import DS from 'ember-data'`
-`import {Mixins, action} from 'autox'`
+`import {Mixins, action} from 'autox-phoenix'`
 {Relateable, Timestamps, Multiaction} = Mixins
 Model = DS.Model.extend Relateable, Timestamps, Multiaction,
   name: DS.attr "string",

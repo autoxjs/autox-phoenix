@@ -1,1 +1,1 @@
-`export { default } from 'autox/transforms/moment'`
+`export { default } from 'autox-phoenix/transforms/moment'`

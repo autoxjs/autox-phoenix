@@ -8,7 +8,9 @@ module.exports = function(environment) {
     locationType: 'auto',
     namespace: "api",
     host: "http://localhost:4000",
-    socketNamespace: "ws://localhost:4000/socket",
+    autox: {
+      socketNamespace: "ws://localhost:4000/socket"
+    },
     cookieKey: "_dummy_key",
     EmberENV: {
       FEATURES: {

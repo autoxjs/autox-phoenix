@@ -2,8 +2,8 @@
 import {
   describe,
   it,
-  beforeEach,
-  afterEach
+  before,
+  after
 } from 'mocha';
 import { expect } from 'chai';
 import startApp from '../helpers/start-app';
@@ -13,28 +13,38 @@ import LoginPage from 'dummy/tests/pages/login';
 describe('Acceptance: SessionPresence', function() {
   let application;
 
-  beforeEach(function() {
+  before(function(done) {
     application = startApp();
+    visit('/');
+    andThen(function() { done(); });
   });
 
-  afterEach(function() {
+  after(function() {
     destroyApp(application);
   });
 
-  it('can login the user', function() {
-    visit('/');
+  it('can redirect anonymous users', function() {
+    expect(currentPath())
+    .to.equal("login");
 
-    andThen(function() {
-      expect(currentPath())
-      .to.equal("login");
+    expect(LoginPage.pageTitle)
+    .to.equal("Login Page");
+  });
 
-      expect(LoginPage.pageTitle)
-      .to.equal("Login Page");
-
+  describe('can properly login', function() {
+    let session;
+    before(function(done) {
       LoginPage.login();
+      session = application.__container__.lookup("service:session");
+      andThen(function() { done(); });
     });
 
-    andThen(function(){
+    it('should authenticate the session', function() {
+      expect(session.get("isAuthenticated"))
+      .to.be.ok;
+    });
+
+    it("should redirect the user to the dashboard", function() {
       expect(currentPath())
       .to.equal("dashboard.index");
     });

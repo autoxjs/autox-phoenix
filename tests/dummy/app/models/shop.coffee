@@ -1,12 +1,12 @@
 `import DS from 'ember-data'`
 `import {virtual, action, about, Multiaction} from 'ember-annotative-models'`
 `import _x from 'ember-autox-core/utils/xdash'`
-`import Mixins from 'autox-phoenix'`
+`import {Relateable, Timestamps, Historical} from 'autox-phoenix'`
 `import moment from 'moment'`
 `import {persistHistory} from 'autox-phoenix/utils/create-history'`
 {needs} = action
 {computed: {computedTask: sync}} = _x
-{Relateable, Timestamps, Historical} = Mixins
+ 
 Histories =
   deny:
     name: "deny-inspection"

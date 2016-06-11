@@ -19,7 +19,7 @@ AutoxPresenceSessionService = Ember.Service.extend
   session: service "session"
   state: "disconnected"
   namespace: alias "config.autox.socketNamespace"
-  userId: alias "session.data.authenticated.user.data.id"
+  userId: alias "session.data.authenticated.data.relationships.user.data.id"
   deferredSocket: RSVP.defer()
   socketPromise: alias "deferredSocket.promise"
   channelFor: (name) ->

@@ -1,1 +1,1 @@
-`export { default } from 'autox/transforms/points'`
+`export { default } from 'autox-phoenix/transforms/points'`

@@ -1,10 +1,11 @@
 `import Ember from 'ember'`
 `import DS from 'ember-data'`
-`import {Mixins, action, computed, _x} from 'autox'`
-{tapLog} = _x
+`import {Relateable, Timestamps} from 'autox-phoenix'`
+`import {Multiaction} from 'ember-annotative-models'`
+`import _x from 'ember-autox-core/utils/xdash'`
+{computed: {computedTask}} = _x
 {isBlank, isPresent, RSVP} = Ember
-{computedTask} = computed
-{Relateable, Timestamps, Multiaction} = Mixins
+
 Model = DS.Model.extend Relateable, Timestamps, Multiaction,
   name: DS.attr "string",
     label: "Truck Name"
@@ -15,7 +16,7 @@ Model = DS.Model.extend Relateable, Timestamps, Multiaction,
     label: "Truck Status"
     description: "Status of the truck"
     display: ["show", "index"]
-    modify: ["new", "edit"]  
+    modify: ["new", "edit"]
 
   dock: DS.belongsTo "dock",
     label: "Loading Dock"
